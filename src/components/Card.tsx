@@ -19,6 +19,25 @@ interface CardProps {
   previousOrder: number
 }
 
+/**
+ * Render a draggable kanban card list item that supports drag-and-drop reordering and deletion.
+ *
+ * The component displays a title, optional content, drag handle, and a delete button. It
+ * handles drag-over, drag-leave, and drop events to compute a target position (top or bottom)
+ * and issues a move mutation with a computed intermediate order; deletion issues a delete mutation
+ * after validating the payload.
+ *
+ * @param ref - Optional React ref forwarded to the wrapping `<li>` element.
+ * @param title - The card's title text shown in the header.
+ * @param content - Optional body text shown below the title (may be null).
+ * @param id - The card's unique identifier used for mutations and drag payloads.
+ * @param columnId - The identifier of the column that contains this card.
+ * @param boardId - The identifier of the board that contains this card.
+ * @param order - The current numeric ordering value of this card.
+ * @param nextOrder - The ordering value of the next card in the column (used to compute a new order when dropped below).
+ * @param previousOrder - The ordering value of the previous card in the column (used to compute a new order when dropped above).
+ * @returns The list item element representing the card with drag-and-drop and delete behavior.
+ */
 export function Card({ ref, title, content, id, columnId, boardId, order, nextOrder, previousOrder }: CardProps & { ref?: React.RefObject<HTMLLIElement | null> }) {
   const [acceptDrop, setAcceptDrop] = useState<'none' | 'top' | 'bottom'>(
     'none',

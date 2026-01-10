@@ -4,6 +4,12 @@ import * as React from 'react'
 
 import { cn } from '~/lib/utils'
 
+/**
+ * Renders a Dialog root element with a standardized data-slot and forwards all props.
+ *
+ * @param props - Props to apply to the underlying DialogPrimitive.Root; they are forwarded unchanged.
+ * @returns The rendered DialogPrimitive.Root element with `data-slot="dialog"`.
+ */
 function Dialog({
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Root>) {
@@ -28,6 +34,12 @@ function DialogClose({
   return <DialogPrimitive.Close data-slot="dialog-close" {...props} />
 }
 
+/**
+ * Renders the dialog overlay element used to dim the background and capture interactions.
+ *
+ * @param className - Additional CSS classes appended to the overlay's composed class list
+ * @returns The overlay element with `data-slot="dialog-overlay"` and merged class names
+ */
 function DialogOverlay({
   className,
   ...props
@@ -44,6 +56,12 @@ function DialogOverlay({
   )
 }
 
+/**
+ * Renders dialog content inside a portal with an overlay, layout/styling hooks, and an optional close button.
+ *
+ * @param showCloseButton - If `true`, renders a close button in the top-right corner of the content. Defaults to `true`.
+ * @returns The dialog content element wrapped in a portal and overlay.
+ */
 function DialogContent({
   className,
   children,
@@ -78,6 +96,12 @@ function DialogContent({
   )
 }
 
+/**
+ * Renders the dialog header container.
+ *
+ * @param className - Additional CSS class names to merge with the header's default classes
+ * @returns A div element with `data-slot="dialog-header"` used as the dialog header container
+ */
 function DialogHeader({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
@@ -88,6 +112,11 @@ function DialogHeader({ className, ...props }: React.ComponentProps<'div'>) {
   )
 }
 
+/**
+ * Renders a footer container for the dialog with responsive layout and spacing.
+ *
+ * @returns A div element with `data-slot="dialog-footer"`, responsive layout classes (`flex flex-col-reverse gap-2` on small screens and `sm:flex-row sm:justify-end` on larger screens), the provided `className` merged, and all other div props forwarded.
+ */
 function DialogFooter({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
@@ -101,6 +130,12 @@ function DialogFooter({ className, ...props }: React.ComponentProps<'div'>) {
   )
 }
 
+/**
+ * Renders the dialog's title element with base typography and optional extra classes.
+ *
+ * @param className - Additional CSS classes to apply to the title element
+ * @returns The rendered dialog title element
+ */
 function DialogTitle({
   className,
   ...props
@@ -114,6 +149,12 @@ function DialogTitle({
   )
 }
 
+/**
+ * Renders the dialog description element with a standardized `data-slot` and muted styling.
+ *
+ * @param className - Optional additional CSS classes to merge with the default muted text styling.
+ * @returns The configured `DialogPrimitive.Description` element for use inside the dialog.
+ */
 function DialogDescription({
   className,
   ...props

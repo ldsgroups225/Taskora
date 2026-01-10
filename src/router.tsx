@@ -12,6 +12,16 @@ import { DefaultCatchBoundary } from './components/DefaultCatchBoundary'
 import { NotFound } from './components/NotFound'
 import { routeTree } from './routeTree.gen'
 
+/**
+ * Create and configure a TanStack router integrated with Convex and React Query.
+ *
+ * Initializes a Convex query client from the VITE_CONVEX_URL environment variable, sets up a QueryClient
+ * configured to use Convex's query hashing and query function, connects the Convex client to the QueryClient,
+ * and installs SSR query integration. In a browser environment, it adjusts the React Query notify scheduler.
+ * Mutation errors produce a visual toast notification; a missing VITE_CONVEX_URL logs an error to the console.
+ *
+ * @returns A configured router instance connected to Convex and React Query
+ */
 export function getRouter() {
   if (typeof document !== 'undefined') {
     notifyManager.setScheduler(window.requestAnimationFrame)

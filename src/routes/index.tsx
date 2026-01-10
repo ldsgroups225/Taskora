@@ -9,6 +9,11 @@ export const Route = createFileRoute('/')({
   component: Home,
 })
 
+/**
+ * Render the home view that displays either the developer ZenMode or the default WarRoom based on the current role.
+ *
+ * @returns The root JSX element for the home route. Shows `ZenMode` when `role` is `"dev"`, otherwise shows `WarRoom`, both wrapped for presence-based transitions.
+ */
 function Home() {
   const { role } = React.use(RoleContext)
 

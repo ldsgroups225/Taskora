@@ -9,6 +9,12 @@ import {
 import { AlertTriangle, Home as HomeIcon, RefreshCcw } from 'lucide-react'
 import { Button } from '~/components/ui/button'
 
+/**
+ * Render a user-facing catch boundary UI when a route throws an error.
+ *
+ * @param error - The caught error information provided by the router; rendered inside the error display.
+ * @returns A React element that shows an alert icon, the error details, a "Try Again" button to invalidate the router, and a contextual "Home" or "Go Back" action.
+ */
 export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
   const router = useRouter()
   const isRoot = useMatch({

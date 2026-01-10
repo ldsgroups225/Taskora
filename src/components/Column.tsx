@@ -25,6 +25,13 @@ interface ColumnProps {
   order: number
 }
 
+/**
+ * Render a board column with its header, cards, and actions.
+ *
+ * Supports editing the column name, deleting the column, adding new cards, and drag-and-drop for moving cards into this column and reordering columns.
+ *
+ * @returns A JSX element representing the column UI: an editable header with a count badge and delete action, a scrollable list of cards, an add-item control, and visual drop indicators and handlers for card/column drag-and-drop.
+ */
 export function Column({ ref, name, columnId, boardId, items, nextOrder, previousOrder, order }: ColumnProps & { ref?: (node: HTMLDivElement | null) => void }) {
   const [acceptCardDrop, setAcceptCardDrop] = useState(false)
   const editState = useState(false)

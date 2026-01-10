@@ -13,6 +13,11 @@ export const issueQueries = {
   children: (parentId: Id<'issues'>) => convexQuery(api.issues.getChildren, { parentId }),
 }
 
+/**
+ * Create a mutation hook for adding a new column to a board with an optimistic cache update.
+ *
+ * @returns A mutation hook that calls the `createColumn` API and optimistically appends a new column to the local board cache (`api.board.getBoard`) so the UI reflects the addition immediately.
+ */
 export function useCreateColumnMutation() {
   const mutationFn = useConvexMutation(
     api.board.createColumn,
@@ -42,6 +47,11 @@ export function useCreateColumnMutation() {
   return useMutation({ mutationFn })
 }
 
+/**
+ * Creates a mutation hook for adding an item to a board and applying an optimistic update to the local board cache.
+ *
+ * @returns A mutation hook that invokes the backend to create a board item and updates the local board query optimistically with the new item.
+ */
 export function useCreateItemMutation() {
   const mutationFn = useConvexMutation(
     api.board.createItem,
@@ -61,6 +71,11 @@ export function useCreateItemMutation() {
   return useMutation({ mutationFn })
 }
 
+/**
+ * Creates a mutation hook to update a board item and applies an optimistic update to the local board cache.
+ *
+ * @returns A mutation hook that updates a board item; the optimistic update replaces the item with the same `id` in the cached board identified by `boardId`.
+ */
 export function useUpdateCardMutation() {
   const mutationFn = useConvexMutation(
     api.board.updateItem,
@@ -79,6 +94,14 @@ export function useUpdateCardMutation() {
   return useMutation({ mutationFn })
 }
 
+/**
+ * Create a mutation hook to delete a board item and optimistically remove it from the local board cache.
+ *
+ * The mutation calls `api.board.deleteItem` and, before the server round-trip completes,
+ * updates the cached board (api.board.getBoard) by filtering out the deleted item.
+ *
+ * @returns A React Query mutation hook that deletes an item and applies an optimistic update removing that item from the cached board
+ */
 export function useDeleteCardMutation() {
   const mutationFn = useConvexMutation(
     api.board.deleteItem,
@@ -97,6 +120,13 @@ export function useDeleteCardMutation() {
   return useMutation({ mutationFn })
 }
 
+/**
+ * Create a mutation hook for deleting a board column and applying an optimistic local update.
+ *
+ * The optimistic update removes the column and any items belonging to that column from the cached board.
+ *
+ * @returns A React Query mutation hook that deletes a column; when executed it updates the local board cache to remove the column and its items and then performs the server mutation.
+ */
 export function useDeleteColumnMutation() {
   const mutationFn = useConvexMutation(
     api.board.deleteColumn,
@@ -121,6 +151,11 @@ export function useUpdateBoardMutation() {
   return useMutation({ mutationFn })
 }
 
+/**
+ * Create a mutation hook that updates a board column and applies an optimistic update to the local board cache.
+ *
+ * @returns The mutation hook configured to invoke the board column update mutation and optimistically update the board stored in the local cache.
+ */
 export function useUpdateColumnMutation() {
   const mutationFn = useConvexMutation(
     api.board.updateColumn,

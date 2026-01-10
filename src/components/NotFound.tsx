@@ -2,6 +2,14 @@ import { Link } from '@tanstack/react-router'
 import { FileQuestion } from 'lucide-react'
 import { Button } from '~/components/ui/button'
 
+/**
+ * Render a centered 404 Not Found page with actions to go back or start over.
+ *
+ * Renders an illustrative icon, a "404 - Not Found" heading, a message area that shows `children` when provided (otherwise a default message), and two actions: "Go back" (navigates window.history.back()) and "Start Over" (navigates to the root path).
+ *
+ * @param children - Optional custom message or elements to display under the heading; when omitted a default message is shown.
+ * @returns The NotFound page JSX element.
+ */
 export function NotFound({ children }: { children?: any }) {
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-6 text-center px-4">

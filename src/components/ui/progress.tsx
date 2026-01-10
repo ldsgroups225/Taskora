@@ -3,6 +3,15 @@ import * as React from 'react'
 
 import { cn } from '~/lib/utils'
 
+/**
+ * Render a horizontal progress bar whose filled portion reflects the provided value.
+ *
+ * The indicator's horizontal translate represents progress as a percentage; if `value` is
+ * undefined the component treats it as `0`.
+ *
+ * @param value - Progress percentage from 0 to 100
+ * @returns The rendered progress bar element
+ */
 function Progress({
   className,
   value,

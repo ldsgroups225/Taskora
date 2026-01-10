@@ -6,6 +6,21 @@ import { itemSchema } from '../db/schema'
 import { useCreateItemMutation } from '../queries'
 import { ItemMutationFields } from '../types'
 
+/**
+ * Render a form for creating a new card item inside a specific column.
+ *
+ * The form collects a title (required), includes hidden fields for boardId,
+ * columnId, and order, generates a unique id for the new item, validates the
+ * title is not empty, and submits the parsed item data via the create-item
+ * mutation. The creation flow ends when the item is submitted, when the form
+ * loses focus to an element outside the form, or when the user cancels.
+ *
+ * @param columnId - The id of the column where the new card will be created
+ * @param boardId - The id of the board that contains the column
+ * @param nextOrder - The numeric order value to assign to the new card
+ * @param onComplete - Callback invoked to close or finalize the creation UI
+ * @returns The React element for the new-card creation form
+ */
 export function NewCard({
   columnId,
   boardId,

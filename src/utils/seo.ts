@@ -1,3 +1,15 @@
+/**
+ * Builds an array of meta tag descriptors for SEO and social sharing.
+ *
+ * When `image` is provided, additional Twitter and Open Graph image tags and a
+ * large-card twitter card are included.
+ *
+ * @param title - The page title used for the `title`, `twitter:title`, and `og:title` tags
+ * @param description - Optional page description used for `description`, `twitter:description`, and `og:description`
+ * @param image - Optional image URL; when present adds `twitter:image`, `twitter:card` (`summary_large_image`), and `og:image`
+ * @param keywords - Optional keywords string used for the `keywords` tag
+ * @returns An array of tag descriptor objects; each object contains either a `title` or a `name` and a `content` property
+ */
 export function seo({
   title,
   description,

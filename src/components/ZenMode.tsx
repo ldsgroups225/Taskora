@@ -19,6 +19,13 @@ const mockTasks: Task[] = [
   { id: '4', title: 'Add mobile first responsiveness', status: 'todo', priority: 'medium' },
 ]
 
+/**
+ * Renders the Zen Mode focus interface that displays a list of tasks with animated entries, status icons, priority indicators, and a summary panel.
+ *
+ * The component includes a header with an add button, a stagger-animated task list where each item shows a colored priority bar, a status icon, title styling based on status, and status/priority badges, plus a bottom quote panel.
+ *
+ * @returns The React element for the Zen Mode UI.
+ */
 export function ZenMode() {
   return (
     <motion.div

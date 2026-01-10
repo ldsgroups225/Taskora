@@ -49,6 +49,11 @@ export const Route = createRootRouteWithContext<{
   component: RootComponent,
 })
 
+/**
+ * Provides role state and renders the application root document and route outlet.
+ *
+ * @returns A React element that supplies the current `role` and `setRole` to `RoleContext`, renders `RootDocument` with those props, and includes the route `Outlet` as its children.
+ */
 function RootComponent() {
   const [role, setRole] = React.useState<UserRole>('dev')
 
@@ -61,6 +66,14 @@ function RootComponent() {
   )
 }
 
+/**
+ * Render the application's root HTML document, including the top navigation with role controls, the main content area, and global developer tools/scripts.
+ *
+ * @param children - Content to render inside the main application area
+ * @param role - Current UI role used to control which role button is styled as active
+ * @param setRole - Optional callback to update the current role when a role button is clicked
+ * @returns The root HTML document element for the application
+ */
 function RootDocument({
   children,
   role,
@@ -145,6 +158,11 @@ function RootDocument({
   )
 }
 
+/**
+ * Render a compact three-dot loading indicator that becomes visible when the router is loading.
+ *
+ * @returns A React element showing three staggered, bouncing dots; invisible and non-interactive when the router is not loading.
+ */
 function LoadingIndicator() {
   const isLoading = useRouterState({ select: s => s.isLoading })
   return (

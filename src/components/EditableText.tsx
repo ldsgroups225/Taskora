@@ -3,6 +3,22 @@ import { flushSync } from 'react-dom'
 import { Input } from '~/components/ui/input'
 import { cn } from '~/lib/utils'
 
+/**
+ * Render either a read-only button showing a string value or an inline editable text input.
+ *
+ * When editing, changes are committed on form submit or when the input blurs; pressing Escape cancels editing.
+ * `onChange` is invoked only when the new value is different from the previous value and is not empty after trimming.
+ *
+ * @param fieldName - `name` attribute for the input element
+ * @param value - Current string value to display or edit
+ * @param inputClassName - Optional additional classes applied to the input
+ * @param inputLabel - `aria-label` for the input element
+ * @param buttonClassName - Optional additional classes applied to the button
+ * @param buttonLabel - `aria-label` for the button element
+ * @param onChange - Callback invoked with the new value when a valid change is committed
+ * @param editState - Optional external `[editing, setEditing]` tuple to control edit mode from outside
+ * @returns The JSX element that is either the edit button or the inline editing form with input
+ */
 export function EditableText({
   fieldName,
   value,

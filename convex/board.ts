@@ -41,6 +41,12 @@ export const clear = internalMutation(async (ctx) => {
   })
 })
 
+/**
+ * Return a copy of a document with internal system fields removed.
+ *
+ * @param doc - The document that may contain `_id` and `_creationTime`
+ * @returns The input document without the `_id` and `_creationTime` fields
+ */
 function withoutSystemFields<T extends { _creationTime: number, _id: Id<any> }>(
   doc: T,
 ) {
@@ -48,6 +54,12 @@ function withoutSystemFields<T extends { _creationTime: number, _id: Id<any> }>(
   return rest
 }
 
+/**
+ * Load a board and its related columns and items, returning their documents without system fields.
+ *
+ * @param id - The board's public `id`
+ * @returns An object containing the board's data (with system fields removed) and two arrays: `columns` and `items`, each holding their documents with system fields removed.
+ */
 async function getFullBoard(ctx: QueryCtx, id: string) {
   const board = withoutSystemFields(await ensureBoardExists(ctx, id))
 
@@ -81,6 +93,13 @@ export const getBoard = query({
   },
 })
 
+/**
+ * Validate that a board with the given id exists and return its document.
+ *
+ * @param boardId - The board identifier to look up
+ * @returns The matching `boards` document
+ * @throws If no board with `boardId` exists
+ */
 async function ensureBoardExists(
   ctx: QueryCtx,
   boardId: string,
@@ -93,6 +112,13 @@ async function ensureBoardExists(
   invariant(board, `missing board ${boardId}`)
   return board
 }
+/**
+ * Ensure a column with the given id exists and return its document.
+ *
+ * @param columnId - The id of the column to validate
+ * @returns The matching column document from the `columns` collection
+ * @throws Error if no column with the given id exists
+ */
 async function ensureColumnExists(
   ctx: QueryCtx,
   columnId: string,
@@ -105,6 +131,14 @@ async function ensureColumnExists(
   invariant(column, `missing column: ${columnId}`)
   return column
 }
+/**
+ * Ensure an item with the given id exists and return its document.
+ *
+ * @param ctx - Query context providing database access
+ * @param itemId - The item `id` to look up
+ * @returns The found item document from the `items` collection
+ * @throws If no item with `itemId` exists
+ */
 async function ensureItemExists(
   ctx: QueryCtx,
   itemId: string,

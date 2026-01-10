@@ -14,6 +14,13 @@ import { Button } from '~/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
 import { Progress } from '~/components/ui/progress'
 
+/**
+ * Render the WarRoom dashboard presenting project overview metrics, status badges, key cards, and a high-priority deliverables list.
+ *
+ * The component is purely presentational and stateless; the velocity sparkline bars animate with randomized heights on each render.
+ *
+ * @returns A React element containing the project overview dashboard UI.
+ */
 export function WarRoom() {
   return (
     <motion.div

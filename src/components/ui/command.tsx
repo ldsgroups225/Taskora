@@ -13,6 +13,13 @@ import {
 } from '~/components/ui/dialog'
 import { cn } from '~/lib/utils'
 
+/**
+ * Renders a styled wrapper around CommandPrimitive used as the command container.
+ *
+ * Adds a data-slot of "command", merges the provided `className` with the component's base container styles, and forwards all other props to CommandPrimitive.
+ *
+ * @returns A React element representing the command container.
+ */
 function Command({
   className,
   ...props
@@ -29,6 +36,16 @@ function Command({
   )
 }
 
+/**
+ * Render a modal command palette composed of a Dialog wrapping a Command container.
+ *
+ * @param title - Visible label for the dialog used in the (screen-reader-only) header
+ * @param description - Descriptive text used in the (screen-reader-only) header
+ * @param children - Command children (input, list, groups, items, etc.) to render inside the palette
+ * @param className - Additional CSS classes applied to the DialogContent wrapper
+ * @param showCloseButton - Whether the DialogContent should display a close button
+ * @returns A Dialog element containing the command palette UI
+ */
 function CommandDialog({
   title = 'Command Palette',
   description = 'Search for a command to run...',
@@ -60,6 +77,13 @@ function CommandDialog({
   )
 }
 
+/**
+ * Render the input area for the command palette with a leading search icon.
+ *
+ * @param className - Additional CSS classes applied to the input element
+ * @param props - Remaining props are forwarded to the underlying command input element
+ * @returns The composed input element (wrapper, search icon, and styled input)
+ */
 function CommandInput({
   className,
   ...props
@@ -82,6 +106,14 @@ function CommandInput({
   )
 }
 
+/**
+ * Scrollable container for command palette items.
+ *
+ * Renders a CommandPrimitive.List with a constrained max height and vertical scrolling, merges any provided `className`, and forwards remaining props to the underlying list element.
+ *
+ * @param className - Additional CSS classes to merge with the component's base styles
+ * @returns The rendered CommandPrimitive.List element
+ */
 function CommandList({
   className,
   ...props
@@ -110,6 +142,14 @@ function CommandEmpty({
   )
 }
 
+/**
+ * Renders a styled container for grouping command items inside the command palette.
+ *
+ * The component applies consistent layout and group-heading styles, merges any
+ * provided `className`, and forwards all other props to `CommandPrimitive.Group`.
+ *
+ * @returns A `CommandPrimitive.Group` React element with preset styling and forwarded props.
+ */
 function CommandGroup({
   className,
   ...props
@@ -126,6 +166,13 @@ function CommandGroup({
   )
 }
 
+/**
+ * Renders a horizontal divider used between command palette groups.
+ *
+ * Accepts all props supported by `CommandPrimitive.Separator`; the `className` prop is merged with the component's base separator styles.
+ *
+ * @returns A React element representing the separator divider.
+ */
 function CommandSeparator({
   className,
   ...props
@@ -139,6 +186,12 @@ function CommandSeparator({
   )
 }
 
+/**
+ * Render an individual actionable item for the command palette.
+ *
+ * @param className - Additional CSS class names to merge with the component's default styles
+ * @returns A React element that renders a `CommandPrimitive.Item` with the component's base styling combined with any provided `className`
+ */
 function CommandItem({
   className,
   ...props
@@ -155,6 +208,11 @@ function CommandItem({
   )
 }
 
+/**
+ * Renders a right-aligned keyboard shortcut label for use inside a command item.
+ *
+ * @returns A `span` element with `data-slot="command-shortcut"` and styling for muted text, small size, and wide letter-spacing. Accepts and forwards all standard `span` props.
+ */
 function CommandShortcut({
   className,
   ...props

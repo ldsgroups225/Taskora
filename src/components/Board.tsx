@@ -9,6 +9,14 @@ import { useUpdateBoardMutation } from '../queries.js'
 import { Column as ColumnComponent } from './Column.js'
 import { NewColumn } from './NewColumn.js'
 
+/**
+ * Render an interactive board view with its columns and items.
+ *
+ * Displays the board header (color dot and editable name), a horizontally scrollable list of columns populated with their items, and a control to add new columns. When a new column is added, the list auto-scrolls to the far right.
+ *
+ * @param boardId - The identifier of the board to load and render
+ * @returns A React element containing the board UI (header, columns list, new-column control, and horizontal scrollbar)
+ */
 export function Board({ boardId }: { boardId: string }) {
   const newColumnAddedRef = useRef(false)
   const updateBoardMutation = useUpdateBoardMutation()

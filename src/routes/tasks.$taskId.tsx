@@ -48,6 +48,13 @@ export const Route = createFileRoute('/tasks/$taskId')({
   },
 })
 
+/**
+ * Renders a full-screen animated skeleton used while a task's data is loading.
+ *
+ * The skeleton includes a top title bar placeholder and a large content card placeholder with pulsing animation.
+ *
+ * @returns The loading UI as a JSX element
+ */
 function TaskPending() {
   return (
     <div className="min-h-screen bg-slate-950 p-8 flex flex-col gap-8 animate-pulse text-white">
@@ -57,6 +64,14 @@ function TaskPending() {
   )
 }
 
+/**
+ * Render the task detail page showing an issue, its subtasks, and related properties.
+ *
+ * Retrieves the issue and its children and displays the full task view including
+ * breadcrumbs, metadata, description, sub-tasks/linked issues list, and a properties/AI sidebar.
+ *
+ * @returns A React element representing the task detail page; if the issue cannot be found, renders a not-found message with a link to the home page.
+ */
 function TaskDetail() {
   const { taskId } = Route.useParams()
   const { data: issue } = useSuspenseQuery(issueQueries.detail(taskId as Id<'issues'>))

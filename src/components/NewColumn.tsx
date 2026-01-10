@@ -4,6 +4,14 @@ import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { useCreateColumnMutation } from '../queries'
 
+/**
+ * Render a UI control that allows creating a new column on a board.
+ *
+ * @param boardId - The ID of the board to which the new column will be added
+ * @param editInitially - If `true`, the component starts in edit mode with the column input visible
+ * @param onNewColumnAdded - Callback invoked after a new column is added and the component exits edit mode
+ * @returns The NewColumn component UI for entering a column name and submitting it to create a column
+ */
 export function NewColumn({
   boardId,
   editInitially,

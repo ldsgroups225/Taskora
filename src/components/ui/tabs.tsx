@@ -5,6 +5,12 @@ import * as React from 'react'
 
 import { cn } from '~/lib/utils'
 
+/**
+ * Renders the Tabs root element with default layout styles and forwards all props.
+ *
+ * @param className - Additional class names appended to the default `flex flex-col gap-2`
+ * @returns The Tabs root React element
+ */
 function Tabs({
   className,
   ...props
@@ -18,6 +24,12 @@ function Tabs({
   )
 }
 
+/**
+ * Renders a styled tabs list element and marks it with `data-slot="tabs-list"`.
+ *
+ * @param className - Additional CSS classes to merge with the component's default styles
+ * @returns A React element representing the tabs list
+ */
 function TabsList({
   className,
   ...props
@@ -34,6 +46,11 @@ function TabsList({
   )
 }
 
+/**
+ * Renders a tab trigger element with standardized styling and forwards received props.
+ *
+ * @returns The rendered tab trigger element with composed classes and forwarded attributes.
+ */
 function TabsTrigger({
   className,
   ...props
@@ -50,6 +67,12 @@ function TabsTrigger({
   )
 }
 
+/**
+ * Renders the content panel for a tab, applying default layout styles and any additional classes.
+ *
+ * @param className - Additional CSS class names to merge with the default styles
+ * @returns The tab content element with combined default and provided class names
+ */
 function TabsContent({
   className,
   ...props

@@ -21,6 +21,13 @@ import {
 } from '~/components/ui/command'
 import { RoleContext } from '~/context/RoleContext'
 
+/**
+ * Command palette UI that provides quick search, suggestions, recent seeded links, and mode switching.
+ *
+ * Registers a global Ctrl/Cmd+K listener to toggle the dialog, and updates the global role (via RoleContext) when a "Switch Mode" item is selected; selecting a mode closes the dialog.
+ *
+ * @returns A JSX element rendering the command menu trigger button and controlled dialog.
+ */
 export function CommandMenu() {
   const [open, setOpen] = React.useState(false)
   const { setRole } = React.use(RoleContext)
