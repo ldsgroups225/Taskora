@@ -41,11 +41,11 @@
   - [x] 2.3 Develop "AI Post-Functions" triggers in Convex (e.g., call Gemini when an issue moves to "In Review").
   - [x] 2.4 Build the "Agentic Query Language" (AQL) parser/handler for natural language filtering.
 
-- [ ] 3.0 Build the Agentic Engine (AI Orchestration with Gemini)
-  - [ ] 3.1 Initialize `@google/genai` with the Gemini 2.5 Flash model.
-  - [ ] 3.2 Create a prompt system for "Backlog Grooming" that re-ranks tasks based on metadata.
-  - [ ] 3.3 Implement the "Auto-Assignment" agent that reads team capacity and assigns work.
-  - [ ] 3.4 Build a status update agent that summarizes Git activity (simulated or integrated) to suggest status changes.
+- [x] 3.0 Build the Agentic Engine (AI Orchestration with Gemini)
+  - [x] 3.1 Initialize `@google/genai` with the Gemini 2.5 Flash model.
+  - [x] 3.2 Create a prompt system for "Backlog Grooming" that re-ranks tasks based on metadata.
+  - [x] 3.3 Implement the "Auto-Assignment" agent that reads team capacity and assigns work.
+  - [x] 3.4 Build a status update agent that summarizes Git activity (simulated or integrated) to suggest status changes.
 
 - [ ] 4.0 Develop the Contextual UI (TanStack Start & Shadcn)
   - [ ] 4.1 Set up TanStack Start routing for Dashboard and Issue Detail views.
