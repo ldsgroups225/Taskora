@@ -95,17 +95,17 @@ Update the file after completing each sub-task, not just after completing an ent
   - [x] 1.10 Create `src/routes/onboarding.tsx` for first-time role selection (dev/manager)
   - [x] 1.11 Add route guard to redirect users without role to onboarding
 
-- [ ] 2.0 Connect Real Data to UI Components
-  - [ ] 2.1 Create `src/hooks/useMyTasks.ts` hook that fetches issues assigned to current user
-  - [ ] 2.2 Update `ZenMode.tsx` to use `useMyTasks` instead of `mockTasks`
-  - [ ] 2.3 Add loading and empty states to ZenMode
-  - [ ] 2.4 Create `convex/metrics.ts` with queries for velocity score, risk count, and active agents
-  - [ ] 2.5 Create `src/hooks/useProjectMetrics.ts` hook to fetch dashboard metrics
-  - [ ] 2.6 Update `WarRoom.tsx` to use real metrics from `useProjectMetrics`
-  - [ ] 2.7 Add real-time subscription using Convex `useQuery` for live updates
-  - [ ] 2.8 Create `convex/deliverables.ts` query for high-priority deliverables list
-  - [ ] 2.9 Update WarRoom deliverables section to use real data
-  - [ ] 2.10 Add loading skeletons to WarRoom cards
+- [x] 2.0 Connect Real Data to UI Components
+  - [x] 2.1 Create `src/hooks/useMyTasks.ts` hook that fetches issues assigned to current user
+  - [x] 2.2 Update `ZenMode.tsx` to use `useMyTasks` instead of `mockTasks`
+  - [x] 2.3 Add loading and empty states to ZenMode
+  - [x] 2.4 Create `convex/metrics.ts` with queries for velocity score, risk count, and active agents
+  - [x] 2.5 Create `src/hooks/useProjectMetrics.ts` hook to fetch dashboard metrics
+  - [x] 2.6 Update `WarRoom.tsx` to use real metrics from `useProjectMetrics`
+  - [x] 2.7 Add real-time subscription using Convex `useQuery` for live updates
+  - [x] 2.8 Create `convex/deliverables.ts` query for high-priority deliverables list
+  - [x] 2.9 Update WarRoom deliverables section to use real data
+  - [x] 2.10 Add loading skeletons to WarRoom cards
 
 - [ ] 3.0 Create User & Project Management
   - [ ] 3.1 Create `convex/projects.ts` with `createProject`, `updateProject`, `deleteProject`, `listProjects` functions

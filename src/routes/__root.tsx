@@ -82,11 +82,13 @@ function RootComponent() {
 }
 
 function RootComponentInner() {
-  const [role, setRole] = React.useState<UserRole>('dev')
   const { user, isLoading, isAuthenticated, isConvexAuthenticated } = useCurrentUser()
+  const [manualRole, setManualRole] = React.useState<UserRole | null>(null)
   const navigate = useNavigate()
   const path = useRouterState({ select: s => s.location.pathname })
   const storeUser = useMutation(api.auth.storeUser)
+
+  const role = manualRole ?? (user?.role as UserRole | undefined) ?? 'dev'
 
   // Sync user to database on first successful login
   React.useEffect(() => {
@@ -96,15 +98,14 @@ function RootComponentInner() {
   }, [isConvexAuthenticated, user, isLoading, storeUser])
 
   React.useEffect(() => {
-    if (isAuthenticated && user && !isLoading) {
-      if (!user.role && path !== '/onboarding') {
-        void navigate({ to: '/onboarding' })
-      }
-      else if (user.role && user.role !== role) {
-        setRole(user.role as any)
-      }
+    if (isAuthenticated && user && !isLoading && !user.role && path !== '/onboarding') {
+      void navigate({ to: '/onboarding' })
     }
-  }, [user, isLoading, isAuthenticated, role, path, navigate])
+  }, [user, isLoading, isAuthenticated, path, navigate])
+
+  const setRole = React.useCallback((newRole: UserRole) => {
+    setManualRole(newRole)
+  }, [])
 
   return (
     <RoleContext value={{ role, setRole }}>

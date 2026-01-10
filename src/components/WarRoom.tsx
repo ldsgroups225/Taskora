@@ -8,13 +8,18 @@ import {
   Users,
   Zap,
 } from 'lucide-react'
-import * as React from 'react'
 import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
 import { Progress } from '~/components/ui/progress'
+import { Skeleton } from '~/components/ui/skeleton'
+import { useDeliverables } from '~/hooks/useDeliverables'
+import { useProjectMetrics } from '~/hooks/useProjectMetrics'
 
 export function WarRoom() {
+  const { metrics, isLoading: isLoadingMetrics } = useProjectMetrics()
+  const { deliverables, isLoading: isLoadingDeliverables } = useDeliverables()
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.98 }}
@@ -33,7 +38,7 @@ export function WarRoom() {
             ON TRACK
           </Badge>
           <Badge variant="secondary" className="bg-white/5 border-white/10 text-slate-300 px-3 py-1 font-mono">
-            V2.4.0-BETA
+            V2.5.0-ALPHA
           </Badge>
         </div>
       </div>
@@ -47,10 +52,16 @@ export function WarRoom() {
             </div>
             <div className="relative">
               <p className="text-slate-400 text-sm font-medium">Velocity Score</p>
-              <h2 className="text-4xl font-bold text-white mt-1">94.2</h2>
+              {isLoadingMetrics
+                ? (
+                    <Skeleton className="h-10 w-24 mt-1 bg-white/5" />
+                  )
+                : (
+                    <h2 className="text-4xl font-bold text-white mt-1">{metrics?.velocity ?? 0}</h2>
+                  )}
               <div className="flex items-center gap-1.5 mt-2 text-emerald-400 text-sm font-bold">
                 <TrendingUp className="w-4 h-4" />
-                +12% this week
+                Live from Convex
               </div>
               <div className="mt-8 flex gap-2">
                 {[1, 2, 3, 4, 5, 6, 7].map(i => (
@@ -73,7 +84,13 @@ export function WarRoom() {
               <AlertTriangle className="w-5 h-5 text-orange-500" />
             </div>
             <p className="text-slate-400 text-sm font-medium">Total Risks</p>
-            <h2 className="text-3xl font-bold text-white mt-1">3</h2>
+            {isLoadingMetrics
+              ? (
+                  <Skeleton className="h-9 w-12 mt-1 bg-white/5" />
+                )
+              : (
+                  <h2 className="text-3xl font-bold text-white mt-1">{metrics?.riskCount ?? 0}</h2>
+                )}
             <p className="text-slate-500 text-xs mt-2 font-mono">Predicted by Gemini AI</p>
           </CardContent>
         </Card>
@@ -83,7 +100,13 @@ export function WarRoom() {
             <Users className="w-5 h-5 text-blue-500" />
           </div>
           <p className="text-slate-400 text-sm font-medium">Active Agents</p>
-          <h2 className="text-3xl font-bold text-white mt-1">8</h2>
+          {isLoadingMetrics
+            ? (
+                <Skeleton className="h-9 w-12 mt-1 bg-white/5" />
+              )
+            : (
+                <h2 className="text-3xl font-bold text-white mt-1">{metrics?.activeAgents ?? 0}</h2>
+              )}
           <p className="text-slate-500 text-xs mt-2">Running orchestration</p>
         </Card>
 
@@ -101,26 +124,53 @@ export function WarRoom() {
             </Button>
           </CardHeader>
           <CardContent className="p-0 divide-y divide-white/5 overflow-y-auto">
-            {['Agentic UI Overhaul', 'Convex Migration', 'Real-time Sync'].map((item, i) => (
-              <div key={item} className="px-6 py-4 flex items-center justify-between hover:bg-white/2 transition-colors">
-                <div className="flex items-center gap-4">
-                  <div className="w-8 h-8 rounded-lg bg-indigo-600/20 flex items-center justify-center text-indigo-400 font-bold text-xs">
-                    {i + 1}
-                  </div>
-                  <div>
-                    <p className="text-sm font-bold text-white tracking-tight">{item}</p>
-                    <p className="text-xs text-slate-500">Assigned to AI Orchestrator</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="hidden sm:flex items-center gap-1.5">
-                    <Zap className="w-3 h-3 text-yellow-500" />
-                    <span className="text-xs font-bold text-slate-400">85% Confidence</span>
-                  </div>
-                  <Progress value={80 - i * 15} className="w-24 h-1.5" />
-                </div>
-              </div>
-            ))}
+            {isLoadingDeliverables
+              ? (
+                  ['skeleton-1', 'skeleton-2', 'skeleton-3'].map(key => (
+                    <div key={key} className="px-6 py-4 flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        <Skeleton className="w-8 h-8 rounded-lg bg-white/5" />
+                        <div>
+                          <Skeleton className="h-4 w-32 bg-white/5" />
+                          <Skeleton className="h-3 w-24 mt-1 bg-white/5" />
+                        </div>
+                      </div>
+                      <Skeleton className="w-24 h-1.5 bg-white/5" />
+                    </div>
+                  ))
+                )
+              : deliverables && deliverables.length > 0
+                ? (
+                    (deliverables as { _id: string, title: string, type: string, priority: string, status: string }[]).map(item => (
+                      <div key={item._id} className="px-6 py-4 flex items-center justify-between hover:bg-white/2 transition-colors">
+                        <div className="flex items-center gap-4">
+                          <div className="w-8 h-8 rounded-lg bg-indigo-600/20 flex items-center justify-center text-indigo-400 font-bold text-xs uppercase">
+                            {item.type[0]}
+                          </div>
+                          <div>
+                            <p className="text-sm font-bold text-white tracking-tight line-clamp-1">{item.title}</p>
+                            <p className="text-xs text-slate-500">
+                              {' '}
+                              Priority:
+                              {item.priority}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-4">
+                          <div className="hidden sm:flex items-center gap-1.5">
+                            <Zap className="w-3 h-3 text-yellow-500" />
+                            <span className="text-xs font-bold text-slate-400">AI Tracked</span>
+                          </div>
+                          <Progress value={item.status === 'in_progress' ? 40 : item.status === 'in_review' ? 80 : 10} className="w-24 h-1.5" />
+                        </div>
+                      </div>
+                    ))
+                  )
+                : (
+                    <div className="px-6 py-12 text-center text-slate-500">
+                      <p className="text-sm">No high-priority deliverables at the moment.</p>
+                    </div>
+                  )}
           </CardContent>
         </Card>
 
@@ -129,8 +179,19 @@ export function WarRoom() {
             <Trophy className="w-32 h-32" />
           </div>
           <div className="relative">
-            <h3 className="font-bold text-lg leading-tight">Sprint Goal Achieved?</h3>
-            <p className="text-indigo-100 text-sm mt-2 font-medium bg-white/10 w-fit px-2 py-0.5 rounded">Prediction: YES</p>
+            <h3 className="font-bold text-lg leading-tight">Productivity</h3>
+            {isLoadingMetrics
+              ? (
+                  <Skeleton className="h-6 w-16 mt-2 bg-white/20" />
+                )
+              : (
+                  <p className="text-indigo-100 text-sm mt-2 font-medium bg-white/10 w-fit px-2 py-0.5 rounded">
+                    Score:
+                    {' '}
+                    {metrics?.productivity ?? 0}
+                    %
+                  </p>
+                )}
           </div>
           <Button variant="secondary" className="mt-8 bg-white text-indigo-600 hover:bg-indigo-50 rounded-xl text-xs font-bold transition-colors z-10 w-full">
             VIEW ANALYTICS

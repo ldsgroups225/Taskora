@@ -118,3 +118,7 @@ export const deleteColumnSchema = v.object({
 export type Board = Infer<typeof board>
 export type Column = Infer<typeof column>
 export type Item = Infer<typeof item>
+export type User = Infer<typeof schema.tables.users.validator>
+export type Project = Infer<typeof schema.tables.projects.validator>
+export type Issue = Infer<typeof schema.tables.issues.validator>
+export type DocIssue = Issue & { _id: string, _creationTime: number }

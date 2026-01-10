@@ -133,6 +133,33 @@ export const deleteIssue = mutation({
 })
 
 /**
+ * List issues assigned to the current user
+ */
+export const listMyIssues = query({
+  args: {},
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity()
+    if (!identity) {
+      return []
+    }
+
+    const user = await ctx.db
+      .query('users')
+      .withIndex('by_clerkId', q => q.eq('clerkId', identity.subject))
+      .unique()
+
+    if (!user) {
+      return []
+    }
+
+    return ctx.db
+      .query('issues')
+      .withIndex('by_assignee', q => q.eq('assigneeId', user._id))
+      .collect()
+  },
+})
+
+/**
  * List issues for a project with optional filters (AQL Support foundation)
  */
 export const listIssues = query({

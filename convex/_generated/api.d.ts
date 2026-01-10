@@ -13,7 +13,9 @@ import type * as ai from "../ai.js";
 import type * as auth from "../auth.js";
 import type * as board from "../board.js";
 import type * as crons from "../crons.js";
+import type * as deliverables from "../deliverables.js";
 import type * as issues from "../issues.js";
+import type * as metrics from "../metrics.js";
 import type * as test_utils from "../test_utils.js";
 
 import type {
@@ -28,7 +30,9 @@ declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   board: typeof board;
   crons: typeof crons;
+  deliverables: typeof deliverables;
   issues: typeof issues;
+  metrics: typeof metrics;
   test_utils: typeof test_utils;
 }>;
 
