@@ -1,10 +1,12 @@
-import invariant from 'tiny-invariant'
+import type { Doc, Id } from './_generated/dataModel'
+import type { QueryCtx } from './_generated/server'
 import { v } from 'convex/values'
+import invariant from 'tiny-invariant'
 import {
-  type QueryCtx,
   internalMutation,
   mutation,
   query,
+
 } from './_generated/server'
 import schema, {
   deleteColumnSchema,
@@ -13,7 +15,6 @@ import schema, {
   updateBoardSchema,
   updateColumnSchema,
 } from './schema'
-import type { Doc, Id } from './_generated/dataModel'
 
 export const seed = internalMutation(async (ctx) => {
   const allBoards = await ctx.db.query('boards').collect()
@@ -40,7 +41,7 @@ export const clear = internalMutation(async (ctx) => {
   })
 })
 
-function withoutSystemFields<T extends { _creationTime: number; _id: Id<any> }>(
+function withoutSystemFields<T extends { _creationTime: number, _id: Id<any> }>(
   doc: T,
 ) {
   const { _id, _creationTime, ...rest } = doc
@@ -53,11 +54,11 @@ async function getFullBoard(ctx: QueryCtx, id: string) {
   const [columns, items] = await Promise.all([
     ctx.db
       .query('columns')
-      .withIndex('board', (q) => q.eq('boardId', board.id))
+      .withIndex('board', q => q.eq('boardId', board.id))
       .collect(),
     ctx.db
       .query('items')
-      .withIndex('board', (q) => q.eq('boardId', board.id))
+      .withIndex('board', q => q.eq('boardId', board.id))
       .collect(),
   ])
 
@@ -70,13 +71,13 @@ async function getFullBoard(ctx: QueryCtx, id: string) {
 
 export const getBoards = query(async (ctx) => {
   const boards = await ctx.db.query('boards').collect()
-  return await Promise.all(boards.map((b) => getFullBoard(ctx, b.id)))
+  return Promise.all(boards.map(async b => getFullBoard(ctx, b.id)))
 })
 
 export const getBoard = query({
   args: { id: v.string() },
   handler: async (ctx, { id }) => {
-    return await getFullBoard(ctx, id)
+    return getFullBoard(ctx, id)
   },
 })
 
@@ -86,7 +87,7 @@ async function ensureBoardExists(
 ): Promise<Doc<'boards'>> {
   const board = await ctx.db
     .query('boards')
-    .withIndex('id', (q) => q.eq('id', boardId))
+    .withIndex('id', q => q.eq('id', boardId))
     .unique()
 
   invariant(board, `missing board ${boardId}`)
@@ -98,7 +99,7 @@ async function ensureColumnExists(
 ): Promise<Doc<'columns'>> {
   const column = await ctx.db
     .query('columns')
-    .withIndex('id', (q) => q.eq('id', columnId))
+    .withIndex('id', q => q.eq('id', columnId))
     .unique()
 
   invariant(column, `missing column: ${columnId}`)
@@ -110,7 +111,7 @@ async function ensureItemExists(
 ): Promise<Doc<'items'>> {
   const item = await ctx.db
     .query('items')
-    .withIndex('id', (q) => q.eq('id', itemId))
+    .withIndex('id', q => q.eq('id', itemId))
     .unique()
 
   invariant(item, `missing item: ${itemId}`)
@@ -120,14 +121,14 @@ async function ensureItemExists(
 export const createColumn = mutation({
   args: newColumnsSchema,
   handler: async (ctx, { boardId, name }) => {
-    ensureBoardExists(ctx, boardId)
+    await ensureBoardExists(ctx, boardId)
 
     const existingColumns = await ctx.db
       .query('columns')
-      .withIndex('board', (q) => q.eq('boardId', boardId))
+      .withIndex('board', q => q.eq('boardId', boardId))
       .collect()
 
-    ctx.db.insert('columns', {
+    await ctx.db.insert('columns', {
       boardId,
       name,
       order: existingColumns.length + 1,
@@ -188,9 +189,9 @@ export const deleteColumn = mutation({
     const column = await ensureColumnExists(ctx, id)
     const items = await ctx.db
       .query('items')
-      .withIndex('column', (q) => q.eq('columnId', id))
+      .withIndex('column', q => q.eq('columnId', id))
       .collect()
-    await Promise.all(items.map((item) => ctx.db.delete(item._id)))
+    await Promise.all(items.map(async item => ctx.db.delete(item._id)))
     await ctx.db.delete(column._id)
   },
 })

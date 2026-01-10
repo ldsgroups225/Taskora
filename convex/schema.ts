@@ -1,5 +1,6 @@
+import type { Infer } from 'convex/values'
 import { defineSchema, defineTable } from 'convex/server'
-import { type Infer, v } from 'convex/values'
+import { v } from 'convex/values'
 
 const schema = defineSchema({
   // Legacy tables to maintain compatibility while migrating to Taskora
@@ -56,13 +57,13 @@ const schema = defineSchema({
       v.literal('todo'),
       v.literal('in_progress'),
       v.literal('in_review'),
-      v.literal('done')
+      v.literal('done'),
     ),
     priority: v.union(
       v.literal('low'),
       v.literal('medium'),
       v.literal('high'),
-      v.literal('critical')
+      v.literal('critical'),
     ),
     type: v.union(
       v.literal('initiative'),
@@ -70,7 +71,7 @@ const schema = defineSchema({
       v.literal('story'),
       v.literal('task'),
       v.literal('bug'),
-      v.literal('subtask')
+      v.literal('subtask'),
     ),
     assigneeId: v.optional(v.id('users')),
     creatorId: v.id('users'),

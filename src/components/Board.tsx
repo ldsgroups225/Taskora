@@ -1,15 +1,13 @@
-import { useCallback, useMemo, useRef } from 'react'
-import invariant from 'tiny-invariant'
-import { useSuspenseQuery } from '@tanstack/react-query'
-import { convexQuery } from '@convex-dev/react-query'
-import { api } from '../../convex/_generated/api.js'
-import { useUpdateBoardMutation } from '../queries.js'
-import { NewColumn } from './NewColumn.js'
-import { Column as ColumnComponent } from './Column.js'
 import type { Column } from 'convex/schema.js'
+import { convexQuery } from '@convex-dev/react-query'
+import { useSuspenseQuery } from '@tanstack/react-query'
+import { useCallback, useMemo, useRef } from 'react'
 import { EditableText } from '~/components/EditableText.js'
 import { ScrollArea, ScrollBar } from '~/components/ui/scroll-area'
-import { cn } from '~/utils/cn'
+import { api } from '../../convex/_generated/api.js'
+import { useUpdateBoardMutation } from '../queries.js'
+import { Column as ColumnComponent } from './Column.js'
+import { NewColumn } from './NewColumn.js'
 
 export function Board({ boardId }: { boardId: string }) {
   const newColumnAddedRef = useRef(false)
@@ -27,7 +25,7 @@ export function Board({ boardId }: { boardId: string }) {
   }, [])
 
   const itemsById = useMemo(
-    () => new Map(board.items.map((item) => [item.id, item])),
+    () => new Map(board.items.map(item => [item.id, item])),
     [board.items],
   )
 
@@ -41,7 +39,8 @@ export function Board({ boardId }: { boardId: string }) {
     for (const item of itemsById.values()) {
       const columnId = item.columnId
       const column = columnsMap.get(columnId)
-      if (column) column.items.push(item)
+      if (column)
+        column.items.push(item)
     }
     return [...columnsMap.values()].sort((a, b) => a.order - b.order)
   }, [board.columns, itemsById])

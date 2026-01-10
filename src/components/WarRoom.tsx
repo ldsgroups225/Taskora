@@ -1,20 +1,18 @@
-import * as React from 'react'
 import { motion } from 'framer-motion'
 import {
-  BarChart3,
-  Users,
-  Zap,
-  Target,
-  Trophy,
   AlertTriangle,
   ArrowUpRight,
-  TrendingUp
+  Target,
+  TrendingUp,
+  Trophy,
+  Users,
+  Zap,
 } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
+import * as React from 'react'
 import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
 import { Progress } from '~/components/ui/progress'
-import { cn } from '~/utils/cn'
 
 export function WarRoom() {
   return (
@@ -97,12 +95,14 @@ export function WarRoom() {
               High Priority Deliverables
             </CardTitle>
             <Button variant="ghost" size="sm" className="text-indigo-400 text-xs font-bold hover:bg-indigo-500/10 flex items-center gap-1 p-0 px-2">
-              VIEW ROADMAP <ArrowUpRight className="w-3 h-3" />
+              VIEW ROADMAP
+              {' '}
+              <ArrowUpRight className="w-3 h-3" />
             </Button>
           </CardHeader>
           <CardContent className="p-0 divide-y divide-white/5 overflow-y-auto">
             {['Agentic UI Overhaul', 'Convex Migration', 'Real-time Sync'].map((item, i) => (
-              <div key={i} className="px-6 py-4 flex items-center justify-between hover:bg-white/2 transition-colors">
+              <div key={item} className="px-6 py-4 flex items-center justify-between hover:bg-white/2 transition-colors">
                 <div className="flex items-center gap-4">
                   <div className="w-8 h-8 rounded-lg bg-indigo-600/20 flex items-center justify-center text-indigo-400 font-bold text-xs">
                     {i + 1}
