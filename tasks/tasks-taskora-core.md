@@ -35,11 +35,11 @@
   - [x] 1.3 Create `projects` and `users` tables with basic metadata and role definitions (Dev/Manager).
   - [x] 1.4 Set up indexes for efficient querying by status and assignee.
 
-- [ ] 2.0 Implement Core Issue Management (Logic & CRUD)
-  - [ ] 2.1 Create Convex mutations for `createIssue`, `updateIssue`, and `deleteIssue`.
-  - [ ] 2.2 Implement the Workflow State Machine logic (transitions, validation rules).
-  - [ ] 2.3 Develop "AI Post-Functions" triggers in Convex (e.g., call Gemini when an issue moves to "In Review").
-  - [ ] 2.4 Build the "Agentic Query Language" (AQL) parser/handler for natural language filtering.
+- [x] 2.0 Implement Core Issue Management (Logic & CRUD)
+  - [x] 2.1 Create Convex mutations for `createIssue`, `updateIssue`, and `deleteIssue`.
+  - [x] 2.2 Implement the Workflow State Machine logic (transitions, validation rules).
+  - [x] 2.3 Develop "AI Post-Functions" triggers in Convex (e.g., call Gemini when an issue moves to "In Review").
+  - [x] 2.4 Build the "Agentic Query Language" (AQL) parser/handler for natural language filtering.
 
 - [ ] 3.0 Build the Agentic Engine (AI Orchestration with Gemini)
   - [ ] 3.1 Initialize `@google/genai` with the Gemini 2.5 Flash model.

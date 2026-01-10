@@ -10,6 +10,7 @@
 
 import type * as board from "../board.js";
 import type * as crons from "../crons.js";
+import type * as issues from "../issues.js";
 
 import type {
   ApiFromModules,
@@ -20,6 +21,7 @@ import type {
 declare const fullApi: ApiFromModules<{
   board: typeof board;
   crons: typeof crons;
+  issues: typeof issues;
 }>;
 
 /**
