@@ -150,3 +150,26 @@ export const listIssues = query({
     })
   },
 })
+
+/**
+ * Get a single issue by ID
+ */
+export const getIssue = query({
+  args: { id: v.id('issues') },
+  handler: async (ctx, args) => {
+    return await ctx.db.get(args.id)
+  },
+})
+
+/**
+ * Get children of an issue
+ */
+export const getChildren = query({
+  args: { parentId: v.id('issues') },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query('issues')
+      .withIndex('by_parent', (q) => q.eq('parentId', args.parentId))
+      .collect()
+  },
+})

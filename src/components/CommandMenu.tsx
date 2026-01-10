@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { Link } from '@tanstack/react-router'
 import {
   Code2,
   LayoutPanelLeft,
@@ -6,6 +7,7 @@ import {
   Settings,
   User,
   Zap,
+  Hash,
 } from 'lucide-react'
 import {
   CommandDialog,
@@ -52,6 +54,15 @@ export function CommandMenu() {
         <CommandInput placeholder="Type an AQL query (e.g., 'tasks for me' or 'high priority items')..." />
         <CommandList>
           <CommandEmpty>No results found. Try another query.</CommandEmpty>
+          <CommandGroup heading="Recent / Seeded">
+            <CommandItem className="cursor-pointer" asChild>
+              <Link to="/tasks/$taskId" params={{ taskId: "jh74a4t1vbcsn7wpgkjtkpsrh97yztmm" }}>
+                <Hash className="mr-2 h-4 w-4 text-purple-400" />
+                <span>Seeded Initiative (Taskora Alpha)</span>
+              </Link>
+            </CommandItem>
+          </CommandGroup>
+          <CommandSeparator />
           <CommandGroup heading="Suggestions">
             <CommandItem className="cursor-pointer">
               <Zap className="mr-2 h-4 w-4 text-indigo-400" />

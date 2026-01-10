@@ -7,6 +7,11 @@ export const boardQueries = {
   detail: (id: string) => convexQuery(api.board.getBoard, { id }),
 }
 
+export const issueQueries = {
+  detail: (id: any) => convexQuery(api.issues.getIssue, { id }),
+  children: (parentId: any) => convexQuery(api.issues.getChildren, { parentId }),
+}
+
 export function useCreateColumnMutation() {
   const mutationFn = useConvexMutation(
     api.board.createColumn,
