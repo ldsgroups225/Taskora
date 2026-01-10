@@ -1,6 +1,15 @@
 /// <reference types="vite/client" />
 import type { QueryClient } from '@tanstack/react-query'
+import type { ConvexReactClient } from 'convex/react'
 import type { UserRole } from '~/context/RoleContext'
+import {
+  ClerkProvider,
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  useAuth,
+  UserButton,
+} from '@clerk/clerk-react'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools/production'
 import {
   createRootRouteWithContext,
@@ -8,9 +17,12 @@ import {
   Link,
   Outlet,
   Scripts,
+  useNavigate,
   useRouterState,
 } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
+import { useMutation } from 'convex/react'
+import { ConvexProviderWithClerk } from 'convex/react-clerk'
 import { Code2, LayoutPanelLeft, Rocket } from 'lucide-react'
 import * as React from 'react'
 import { CommandMenu } from '~/components/CommandMenu'
@@ -18,13 +30,15 @@ import { DefaultCatchBoundary } from '~/components/DefaultCatchBoundary'
 import { NotFound } from '~/components/NotFound'
 import { Toaster } from '~/components/ui/sonner'
 import { RoleContext } from '~/context/RoleContext'
+import { useCurrentUser } from '~/hooks/useCurrentUser'
 import { cn } from '~/lib/utils'
 import appCss from '~/styles/app.css?url'
-
 import { seo } from '~/utils/seo'
+import { api } from '../../convex/_generated/api'
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient
+  convexClient: ConvexReactClient
 }>()({
   head: () => ({
     meta: [
@@ -50,7 +64,47 @@ export const Route = createRootRouteWithContext<{
 })
 
 function RootComponent() {
+  const { convexClient } = Route.useRouteContext()
+  const navigate = useNavigate()
+  const CLERK_PUBLISHABLE_KEY = (import.meta as any).env.VITE_CLERK_PUBLISHABLE_KEY
+
+  return (
+    <ClerkProvider
+      publishableKey={CLERK_PUBLISHABLE_KEY}
+      routerPush={async to => navigate({ to })}
+      routerReplace={async to => navigate({ to, replace: true })}
+    >
+      <ConvexProviderWithClerk client={convexClient} useAuth={useAuth}>
+        <RootComponentInner />
+      </ConvexProviderWithClerk>
+    </ClerkProvider>
+  )
+}
+
+function RootComponentInner() {
   const [role, setRole] = React.useState<UserRole>('dev')
+  const { user, isLoading, isAuthenticated, isConvexAuthenticated } = useCurrentUser()
+  const navigate = useNavigate()
+  const path = useRouterState({ select: s => s.location.pathname })
+  const storeUser = useMutation(api.auth.storeUser)
+
+  // Sync user to database on first successful login
+  React.useEffect(() => {
+    if (isConvexAuthenticated && !user && !isLoading) {
+      void storeUser()
+    }
+  }, [isConvexAuthenticated, user, isLoading, storeUser])
+
+  React.useEffect(() => {
+    if (isAuthenticated && user && !isLoading) {
+      if (!user.role && path !== '/onboarding') {
+        void navigate({ to: '/onboarding' })
+      }
+      else if (user.role && user.role !== role) {
+        setRole(user.role as any)
+      }
+    }
+  }, [user, isLoading, isAuthenticated, role, path, navigate])
 
   return (
     <RoleContext value={{ role, setRole }}>
@@ -125,8 +179,23 @@ function RootDocument({
                 <div className="sm:hidden">
                   <CommandMenu />
                 </div>
-                <div className="w-8 h-8 rounded-full bg-slate-800 border border-white/10 flex items-center justify-center">
-                  <span className="text-xs font-bold">JD</span>
+                <div className="flex items-center gap-3">
+                  <SignedIn>
+                    <UserButton
+                      appearance={{
+                        elements: {
+                          userButtonAvatarBox: 'w-8 h-8 rounded-full border border-white/10',
+                        },
+                      }}
+                    />
+                  </SignedIn>
+                  <SignedOut>
+                    <SignInButton mode="modal">
+                      <button className="text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        Sign In
+                      </button>
+                    </SignInButton>
+                  </SignedOut>
                 </div>
               </div>
             </div>

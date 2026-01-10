@@ -79,21 +79,21 @@ Update the file after completing each sub-task, not just after completing an ent
 
 ### Phase 1: Foundation (Weeks 1-2)
 
-- [ ] 0.0 Create feature branch
-  - [ ] 0.1 Create and checkout a new branch: `git checkout -b feature/taskora-completion`
+- [x] 0.0 Create feature branch
+  - [x] 0.1 Create and checkout a new branch: `git checkout -b feature/taskora-completion`
 
-- [ ] 1.0 Implement Clerk Authentication Integration
-  - [ ] 1.1 Install Clerk packages: `pnpm add @clerk/tanstack-start @clerk/clerk-react`
-  - [ ] 1.2 Add `CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY` to `.env.local`
-  - [ ] 1.3 Create `src/routes/sign-in.tsx` with Clerk `<SignIn />` component
-  - [ ] 1.4 Create `src/routes/sign-up.tsx` with Clerk `<SignUp />` component
-  - [ ] 1.5 Wrap app with `<ClerkProvider>` in `src/routes/__root.tsx`
-  - [ ] 1.6 Add authentication middleware to protect routes (redirect unauthenticated users to sign-in)
-  - [ ] 1.7 Create `convex/auth.ts` with webhook handler for Clerk user sync
-  - [ ] 1.8 Update `convex/issues.ts` to resolve `creatorId` from `identity.subject` instead of first user
-  - [ ] 1.9 Create `src/hooks/useCurrentUser.ts` hook that fetches user from Convex by clerkId
-  - [ ] 1.10 Create `src/routes/onboarding.tsx` for first-time role selection (dev/manager)
-  - [ ] 1.11 Add route guard to redirect users without role to onboarding
+- [x] 1.0 Implement Clerk Authentication Integration
+  - [x] 1.1 Install Clerk packages: `pnpm add @clerk/tanstack-start @clerk/clerk-react`
+  - [x] 1.2 Add `CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY` to `.env.local`
+  - [x] 1.3 Create `src/routes/sign-in.tsx` with Clerk `<SignIn />` component
+  - [x] 1.4 Create `src/routes/sign-up.tsx` with Clerk `<SignUp />` component
+  - [x] 1.5 Wrap app with `<ClerkProvider>` in `src/routes/__root.tsx`
+  - [x] 1.6 Add authentication middleware to protect routes (redirect unauthenticated users to sign-in)
+  - [x] 1.7 Create `convex/auth.ts` with webhook handler for Clerk user sync
+  - [x] 1.8 Update `convex/issues.ts` to resolve `creatorId` from `identity.subject` instead of first user
+  - [x] 1.9 Create `src/hooks/useCurrentUser.ts` hook that fetches user from Convex by clerkId
+  - [x] 1.10 Create `src/routes/onboarding.tsx` for first-time role selection (dev/manager)
+  - [x] 1.11 Add route guard to redirect users without role to onboarding
 
 - [ ] 2.0 Connect Real Data to UI Components
   - [ ] 2.1 Create `src/hooks/useMyTasks.ts` hook that fetches issues assigned to current user

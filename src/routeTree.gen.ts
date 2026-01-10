@@ -9,10 +9,28 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SignUpRouteImport } from './routes/sign-up'
+import { Route as SignInRouteImport } from './routes/sign-in'
+import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TasksTaskIdRouteImport } from './routes/tasks.$taskId'
 import { Route as BoardsBoardIdRouteImport } from './routes/boards.$boardId'
 
+const SignUpRoute = SignUpRouteImport.update({
+  id: '/sign-up',
+  path: '/sign-up',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignInRoute = SignInRouteImport.update({
+  id: '/sign-in',
+  path: '/sign-in',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OnboardingRoute = OnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -31,36 +49,88 @@ const BoardsBoardIdRoute = BoardsBoardIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/onboarding': typeof OnboardingRoute
+  '/sign-in': typeof SignInRoute
+  '/sign-up': typeof SignUpRoute
   '/boards/$boardId': typeof BoardsBoardIdRoute
   '/tasks/$taskId': typeof TasksTaskIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/onboarding': typeof OnboardingRoute
+  '/sign-in': typeof SignInRoute
+  '/sign-up': typeof SignUpRoute
   '/boards/$boardId': typeof BoardsBoardIdRoute
   '/tasks/$taskId': typeof TasksTaskIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/onboarding': typeof OnboardingRoute
+  '/sign-in': typeof SignInRoute
+  '/sign-up': typeof SignUpRoute
   '/boards/$boardId': typeof BoardsBoardIdRoute
   '/tasks/$taskId': typeof TasksTaskIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/boards/$boardId' | '/tasks/$taskId'
+  fullPaths:
+    | '/'
+    | '/onboarding'
+    | '/sign-in'
+    | '/sign-up'
+    | '/boards/$boardId'
+    | '/tasks/$taskId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/boards/$boardId' | '/tasks/$taskId'
-  id: '__root__' | '/' | '/boards/$boardId' | '/tasks/$taskId'
+  to:
+    | '/'
+    | '/onboarding'
+    | '/sign-in'
+    | '/sign-up'
+    | '/boards/$boardId'
+    | '/tasks/$taskId'
+  id:
+    | '__root__'
+    | '/'
+    | '/onboarding'
+    | '/sign-in'
+    | '/sign-up'
+    | '/boards/$boardId'
+    | '/tasks/$taskId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  OnboardingRoute: typeof OnboardingRoute
+  SignInRoute: typeof SignInRoute
+  SignUpRoute: typeof SignUpRoute
   BoardsBoardIdRoute: typeof BoardsBoardIdRoute
   TasksTaskIdRoute: typeof TasksTaskIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sign-up': {
+      id: '/sign-up'
+      path: '/sign-up'
+      fullPath: '/sign-up'
+      preLoaderRoute: typeof SignUpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sign-in': {
+      id: '/sign-in'
+      path: '/sign-in'
+      fullPath: '/sign-in'
+      preLoaderRoute: typeof SignInRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/onboarding': {
+      id: '/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -87,6 +157,9 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  OnboardingRoute: OnboardingRoute,
+  SignInRoute: SignInRoute,
+  SignUpRoute: SignUpRoute,
   BoardsBoardIdRoute: BoardsBoardIdRoute,
   TasksTaskIdRoute: TasksTaskIdRoute,
 }

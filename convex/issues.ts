@@ -37,11 +37,16 @@ export const createIssue = mutation({
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity()
-    // For now, we'll assume a creatorId exists or fallback to a system user in simplified dev mode
-    // In a real app, identity.subject would be matched to a record in our 'users' table
-    const creator = await ctx.db.query('users').first() // Temporary creator resolution
+    if (!identity)
+      throw new Error('Not authenticated')
+
+    const creator = await ctx.db
+      .query('users')
+      .withIndex('by_clerkId', q => q.eq('clerkId', identity.subject))
+      .unique()
+
     if (!creator)
-      throw new Error('No users found to assign as creator')
+      throw new Error('User not found in database')
 
     const lastIssue = await ctx.db
       .query('issues')

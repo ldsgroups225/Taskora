@@ -2,6 +2,7 @@
   "name": "taskora",
   "type": "module",
   "private": true,
+  "packageManager": "pnpm@10.28.0",
   "sideEffects": false,
   "scripts": {
     "dev": "npx convex dev --once && concurrently -r npm:dev:web npm:dev:db",
@@ -11,9 +12,12 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+    "typecheck": "tsc --noEmit",
     "start": "pnpx srvx --prod -s ../client dist/server/server.js"
   },
   "dependencies": {
+    "@clerk/clerk-react": "^5.59.3",
+    "@clerk/tanstack-react-start": "^0.27.14",
     "@convex-dev/react-query": "0.0.0-alpha.8",
     "@google/genai": "^1.35.0",
     "@radix-ui/react-alert-dialog": "^1.1.15",
