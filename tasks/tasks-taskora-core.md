@@ -26,14 +26,14 @@
 
 ## Tasks
 
-- [ ] 0.0 Create feature branch
-  - [ ] 0.1 Create and checkout a new branch: `git checkout -b feature/taskora-core-implementation`
+- [x] 0.0 Create feature branch
+  - [x] 0.1 Create and checkout a new branch: `git checkout -b feature/taskora-core-implementation`
 
-- [ ] 1.0 Setup Database Schema (Convex)
-  - [ ] 1.1 Define `issues` table with fields for title, description, status, priority, type (Epic, Story, etc.), and parentId.
-  - [ ] 1.2 Implement `properties` JSONB-equivalent field using Convex's object type for "Entity Properties".
-  - [ ] 1.3 Create `projects` and `users` tables with basic metadata and role definitions (Dev/Manager).
-  - [ ] 1.4 Set up indexes for efficient querying by status and assignee.
+- [x] 1.0 Setup Database Schema (Convex)
+  - [x] 1.1 Define `issues` table with fields for title, description, status, priority, type (Epic, Story, etc.), and parentId.
+  - [x] 1.2 Implement `properties` JSONB-equivalent field using Convex's object type for "Entity Properties".
+  - [x] 1.3 Create `projects` and `users` tables with basic metadata and role definitions (Dev/Manager).
+  - [x] 1.4 Set up indexes for efficient querying by status and assignee.
 
 - [ ] 2.0 Implement Core Issue Management (Logic & CRUD)
   - [ ] 2.1 Create Convex mutations for `createIssue`, `updateIssue`, and `deleteIssue`.

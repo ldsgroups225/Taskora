@@ -2,6 +2,7 @@ import { defineSchema, defineTable } from 'convex/server'
 import { type Infer, v } from 'convex/values'
 
 const schema = defineSchema({
+  // Legacy tables to maintain compatibility while migrating to Taskora
   boards: defineTable({
     id: v.string(),
     name: v.string(),
@@ -28,7 +29,61 @@ const schema = defineSchema({
     .index('id', ['id'])
     .index('column', ['columnId'])
     .index('board', ['boardId']),
+
+  // Taskora tables
+  users: defineTable({
+    clerkId: v.string(),
+    name: v.string(),
+    email: v.string(),
+    role: v.union(v.literal('dev'), v.literal('manager')),
+    avatarUrl: v.optional(v.string()),
+  }).index('by_clerkId', ['clerkId']),
+
+  projects: defineTable({
+    name: v.string(),
+    key: v.string(),
+    description: v.optional(v.string()),
+    leadId: v.id('users'),
+  }).index('by_key', ['key']),
+
+  issues: defineTable({
+    projectId: v.id('projects'),
+    parentId: v.optional(v.id('issues')),
+    title: v.string(),
+    description: v.optional(v.string()),
+    status: v.union(
+      v.literal('backlog'),
+      v.literal('todo'),
+      v.literal('in_progress'),
+      v.literal('in_review'),
+      v.literal('done')
+    ),
+    priority: v.union(
+      v.literal('low'),
+      v.literal('medium'),
+      v.literal('high'),
+      v.literal('critical')
+    ),
+    type: v.union(
+      v.literal('initiative'),
+      v.literal('epic'),
+      v.literal('story'),
+      v.literal('task'),
+      v.literal('bug'),
+      v.literal('subtask')
+    ),
+    assigneeId: v.optional(v.id('users')),
+    creatorId: v.id('users'),
+    order: v.number(),
+    storyPoints: v.optional(v.number()),
+    properties: v.any(), // Flexible "Entity Properties"
+  })
+    .index('by_project', ['projectId'])
+    .index('by_assignee', ['assigneeId'])
+    .index('by_status', ['status'])
+    .index('by_parent', ['parentId']),
 })
+
 export default schema
 
 const board = schema.tables.boards.validator
