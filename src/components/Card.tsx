@@ -6,7 +6,7 @@ import { deleteItemSchema } from '../db/schema'
 import { Card as ShadcnCard, CardContent } from '~/components/ui/card'
 import { Button } from '~/components/ui/button'
 import { Trash2, GripVertical } from 'lucide-react'
-import { cn } from '~/utils/cn'
+import { cn } from '~/lib/utils'
 
 interface CardProps {
   title: string

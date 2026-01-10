@@ -9,7 +9,7 @@ import { Column as ColumnComponent } from './Column.js'
 import type { Column } from 'convex/schema.js'
 import { EditableText } from '~/components/EditableText.js'
 import { ScrollArea, ScrollBar } from '~/components/ui/scroll-area'
-import { cn } from '~/utils/cn'
+import { cn } from '~/lib/utils'
 
 export function Board({ boardId }: { boardId: string }) {
   const newColumnAddedRef = useRef(false)

@@ -16,7 +16,7 @@ import { Button } from '~/components/ui/button'
 import { Plus, Trash2, MoreHorizontal } from 'lucide-react'
 import { Badge } from '~/components/ui/badge'
 import { ScrollArea } from '~/components/ui/scroll-area'
-import { cn } from '~/utils/cn'
+import { cn } from '~/lib/utils'
 
 interface ColumnProps {
   name: string

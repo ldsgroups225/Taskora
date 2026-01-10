@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import { CheckCircle2, Circle, Clock, AlertCircle, Plus } from 'lucide-react'
 import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
-import { cn } from '~/utils/cn'
+import { cn } from '~/lib/utils'
 
 interface Task {
   id: string

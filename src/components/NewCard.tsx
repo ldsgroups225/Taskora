@@ -5,7 +5,7 @@ import { useCreateItemMutation } from '../queries'
 import { itemSchema } from '../db/schema'
 import { Button } from '~/components/ui/button'
 import { Textarea } from '~/components/ui/textarea'
-import { cn } from '~/utils/cn'
+import { cn } from '~/lib/utils'
 
 export function NewCard({
   columnId,

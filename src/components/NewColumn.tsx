@@ -4,7 +4,7 @@ import { useCreateColumnMutation } from '../queries'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { Plus, X } from 'lucide-react'
-import { cn } from '~/utils/cn'
+import { cn } from '~/lib/utils'
 
 export function NewColumn({
   boardId,

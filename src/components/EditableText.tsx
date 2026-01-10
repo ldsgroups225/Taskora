@@ -2,7 +2,7 @@ import { useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 import { Input } from '~/components/ui/input'
 import { Button } from '~/components/ui/button'
-import { cn } from '~/utils/cn'
+import { cn } from '~/lib/utils'
 
 export function EditableText({
   fieldName,
