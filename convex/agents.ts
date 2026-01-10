@@ -1,4 +1,4 @@
-/* eslint-disable ts/no-unsafe-call */
+import type { Doc } from './_generated/dataModel'
 import { v } from 'convex/values'
 import { internal } from './_generated/api'
 import { internalAction, mutation } from './_generated/server'
@@ -43,7 +43,9 @@ export const runAutoAssignment = internalAction({
   args: {},
   handler: async (ctx) => {
     // 1. Fetch data via query/mutation
-    const data = await ctx.runMutation((internal as any).agents.assignTasks, {})
+    const data = await ctx.runMutation((internal as any).agents.assignTasks, {}) as
+      | { message: string }
+      | { issues: Doc<'issues'>[], devs: Doc<'users'>[] }
     if ('message' in data) {
       console.log(data.message)
       return
@@ -53,8 +55,8 @@ export const runAutoAssignment = internalAction({
 
     // 2. Call Gemini
     const assignments = await ctx.runAction((internal as any).ai.groomBacklog, {
-      issues: issues.map((i: any) => ({ id: i._id, title: i.title, priority: i.priority })),
-      team: devs.map((u: any) => ({ id: u._id, name: u.name, role: u.role })),
+      issues: issues.map(i => ({ id: i._id, title: i.title, priority: i.priority })),
+      team: devs.map(u => ({ id: u._id, name: u.name, role: u.role })),
     })
 
     console.log('AI Recommendations:', assignments)

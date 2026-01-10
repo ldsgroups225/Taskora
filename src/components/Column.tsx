@@ -25,7 +25,7 @@ interface ColumnProps {
   order: number
 }
 
-export function Column({ ref, name, columnId, boardId, items, nextOrder, previousOrder, order }: ColumnProps & { ref?: React.RefObject<HTMLDivElement | null> }) {
+export function Column({ ref, name, columnId, boardId, items, nextOrder, previousOrder, order }: ColumnProps & { ref?: (node: HTMLDivElement | null) => void }) {
   const [acceptCardDrop, setAcceptCardDrop] = useState(false)
   const editState = useState(false)
   const [acceptColumnDrop, setAcceptColumnDrop] = useState<'none' | 'left' | 'right'>('none')

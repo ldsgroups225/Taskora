@@ -1,3 +1,4 @@
+import type { Id } from '../convex/_generated/dataModel'
 import { convexQuery, useConvexMutation } from '@convex-dev/react-query'
 import { useMutation } from '@tanstack/react-query'
 import { api } from '../convex/_generated/api'
@@ -8,8 +9,8 @@ export const boardQueries = {
 }
 
 export const issueQueries = {
-  detail: (id: any) => convexQuery(api.issues.getIssue, { id }),
-  children: (parentId: any) => convexQuery(api.issues.getChildren, { parentId }),
+  detail: (id: Id<'issues'>) => convexQuery(api.issues.getIssue, { id }),
+  children: (parentId: Id<'issues'>) => convexQuery(api.issues.getChildren, { parentId }),
 }
 
 export function useCreateColumnMutation() {
