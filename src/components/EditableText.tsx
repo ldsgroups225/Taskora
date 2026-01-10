@@ -1,5 +1,8 @@
 import { useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
+import { Input } from '~/components/ui/input'
+import { Button } from '~/components/ui/button'
+import { cn } from '~/utils/cn'
 
 export function EditableText({
   fieldName,
@@ -13,9 +16,9 @@ export function EditableText({
 }: {
   fieldName: string
   value: string
-  inputClassName: string
+  inputClassName?: string
   inputLabel: string
-  buttonClassName: string
+  buttonClassName?: string
   buttonLabel: string
   onChange: (value: string) => void
   editState?: [boolean, (value: boolean) => void]
@@ -27,26 +30,28 @@ export function EditableText({
 
   return edit ? (
     <form
+      className="w-full"
       onSubmit={(event) => {
         event.preventDefault()
-
-        onChange(inputRef.current!.value)
-
+        const newValue = inputRef.current?.value || ''
+        if (newValue !== value && newValue.trim() !== '') {
+          onChange(newValue)
+        }
         flushSync(() => {
           setEdit(false)
         })
-
         buttonRef.current?.focus()
       }}
     >
-      <input
+      <Input
         required
         ref={inputRef}
         type="text"
         aria-label={inputLabel}
         name={fieldName}
         defaultValue={value}
-        className={inputClassName}
+        className={cn("h-8 px-2 focus-visible:ring-indigo-500 bg-slate-900 border-white/10 text-white", inputClassName)}
+        autoFocus
         onKeyDown={(event) => {
           if (event.key === 'Escape') {
             flushSync(() => {
@@ -56,11 +61,9 @@ export function EditableText({
           }
         }}
         onBlur={(event) => {
-          if (
-            inputRef.current?.value !== value &&
-            inputRef.current?.value.trim() !== ''
-          ) {
-            onChange(inputRef.current!.value)
+          const newValue = inputRef.current?.value || ''
+          if (newValue !== value && newValue.trim() !== '') {
+            onChange(newValue)
           }
           setEdit(false)
         }}
@@ -77,9 +80,12 @@ export function EditableText({
         })
         inputRef.current?.select()
       }}
-      className={buttonClassName}
+      className={cn(
+        "text-left transition-colors hover:bg-white/5 rounded px-2 py-1 -ml-2",
+        buttonClassName
+      )}
     >
-      {value || <span className="text-slate-400 italic">Edit</span>}
+      {value || <span className="text-slate-500 italic">Add {fieldName}...</span>}
     </button>
   )
 }

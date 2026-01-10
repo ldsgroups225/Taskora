@@ -1,10 +1,12 @@
 import invariant from 'tiny-invariant'
 import { forwardRef, useState } from 'react'
-
 import { CONTENT_TYPES } from '../types'
-import { Icon } from '../icons/icons'
 import { useDeleteCardMutation, useUpdateCardMutation } from '../queries'
 import { deleteItemSchema } from '../db/schema'
+import { Card as ShadcnCard, CardContent } from '~/components/ui/card'
+import { Button } from '~/components/ui/button'
+import { Trash2, GripVertical } from 'lucide-react'
+import { cn } from '~/utils/cn'
 
 interface CardProps {
   title: string
@@ -71,18 +73,18 @@ export const Card = forwardRef<HTMLLIElement, CardProps>(
 
           setAcceptDrop('none')
         }}
-        className={
-          'border-t-2 border-b-2 -mb-[2px] last:mb-0 cursor-grab active:cursor-grabbing px-2 py-1 ' +
-          (acceptDrop === 'top'
-            ? 'border-t-red-500 border-b-transparent'
-            : acceptDrop === 'bottom'
-              ? 'border-b-red-500 border-t-transparent'
-              : 'border-t-transparent border-b-transparent')
-        }
+        className={cn(
+          "relative transition-all duration-200 py-1.5 px-2 list-none group",
+          acceptDrop === 'top' && "pt-8",
+          acceptDrop === 'bottom' && "pb-8"
+        )}
       >
-        <div
+        {acceptDrop === 'top' && (
+          <div className="absolute top-0 left-2 right-2 h-1 bg-indigo-500 rounded-full animate-pulse" />
+        )}
+
+        <ShadcnCard
           draggable
-          className="bg-white shadow-sm shadow-slate-300 border-slate-300 text-sm rounded-lg w-full py-1 px-2 relative"
           onDragStart={(event) => {
             event.dataTransfer.effectAllowed = 'move'
             event.dataTransfer.setData(
@@ -91,32 +93,49 @@ export const Card = forwardRef<HTMLLIElement, CardProps>(
             )
             event.stopPropagation()
           }}
+          className="bg-slate-900 border-white/10 hover:border-indigo-500/50 transition-colors shadow-sm cursor-grab active:cursor-grabbing group/card overflow-hidden"
         >
-          <h3>{title}</h3>
-          <div className="mt-2">{content || <>&nbsp;</>}</div>
-          <form
-            onSubmit={(event) => {
-              event.preventDefault()
+          <CardContent className="p-3 space-y-2">
+            <div className="flex items-start justify-between gap-2">
+              <div className="flex items-center gap-2 grow">
+                <GripVertical className="w-4 h-4 text-slate-600 group-hover/card:text-slate-400 transition-colors shrink-0" />
+                <h3 className="text-sm font-semibold text-slate-200 leading-tight grow">{title}</h3>
+              </div>
+              <form
+                onSubmit={(event) => {
+                  event.preventDefault()
+                  deleteCard.mutate(
+                    deleteItemSchema.parse({
+                      id,
+                      boardId,
+                    }),
+                  )
+                }}
+                className="shrink-0"
+              >
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6 text-slate-600 hover:text-red-400 hover:bg-red-400/10 opacity-0 group-hover/card:opacity-100 transition-opacity"
+                  type="submit"
+                >
+                  <Trash2 className="w-3 h-3" />
+                </Button>
+              </form>
+            </div>
+            {content && (
+              <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed pl-6">
+                {content}
+              </p>
+            )}
+          </CardContent>
+        </ShadcnCard>
 
-              deleteCard.mutate(
-                deleteItemSchema.parse({
-                  id,
-                  boardId,
-                }),
-              )
-            }}
-          >
-            <button
-              aria-label="Delete card"
-              className="absolute top-4 right-4 hover:text-red-500 flex gap-2 items-center"
-              type="submit"
-            >
-              <div className="opacity-50 text-xs">{order}</div>
-              <Icon name="trash" />
-            </button>
-          </form>
-        </div>
+        {acceptDrop === 'bottom' && (
+          <div className="absolute bottom-0 left-2 right-2 h-1 bg-indigo-500 rounded-full animate-pulse" />
+        )}
       </li>
     )
   },
 )
+Card.displayName = "Card"

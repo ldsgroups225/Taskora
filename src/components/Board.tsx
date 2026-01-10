@@ -8,6 +8,8 @@ import { NewColumn } from './NewColumn.js'
 import { Column as ColumnComponent } from './Column.js'
 import type { Column } from 'convex/schema.js'
 import { EditableText } from '~/components/EditableText.js'
+import { ScrollArea, ScrollBar } from '~/components/ui/scroll-area'
+import { cn } from '~/utils/cn'
 
 export function Board({ boardId }: { boardId: string }) {
   const newColumnAddedRef = useRef(false)
@@ -16,13 +18,11 @@ export function Board({ boardId }: { boardId: string }) {
     convexQuery(api.board.getBoard, { id: boardId }),
   )
 
-  // scroll right when new columns are added
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const columnRef = useCallback((_node: HTMLElement | null) => {
     if (scrollContainerRef.current && newColumnAddedRef.current) {
       newColumnAddedRef.current = false
-      scrollContainerRef.current.scrollLeft =
-        scrollContainerRef.current.scrollWidth
+      scrollContainerRef.current.scrollLeft = scrollContainerRef.current.scrollWidth
     }
   }, [])
 
@@ -35,56 +35,49 @@ export function Board({ boardId }: { boardId: string }) {
 
   const columns = useMemo(() => {
     const columnsMap = new Map<string, ColumnWithItems>()
-
     for (const column of [...board.columns]) {
       columnsMap.set(column.id, { ...column, items: [] })
     }
-
-    // add items to their columns
     for (const item of itemsById.values()) {
       const columnId = item.columnId
       const column = columnsMap.get(columnId)
-      invariant(
-        column,
-        `missing column: ${columnId} from ${[...columnsMap.keys()]}`,
-      )
-      column.items.push(item)
+      if (column) column.items.push(item)
     }
-
     return [...columnsMap.values()].sort((a, b) => a.order - b.order)
   }, [board.columns, itemsById])
 
   return (
-    <div
-      className="grow min-h-0 flex flex-col overflow-x-scroll"
-      ref={scrollContainerRef}
-      style={{ backgroundColor: board.color }}
-    >
-      <h1>
-        <EditableText
-          value={
-            // optimistic update
-            updateBoardMutation.isPending && updateBoardMutation.variables.name
-              ? updateBoardMutation.variables.name
-              : board.name
-          }
-          fieldName="name"
-          inputClassName="mx-8 my-4 text-2xl font-medium border border-slate-400 rounded-lg py-1 px-2 text-black"
-          buttonClassName="mx-8 my-4 text-2xl font-medium block rounded-lg text-left border border-transparent py-1 px-2 text-slate-800"
-          buttonLabel={`Edit board "${board.name}" name`}
-          inputLabel="Edit board name"
-          onChange={(value) => {
-            updateBoardMutation.mutate({
-              id: board.id,
-              name: value,
-            })
-          }}
-        />
-      </h1>
+    <div className="grow flex flex-col min-h-0 bg-slate-950/20">
+      <header className="px-8 py-6 shrink-0 flex items-center justify-between">
+        <h1 className="flex items-center gap-4">
+          <div
+            className="w-4 h-4 rounded-full shadow-lg"
+            style={{ backgroundColor: board.color }}
+          />
+          <EditableText
+            value={
+              updateBoardMutation.isPending && updateBoardMutation.variables.name
+                ? updateBoardMutation.variables.name
+                : board.name
+            }
+            fieldName="boardName"
+            buttonClassName="text-2xl font-bold text-white tracking-tight px-0 hover:bg-transparent"
+            inputClassName="text-2xl font-bold tracking-tight bg-transparent border-none focus-visible:ring-0 p-0 h-auto"
+            buttonLabel={`Edit board "${board.name}" name`}
+            inputLabel="Edit board name"
+            onChange={(value) => {
+              updateBoardMutation.mutate({
+                id: board.id,
+                name: value,
+              })
+            }}
+          />
+        </h1>
+      </header>
 
-      <div className="flex grow min-h-0 h-full items-start px-8 pb-4 w-fit">
-        {columns.map((col, index) => {
-          return (
+      <ScrollArea className="grow px-8 pb-8">
+        <div className="flex items-start h-full h-[calc(100vh-180px)]" ref={scrollContainerRef}>
+          {columns.map((col, index) => (
             <ColumnComponent
               ref={columnRef}
               key={col.id}
@@ -94,23 +87,21 @@ export function Board({ boardId }: { boardId: string }) {
               items={col.items}
               order={col.order}
               previousOrder={columns[index - 1] ? columns[index - 1].order : 0}
-              nextOrder={
-                columns[index + 1] ? columns[index + 1].order : col.order + 1
-              }
+              nextOrder={columns[index + 1] ? columns[index + 1].order : col.order + 1}
             />
-          )
-        })}
-        <NewColumn
-          boardId={board.id}
-          editInitially={board.columns.length === 0}
-          onNewColumnAdded={() => {
-            newColumnAddedRef.current = true
-          }}
-        />
-      </div>
-
-      {/* trolling you to add some extra margin to the right of the container with a whole dang div */}
-      <div data-lol className="w-8 h-1 shrink-0" />
+          ))}
+          <NewColumn
+            boardId={board.id}
+            editInitially={board.columns.length === 0}
+            onNewColumnAdded={() => {
+              newColumnAddedRef.current = true
+            }}
+          />
+          {/* Spacer for scroll end */}
+          <div className="w-12 shrink-0 h-full" />
+        </div>
+        <ScrollBar orientation="horizontal" className="bg-white/5" />
+      </ScrollArea>
     </div>
   )
 }

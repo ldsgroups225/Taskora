@@ -13,126 +13,143 @@ import * as React from 'react'
 import { Toaster } from 'react-hot-toast'
 import type { QueryClient } from '@tanstack/react-query'
 import { DefaultCatchBoundary } from '~/components/DefaultCatchBoundary'
-import { IconLink } from '~/components/IconLink'
 import { NotFound } from '~/components/NotFound'
 import appCss from '~/styles/app.css?url'
 import { seo } from '~/utils/seo'
 import { Loader } from '~/components/Loader'
+import { LayoutPanelLeft, Code2, Rocket } from 'lucide-react'
+import { clsx, type ClassValue } from 'clsx'
+import { twMerge } from 'tailwind-merge'
+
+function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}
+
+export type UserRole = 'dev' | 'manager'
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient
 }>()({
   head: () => ({
     meta: [
-      {
-        charSet: 'utf-8',
-      },
-      {
-        name: 'viewport',
-        content: 'width=device-width, initial-scale=1',
-      },
+      { charSet: 'utf-8' },
+      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       ...seo({
-        title:
-          'TanStack Start | Type-Safe, Client-First, Full-Stack React Framework',
-        description: `TanStack Start is a type-safe, client-first, full-stack React framework. `,
+        title: 'Taskora | Agentic Project Orchestration',
+        description: 'Autonomously managing backlogs and predicting bottlenecks for high-growth startups.',
       }),
     ],
     links: [
       { rel: 'stylesheet', href: appCss },
-      {
-        rel: 'apple-touch-icon',
-        sizes: '180x180',
-        href: '/apple-touch-icon.png',
-      },
-      {
-        rel: 'icon',
-        type: 'image/png',
-        sizes: '32x32',
-        href: '/favicon-32x32.png',
-      },
-      {
-        rel: 'icon',
-        type: 'image/png',
-        sizes: '16x16',
-        href: '/favicon-16x16.png',
-      },
-      { rel: 'manifest', href: '/site.webmanifest', color: '#fffff' },
       { rel: 'icon', href: '/favicon.ico' },
     ],
   }),
-  errorComponent: (props) => {
-    return (
-      <RootDocument>
-        <DefaultCatchBoundary {...props} />
-      </RootDocument>
-    )
-  },
+  errorComponent: (props) => (
+    <RootDocument>
+      <DefaultCatchBoundary {...props} />
+    </RootDocument>
+  ),
   notFoundComponent: () => <NotFound />,
   component: RootComponent,
 })
 
+export const RoleContext = React.createContext<{
+  role: UserRole
+  setRole: (role: UserRole) => void
+}>({
+  role: 'dev',
+  setRole: () => { },
+})
+
 function RootComponent() {
+  const [role, setRole] = React.useState<UserRole>('dev')
+
   return (
-    <RootDocument>
-      <Outlet />
-    </RootDocument>
+    <RoleContext.Provider value={{ role, setRole }}>
+      <RootDocument role={role} setRole={setRole}>
+        <Outlet />
+      </RootDocument>
+    </RoleContext.Provider>
   )
 }
 
-function RootDocument({ children }: { children: React.ReactNode }) {
+import { CommandMenu } from '~/components/CommandMenu'
+
+function RootDocument({
+  children,
+  role,
+  setRole
+}: {
+  children: React.ReactNode
+  role?: UserRole
+  setRole?: (role: UserRole) => void
+}) {
   return (
-    <html>
+    <html lang="en" className="dark">
       <head>
         <HeadContent />
       </head>
-      <body>
-        <div className="h-screen flex flex-col min-h-0">
-          <div className="bg-slate-900 border-b border-slate-800 flex items-center justify-between py-4 px-8 box-border">
-            <div className="flex items-center gap-4">
-              <div>
-                <Link to="/" className="block leading-tight">
-                  <div className="font-black text-2xl text-white">Trellaux</div>
-                  <div className="text-slate-500">a TanStack Demo</div>
+      <body className="antialiased selection:bg-indigo-500/30">
+        <div className="h-screen flex flex-col min-h-0 bg-slate-950 text-slate-200">
+          {/* Header */}
+          <header className="sticky top-0 z-50 w-full border-b border-white/5 bg-slate-950/50 backdrop-blur-xl">
+            <div className="container mx-auto px-4 md:px-8 h-16 flex items-center justify-between gap-4">
+              <div className="flex items-center gap-8">
+                <Link to="/" className="flex items-center gap-2 group shrink-0">
+                  <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-500/20 group-hover:scale-110 transition-transform">
+                    <Rocket className="w-5 h-5 text-white" />
+                  </div>
+                  <span className="font-bold text-xl tracking-tight text-white uppercase italic">Taskora</span>
                 </Link>
-              </div>
-              <LoadingIndicator />
-            </div>
-            <div className="flex items-center gap-6">
-              {/* <label
-                htmlFor="countries"
-                className="block text-sm font-medium text-gray-900 dark:text-white"
-              >
-                Delay
-              </label>
-              <select
-                className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                onChange={(event) => {
-                  // setExtraDelay(Number(event.currentTarget.value))
-                }}
-                defaultValue="0"
-              >
-                <option value="0">None</option>
-                <option value="100">100</option>
-                <option value="500">500</option>
-                <option value="2000">2000</option>
-              </select> */}
-              <IconLink
-                href="https://github.com/TanStack/router/tree/main/examples/react/start-trellaux"
-                label="Source"
-                icon="/github-mark-white.png"
-              />
-              <IconLink
-                href="https://tanstack.com"
-                icon="/tanstack.png"
-                label="TanStack"
-              />
-            </div>
-          </div>
 
-          <div className="grow min-h-0 h-full flex flex-col">
+                <nav className="hidden md:flex items-center gap-1 bg-white/5 rounded-full p-1 border border-white/10 shrink-0">
+                  <button
+                    onClick={() => setRole?.('dev')}
+                    className={cn(
+                      "flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium transition-all",
+                      role === 'dev'
+                        ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/20"
+                        : "text-slate-400 hover:text-white"
+                    )}
+                  >
+                    <Code2 className="w-4 h-4" />
+                    Zen Mode
+                  </button>
+                  <button
+                    onClick={() => setRole?.('manager')}
+                    className={cn(
+                      "flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium transition-all",
+                      role === 'manager'
+                        ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/20"
+                        : "text-slate-400 hover:text-white"
+                    )}
+                  >
+                    <LayoutPanelLeft className="w-4 h-4" />
+                    War Room
+                  </button>
+                </nav>
+              </div>
+
+              <div className="hidden sm:flex items-center gap-4 grow justify-center max-w-md">
+                <CommandMenu />
+              </div>
+
+              <div className="flex items-center gap-4 shrink-0">
+                <LoadingIndicator />
+                <div className="sm:hidden">
+                  <CommandMenu />
+                </div>
+                <div className="w-8 h-8 rounded-full bg-slate-800 border border-white/10 flex items-center justify-center">
+                  <span className="text-xs font-bold">JD</span>
+                </div>
+              </div>
+            </div>
+          </header>
+
+          <main className="grow min-h-0 h-full flex flex-col">
             {children}
-            <Toaster />
-          </div>
+            <Toaster position="bottom-right" />
+          </main>
         </div>
         <ReactQueryDevtools />
         <TanStackRouterDevtools position="bottom-right" />
@@ -145,12 +162,16 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 function LoadingIndicator() {
   const isLoading = useRouterState({ select: (s) => s.isLoading })
   return (
-    <div
-      className={`h-12 transition-all duration-300 ${
-        isLoading ? `opacity-100 delay-300` : `opacity-0 delay-0`
-      }`}
-    >
-      <Loader />
+    <div className={cn(
+      "h-8 flex items-center transition-all duration-300",
+      isLoading ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none"
+    )}>
+      <div className="flex gap-1">
+        <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-bounce" style={{ animationDelay: '0ms' }} />
+        <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-bounce" style={{ animationDelay: '150ms' }} />
+        <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-bounce" style={{ animationDelay: '300ms' }} />
+      </div>
     </div>
   )
 }
+

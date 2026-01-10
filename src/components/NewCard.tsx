@@ -1,11 +1,11 @@
 import { useRef } from 'react'
 import invariant from 'tiny-invariant'
-
 import { ItemMutationFields } from '../types'
 import { useCreateItemMutation } from '../queries'
 import { itemSchema } from '../db/schema'
-import { SaveButton } from '~/components/SaveButton'
-import { CancelButton } from '~/components/CancelButton'
+import { Button } from '~/components/ui/button'
+import { Textarea } from '~/components/ui/textarea'
+import { cn } from '~/utils/cn'
 
 export function NewCard({
   columnId,
@@ -25,7 +25,7 @@ export function NewCard({
   return (
     <form
       method="post"
-      className="px-2 py-1 border-t-2 border-b-2 border-transparent"
+      className="p-3 bg-slate-900 border border-indigo-500/30 rounded-xl space-y-3 shadow-xl shadow-indigo-500/5 transition-all animate-in fade-in zoom-in duration-200"
       onSubmit={(event) => {
         event.preventDefault()
 
@@ -34,9 +34,11 @@ export function NewCard({
         formData.set(ItemMutationFields.id.name, id)
 
         invariant(textAreaRef.current)
-        textAreaRef.current.value = ''
+        if (textAreaRef.current.value.trim() === '') return
 
         mutate(itemSchema.parse(Object.fromEntries(formData.entries())))
+        textAreaRef.current.value = ''
+        onComplete()
       }}
       onBlur={(event) => {
         if (!event.currentTarget.contains(event.relatedTarget)) {
@@ -56,31 +58,30 @@ export function NewCard({
         value={nextOrder}
       />
 
-      <textarea
+      <Textarea
         autoFocus
         required
         ref={textAreaRef}
         name={ItemMutationFields.title.name}
-        placeholder="Enter a title for this card"
-        className="outline-hidden shadow-sm text-sm rounded-lg w-full py-1 px-2 resize-none placeholder:text-sm placeholder:text-slate-500 h-14"
+        placeholder="Card title..."
+        className="min-h-[80px] bg-slate-950 border-white/10 focus-visible:ring-indigo-500 resize-none text-sm p-3"
         onKeyDown={(event) => {
-          if (event.key === 'Enter') {
+          if (event.key === 'Enter' && !event.shiftKey) {
             event.preventDefault()
-            invariant(buttonRef.current, 'expected button ref')
-            buttonRef.current.click()
+            buttonRef.current?.click()
           }
           if (event.key === 'Escape') {
             onComplete()
           }
         }}
-        onChange={(event) => {
-          const el = event.currentTarget
-          el.style.height = el.scrollHeight + 'px'
-        }}
       />
-      <div className="flex justify-between">
-        <SaveButton ref={buttonRef}>Save Card</SaveButton>
-        <CancelButton onClick={onComplete}>Cancel</CancelButton>
+      <div className="flex items-center gap-2">
+        <Button size="sm" className="bg-indigo-600 hover:bg-indigo-700 text-xs font-bold grow" ref={buttonRef}>
+          Add Card
+        </Button>
+        <Button size="sm" variant="ghost" className="text-slate-500 hover:text-white text-xs grow" onClick={onComplete}>
+          Cancel
+        </Button>
       </div>
     </form>
   )

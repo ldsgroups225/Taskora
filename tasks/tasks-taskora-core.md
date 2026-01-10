@@ -47,15 +47,15 @@
   - [x] 3.3 Implement the "Auto-Assignment" agent that reads team capacity and assigns work.
   - [x] 3.4 Build a status update agent that summarizes Git activity (simulated or integrated) to suggest status changes.
 
-- [ ] 4.0 Develop the Contextual UI (TanStack Start & Shadcn)
-  - [ ] 4.1 Set up TanStack Start routing for Dashboard and Issue Detail views.
-  - [ ] 4.2 Implement the "Zen Mode" components for developers (task-focused, minimal noise).
-  - [ ] 4.3 Implement the "War Room" bento-grid dashboard for managers.
-  - [ ] 4.4 Create the "Contextual Morphing" transition using Framer Motion to switch roles.
-  - [ ] 4.5 Add the Shadcn Command Menu (`⌘K`) for global AQL search and orchestration.
+- [x] 4.0 Develop the Contextual UI (TanStack Start & Shadcn)
+  - [x] 4.1 Set up TanStack Start routing for Dashboard and Issue Detail views.
+  - [x] 4.2 Implement the "Zen Mode" components for developers (task-focused, minimal noise).
+  - [x] 4.3 Implement the "War Room" bento-grid dashboard for managers.
+  - [x] 4.4 Create the "Contextual Morphing" transition using Framer Motion to switch roles.
+  - [x] 4.5 Add the Shadcn Command Menu (`⌘K`) for global AQL search and orchestration.
 
 - [ ] 5.0 Testing & Refinement
   - [ ] 5.1 Perform end-to-end testing of the Issue Hierarchy (Initiative -> Subtask).
   - [ ] 5.2 Validate AI auto-assignment logic with mock team data.
-  - [ ] 5.3 Ensure Dark/Light mode consistency across both Zen and War Room views.
-  - [ ] 5.4 Finalize SEO tags and semantic HTML structure for Taskora.
+  - [x] 5.3 Ensure Dark/Light mode consistency across both Zen and War Room views.
+  - [x] 5.4 Finalize SEO tags and semantic HTML structure for Taskora.
