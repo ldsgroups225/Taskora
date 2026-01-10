@@ -1,11 +1,10 @@
 import { useRef } from 'react'
 import invariant from 'tiny-invariant'
-import { ItemMutationFields } from '../types'
-import { useCreateItemMutation } from '../queries'
-import { itemSchema } from '../db/schema'
 import { Button } from '~/components/ui/button'
 import { Textarea } from '~/components/ui/textarea'
-import { cn } from '~/lib/utils'
+import { itemSchema } from '../db/schema'
+import { useCreateItemMutation } from '../queries'
+import { ItemMutationFields } from '../types'
 
 export function NewCard({
   columnId,
@@ -34,7 +33,8 @@ export function NewCard({
         formData.set(ItemMutationFields.id.name, id)
 
         invariant(textAreaRef.current)
-        if (textAreaRef.current.value.trim() === '') return
+        if (textAreaRef.current.value.trim() === '')
+          return
 
         mutate(itemSchema.parse(Object.fromEntries(formData.entries())))
         textAreaRef.current.value = ''

@@ -1,6 +1,6 @@
-import * as React from 'react'
 import { motion } from 'framer-motion'
-import { CheckCircle2, Circle, Clock, AlertCircle, Plus } from 'lucide-react'
+import { AlertCircle, CheckCircle2, Circle, Clock, Plus } from 'lucide-react'
+import * as React from 'react'
 import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
 import { cn } from '~/lib/utils'
@@ -44,27 +44,35 @@ export function ZenMode() {
             className="group relative flex items-center gap-4 bg-white/5 border border-white/10 p-4 rounded-2xl hover:bg-white/8 hover:border-white/20 transition-all cursor-pointer overflow-hidden shadow-sm hover:shadow-md"
           >
             <div className={cn(
-              "absolute inset-y-0 left-0 w-1 bg-primary/20",
-              task.priority === 'critical' ? "bg-red-500" :
-                task.priority === 'high' ? "bg-orange-500" :
-                  "bg-blue-500"
-            )} />
+              'absolute inset-y-0 left-0 w-1 bg-primary/20',
+              task.priority === 'critical'
+                ? 'bg-red-500'
+                : task.priority === 'high'
+                  ? 'bg-orange-500'
+                  : 'bg-blue-500',
+            )}
+            />
 
             <div className="shrink-0">
-              {task.status === 'done' ? (
-                <CheckCircle2 className="w-6 h-6 text-emerald-500" />
-              ) : task.status === 'in_progress' ? (
-                <Clock className="w-6 h-6 text-indigo-400" />
-              ) : (
-                <Circle className="w-6 h-6 text-slate-500 group-hover:text-slate-300 transition-colors" />
-              )}
+              {task.status === 'done'
+                ? (
+                    <CheckCircle2 className="w-6 h-6 text-emerald-500" />
+                  )
+                : task.status === 'in_progress'
+                  ? (
+                      <Clock className="w-6 h-6 text-indigo-400" />
+                    )
+                  : (
+                      <Circle className="w-6 h-6 text-slate-500 group-hover:text-slate-300 transition-colors" />
+                    )}
             </div>
 
             <div className="grow min-w-0">
               <h3 className={cn(
-                "font-medium text-lg leading-snug truncate transition-colors",
-                task.status === 'done' ? "text-slate-500 line-through" : "text-slate-200"
-              )}>
+                'font-medium text-lg leading-snug truncate transition-colors',
+                task.status === 'done' ? 'text-slate-500 line-through' : 'text-slate-200',
+              )}
+              >
                 {task.title}
               </h3>
               <div className="flex items-center gap-3 mt-1.5 flex-wrap">
@@ -72,12 +80,17 @@ export function ZenMode() {
                   {task.status.replace('_', ' ')}
                 </Badge>
                 <div className="flex items-center gap-1">
-                  <Badge variant="outline" className={cn(
-                    "text-[10px] uppercase font-bold py-0 h-4 border-slate-700 bg-slate-900/50",
-                    task.priority === 'critical' ? "text-red-400 border-red-500/20" :
-                      task.priority === 'high' ? "text-orange-400 border-orange-500/20" :
-                        "text-blue-400 border-blue-500/20"
-                  )}>
+                  <Badge
+                    variant="outline"
+                    className={cn(
+                      'text-[10px] uppercase font-bold py-0 h-4 border-slate-700 bg-slate-900/50',
+                      task.priority === 'critical'
+                        ? 'text-red-400 border-red-500/20'
+                        : task.priority === 'high'
+                          ? 'text-orange-400 border-orange-500/20'
+                          : 'text-blue-400 border-blue-500/20',
+                    )}
+                  >
                     <AlertCircle className="w-2 h-2 mr-1" />
                     {task.priority}
                   </Badge>

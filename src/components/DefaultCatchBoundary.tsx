@@ -1,3 +1,4 @@
+import type { ErrorComponentProps } from '@tanstack/react-router'
 import {
   ErrorComponent,
   Link,
@@ -5,15 +6,14 @@ import {
   useMatch,
   useRouter,
 } from '@tanstack/react-router'
-import type { ErrorComponentProps } from '@tanstack/react-router'
+import { AlertTriangle, Home as HomeIcon, RefreshCcw } from 'lucide-react'
 import { Button } from '~/components/ui/button'
-import { AlertTriangle, RefreshCcw, Home as HomeIcon } from 'lucide-react'
 
 export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
   const router = useRouter()
   const isRoot = useMatch({
     strict: false,
-    select: (state) => state.id === rootRouteId,
+    select: state => state.id === rootRouteId,
   })
 
   console.error(error)
@@ -33,7 +33,7 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
 
       <div className="flex items-center gap-3">
         <Button
-          onClick={() => router.invalidate()}
+          onClick={async () => router.invalidate()}
           variant="secondary"
           className="gap-2"
         >
@@ -41,25 +41,27 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
           Try Again
         </Button>
 
-        {isRoot ? (
-          <Button asChild variant="outline" className="gap-2 border-white/10">
-            <Link to="/">
-              <HomeIcon className="w-4 h-4" />
-              Home
-            </Link>
-          </Button>
-        ) : (
-          <Button
-            variant="outline"
-            className="gap-2 border-white/10"
-            onClick={(e) => {
-              e.preventDefault()
-              window.history.back()
-            }}
-          >
-            Go Back
-          </Button>
-        )}
+        {isRoot
+          ? (
+              <Button asChild variant="outline" className="gap-2 border-white/10">
+                <Link to="/">
+                  <HomeIcon className="w-4 h-4" />
+                  Home
+                </Link>
+              </Button>
+            )
+          : (
+              <Button
+                variant="outline"
+                className="gap-2 border-white/10"
+                onClick={(e) => {
+                  e.preventDefault()
+                  window.history.back()
+                }}
+              >
+                Go Back
+              </Button>
+            )}
       </div>
     </div>
   )

@@ -1,26 +1,27 @@
 /// <reference types="vite/client" />
+import type { QueryClient } from '@tanstack/react-query'
+import type { UserRole } from '~/context/RoleContext'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools/production'
 import {
+  createRootRouteWithContext,
+  HeadContent,
   Link,
   Outlet,
-  createRootRouteWithContext,
-  useRouterState,
-  HeadContent,
   Scripts,
+  useRouterState,
 } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
+import { Code2, LayoutPanelLeft, Rocket } from 'lucide-react'
 import * as React from 'react'
-import { Toaster } from 'react-hot-toast'
-import type { QueryClient } from '@tanstack/react-query'
+import { CommandMenu } from '~/components/CommandMenu'
 import { DefaultCatchBoundary } from '~/components/DefaultCatchBoundary'
 import { NotFound } from '~/components/NotFound'
-import appCss from '~/styles/app.css?url'
-import { seo } from '~/utils/seo'
-import { Loader } from '~/components/Loader'
-import { LayoutPanelLeft, Code2, Rocket } from 'lucide-react'
+import { Toaster } from '~/components/ui/sonner'
+import { RoleContext } from '~/context/RoleContext'
 import { cn } from '~/lib/utils'
+import appCss from '~/styles/app.css?url'
 
-export type UserRole = 'dev' | 'manager'
+import { seo } from '~/utils/seo'
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient
@@ -39,7 +40,7 @@ export const Route = createRootRouteWithContext<{
       { rel: 'icon', href: '/favicon.ico' },
     ],
   }),
-  errorComponent: (props) => (
+  errorComponent: props => (
     <RootDocument>
       <DefaultCatchBoundary {...props} />
     </RootDocument>
@@ -48,32 +49,22 @@ export const Route = createRootRouteWithContext<{
   component: RootComponent,
 })
 
-export const RoleContext = React.createContext<{
-  role: UserRole
-  setRole: (role: UserRole) => void
-}>({
-  role: 'dev',
-  setRole: () => { },
-})
-
 function RootComponent() {
   const [role, setRole] = React.useState<UserRole>('dev')
 
   return (
-    <RoleContext.Provider value={{ role, setRole }}>
+    <RoleContext value={{ role, setRole }}>
       <RootDocument role={role} setRole={setRole}>
         <Outlet />
       </RootDocument>
-    </RoleContext.Provider>
+    </RoleContext>
   )
 }
-
-import { CommandMenu } from '~/components/CommandMenu'
 
 function RootDocument({
   children,
   role,
-  setRole
+  setRole,
 }: {
   children: React.ReactNode
   role?: UserRole
@@ -101,10 +92,10 @@ function RootDocument({
                   <button
                     onClick={() => setRole?.('dev')}
                     className={cn(
-                      "flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium transition-all",
+                      'flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium transition-all',
                       role === 'dev'
-                        ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/20"
-                        : "text-slate-400 hover:text-white"
+                        ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20'
+                        : 'text-slate-400 hover:text-white',
                     )}
                   >
                     <Code2 className="w-4 h-4" />
@@ -113,10 +104,10 @@ function RootDocument({
                   <button
                     onClick={() => setRole?.('manager')}
                     className={cn(
-                      "flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium transition-all",
+                      'flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium transition-all',
                       role === 'manager'
-                        ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/20"
-                        : "text-slate-400 hover:text-white"
+                        ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20'
+                        : 'text-slate-400 hover:text-white',
                     )}
                   >
                     <LayoutPanelLeft className="w-4 h-4" />
@@ -155,12 +146,13 @@ function RootDocument({
 }
 
 function LoadingIndicator() {
-  const isLoading = useRouterState({ select: (s) => s.isLoading })
+  const isLoading = useRouterState({ select: s => s.isLoading })
   return (
     <div className={cn(
-      "h-8 flex items-center transition-all duration-300",
-      isLoading ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none"
-    )}>
+      'h-8 flex items-center transition-all duration-300',
+      isLoading ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none',
+    )}
+    >
       <div className="flex gap-1">
         <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-bounce" style={{ animationDelay: '0ms' }} />
         <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-bounce" style={{ animationDelay: '150ms' }} />
@@ -169,4 +161,3 @@ function LoadingIndicator() {
     </div>
   )
 }
-

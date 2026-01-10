@@ -21,7 +21,7 @@ export async function groomBacklog(issues: any[], context: any) {
 
   const result = await client.models.generateContent({
     model: 'gemini-2.5-flash',
-    contents: [{ role: 'user', parts: [{ text: prompt }] }]
+    contents: [{ role: 'user', parts: [{ text: prompt }] }],
   })
   return result.text
 }
@@ -43,7 +43,7 @@ export async function analyzeReviewRequest(issue: any, codeDiff: string) {
 
   const result = await client.models.generateContent({
     model: 'gemini-2.0-flash',
-    contents: [{ role: 'user', parts: [{ text: prompt }] }]
+    contents: [{ role: 'user', parts: [{ text: prompt }] }],
   })
   return result.text
 }
@@ -62,15 +62,17 @@ export async function parseAQL(query: string) {
 
   const result = await client.models.generateContent({
     model: 'gemini-2.0-flash',
-    contents: [{ role: 'user', parts: [{ text: prompt }] }]
+    contents: [{ role: 'user', parts: [{ text: prompt }] }],
   })
 
   const text = result.text
-  if (!text) return { error: 'No response from AI' }
+  if (!text)
+    return { error: 'No response from AI' }
 
   try {
     return JSON.parse(text)
-  } catch (e) {
+  }
+  catch {
     return { error: 'Failed to parse AQL' }
   }
 }

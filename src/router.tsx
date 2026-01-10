@@ -1,16 +1,16 @@
-import { createRouter } from '@tanstack/react-router'
+import { ConvexQueryClient } from '@convex-dev/react-query'
 import {
   MutationCache,
-  QueryClient,
   notifyManager,
+  QueryClient,
 } from '@tanstack/react-query'
+import { createRouter } from '@tanstack/react-router'
 import { setupRouterSsrQueryIntegration } from '@tanstack/react-router-ssr-query'
-import toast from 'react-hot-toast'
-import { ConvexQueryClient } from '@convex-dev/react-query'
 import { ConvexProvider } from 'convex/react'
-import { routeTree } from './routeTree.gen'
+import { toast } from 'sonner'
 import { DefaultCatchBoundary } from './components/DefaultCatchBoundary'
 import { NotFound } from './components/NotFound'
+import { routeTree } from './routeTree.gen'
 
 export function getRouter() {
   if (typeof document !== 'undefined') {

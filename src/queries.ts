@@ -1,5 +1,5 @@
-import { useMutation } from '@tanstack/react-query'
 import { convexQuery, useConvexMutation } from '@convex-dev/react-query'
+import { useMutation } from '@tanstack/react-query'
 import { api } from '../convex/_generated/api'
 
 export const boardQueries = {
@@ -17,9 +17,10 @@ export function useCreateColumnMutation() {
     api.board.createColumn,
   ).withOptimisticUpdate((localStore, args) => {
     const board = localStore.getQuery(api.board.getBoard, { id: args.boardId })
-    if (!board) return
+    if (!board)
+      return
 
-    const randomId = Math.random() + ''
+    const randomId = `${Math.random()}`
 
     const newBoard = {
       ...board,
@@ -45,7 +46,8 @@ export function useCreateItemMutation() {
     api.board.createItem,
   ).withOptimisticUpdate((localStore, args) => {
     const board = localStore.getQuery(api.board.getBoard, { id: args.boardId })
-    if (!board) return
+    if (!board)
+      return
 
     const items = [...board.items, args]
     localStore.setQuery(
@@ -63,8 +65,9 @@ export function useUpdateCardMutation() {
     api.board.updateItem,
   ).withOptimisticUpdate((localStore, args) => {
     const board = localStore.getQuery(api.board.getBoard, { id: args.boardId })
-    if (!board) return
-    const items = board.items.map((item) => (item.id === args.id ? args : item))
+    if (!board)
+      return
+    const items = board.items.map(item => (item.id === args.id ? args : item))
     localStore.setQuery(
       api.board.getBoard,
       { id: board.id },
@@ -80,8 +83,9 @@ export function useDeleteCardMutation() {
     api.board.deleteItem,
   ).withOptimisticUpdate((localStore, args) => {
     const board = localStore.getQuery(api.board.getBoard, { id: args.boardId })
-    if (!board) return
-    const items = board.items.filter((item) => item.id !== args.id)
+    if (!board)
+      return
+    const items = board.items.filter(item => item.id !== args.id)
     localStore.setQuery(
       api.board.getBoard,
       { id: board.id },
@@ -97,9 +101,10 @@ export function useDeleteColumnMutation() {
     api.board.deleteColumn,
   ).withOptimisticUpdate((localStore, args) => {
     const board = localStore.getQuery(api.board.getBoard, { id: args.boardId })
-    if (!board) return
-    const columns = board.columns.filter((col) => col.id !== args.id)
-    const items = board.items.filter((item) => item.columnId !== args.id)
+    if (!board)
+      return
+    const columns = board.columns.filter(col => col.id !== args.id)
+    const items = board.items.filter(item => item.columnId !== args.id)
     localStore.setQuery(
       api.board.getBoard,
       { id: board.id },
@@ -120,8 +125,9 @@ export function useUpdateColumnMutation() {
     api.board.updateColumn,
   ).withOptimisticUpdate((localStore, args) => {
     const board = localStore.getQuery(api.board.getBoard, { id: args.boardId })
-    if (!board) return
-    const columns = board.columns.map((col) =>
+    if (!board)
+      return
+    const columns = board.columns.map(col =>
       col.id === args.id ? { ...col, ...args } : col,
     )
     localStore.setQuery(

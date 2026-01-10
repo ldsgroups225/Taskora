@@ -1,6 +1,5 @@
 import { v } from 'convex/values'
 import { mutation, query } from './_generated/server'
-import { Doc, Id } from './_generated/dataModel'
 
 /**
  * Create a new issue
@@ -16,13 +15,13 @@ export const createIssue = mutation({
       v.literal('todo'),
       v.literal('in_progress'),
       v.literal('in_review'),
-      v.literal('done')
+      v.literal('done'),
     ),
     priority: v.union(
       v.literal('low'),
       v.literal('medium'),
       v.literal('high'),
-      v.literal('critical')
+      v.literal('critical'),
     ),
     type: v.union(
       v.literal('initiative'),
@@ -30,7 +29,7 @@ export const createIssue = mutation({
       v.literal('story'),
       v.literal('task'),
       v.literal('bug'),
-      v.literal('subtask')
+      v.literal('subtask'),
     ),
     assigneeId: v.optional(v.id('users')),
     storyPoints: v.optional(v.number()),
@@ -41,11 +40,12 @@ export const createIssue = mutation({
     // For now, we'll assume a creatorId exists or fallback to a system user in simplified dev mode
     // In a real app, identity.subject would be matched to a record in our 'users' table
     const creator = await ctx.db.query('users').first() // Temporary creator resolution
-    if (!creator) throw new Error('No users found to assign as creator')
+    if (!creator)
+      throw new Error('No users found to assign as creator')
 
     const lastIssue = await ctx.db
       .query('issues')
-      .withIndex('by_project', (q) => q.eq('projectId', args.projectId))
+      .withIndex('by_project', q => q.eq('projectId', args.projectId))
       .order('desc')
       .first()
 
@@ -77,16 +77,16 @@ export const updateIssue = mutation({
           v.literal('todo'),
           v.literal('in_progress'),
           v.literal('in_review'),
-          v.literal('done')
-        )
+          v.literal('done'),
+        ),
       ),
       priority: v.optional(
         v.union(
           v.literal('low'),
           v.literal('medium'),
           v.literal('high'),
-          v.literal('critical')
-        )
+          v.literal('critical'),
+        ),
       ),
       assigneeId: v.optional(v.id('users')),
       storyPoints: v.optional(v.number()),
@@ -95,7 +95,8 @@ export const updateIssue = mutation({
   },
   handler: async (ctx, { id, patch }) => {
     const issue = await ctx.db.get(id)
-    if (!issue) throw new Error('Issue not found')
+    if (!issue)
+      throw new Error('Issue not found')
 
     // AI Trigger Hook: If status changes to 'in_review', we could trigger an agent here
     if (patch.status && patch.status !== issue.status) {
@@ -115,7 +116,7 @@ export const deleteIssue = mutation({
   handler: async (ctx, { id }) => {
     const subtasks = await ctx.db
       .query('issues')
-      .withIndex('by_parent', (q) => q.eq('parentId', id))
+      .withIndex('by_parent', q => q.eq('parentId', id))
       .collect()
 
     for (const subtask of subtasks) {
@@ -136,16 +137,18 @@ export const listIssues = query({
     assigneeId: v.optional(v.id('users')),
   },
   handler: async (ctx, args) => {
-    let q = ctx.db
+    const q = ctx.db
       .query('issues')
-      .withIndex('by_project', (q) => q.eq('projectId', args.projectId))
+      .withIndex('by_project', q => q.eq('projectId', args.projectId))
 
     const results = await q.collect()
 
     // Basic filtering (foundation for AQL)
     return results.filter((issue) => {
-      if (args.status && issue.status !== args.status) return false
-      if (args.assigneeId && issue.assigneeId !== args.assigneeId) return false
+      if (args.status && issue.status !== args.status)
+        return false
+      if (args.assigneeId && issue.assigneeId !== args.assigneeId)
+        return false
       return true
     })
   },
@@ -157,7 +160,7 @@ export const listIssues = query({
 export const getIssue = query({
   args: { id: v.id('issues') },
   handler: async (ctx, args) => {
-    return await ctx.db.get(args.id)
+    return ctx.db.get(args.id)
   },
 })
 
@@ -167,9 +170,9 @@ export const getIssue = query({
 export const getChildren = query({
   args: { parentId: v.id('issues') },
   handler: async (ctx, args) => {
-    return await ctx.db
+    return ctx.db
       .query('issues')
-      .withIndex('by_parent', (q) => q.eq('parentId', args.parentId))
+      .withIndex('by_parent', q => q.eq('parentId', args.parentId))
       .collect()
   },
 })

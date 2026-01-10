@@ -1,6 +1,7 @@
+/* eslint-disable ts/no-unsafe-call */
 import { v } from 'convex/values'
-import { mutation, internalAction } from './_generated/server'
-import { api, internal } from './_generated/api'
+import { internal } from './_generated/api'
+import { internalAction, mutation } from './_generated/server'
 
 export const assignTasks = mutation({
   args: {},
@@ -8,11 +9,12 @@ export const assignTasks = mutation({
     // 1. Get unassigned issues
     const issues = await ctx.db
       .query('issues')
-      .withIndex('by_assignee', (q) => q.eq('assigneeId', undefined))
-      .filter((q) => q.neq(q.field('status'), 'done'))
+      .withIndex('by_assignee', q => q.eq('assigneeId', undefined))
+      .filter(q => q.neq(q.field('status'), 'done'))
       .collect()
 
-    if (issues.length === 0) return { message: 'No unassigned tasks' }
+    if (issues.length === 0)
+      return { message: 'No unassigned tasks' }
 
     // 2. Get available developers
     const users = await ctx.db
@@ -23,11 +25,12 @@ export const assignTasks = mutation({
     // Filter for devs in memory for now
     const devs = users.filter(u => u.role === 'dev')
 
-    if (devs.length === 0) return { message: 'No developers found' }
+    if (devs.length === 0)
+      return { message: 'No developers found' }
 
     // 3. Call AI action to get assignments
     // We need to schedule this or use an action if we want to wait (but mutations can't await actions directly unless using scheduler)
-    // For "validation" purposes (Step 5.2), we'll do this in a test flow or action. 
+    // For "validation" purposes (Step 5.2), we'll do this in a test flow or action.
     // BUT, a proper agent would be an ACTION that queries DB, calls AI, then calls a MUTATION to update.
 
     // So let's return data for the caller (Action) to use
@@ -51,16 +54,16 @@ export const runAutoAssignment = internalAction({
     // 2. Call Gemini
     const assignments = await ctx.runAction((internal as any).ai.groomBacklog, {
       issues: issues.map((i: any) => ({ id: i._id, title: i.title, priority: i.priority })),
-      team: devs.map((u: any) => ({ id: u._id, name: u.name, role: u.role }))
+      team: devs.map((u: any) => ({ id: u._id, name: u.name, role: u.role })),
     })
 
-    console.log("AI Recommendations:", assignments)
+    console.log('AI Recommendations:', assignments)
 
     // 3. Apply updates (Mock implementation of applying logic)
     if (Array.isArray(assignments)) {
       await ctx.runMutation((internal as any).agents.applyAssignments, { assignments })
     }
-  }
+  },
 })
 
 export const applyAssignments = mutation({
@@ -71,5 +74,5 @@ export const applyAssignments = mutation({
         await ctx.db.patch(assignment.id, { assigneeId: assignment.assigneeId })
       }
     }
-  }
+  },
 })

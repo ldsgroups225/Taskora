@@ -1,16 +1,16 @@
 import { v } from 'convex/values'
-import { mutation, query, action } from './_generated/server'
 import { internal } from './_generated/api'
+import { action, mutation, query } from './_generated/server'
 
 export const validateAutoAssignment = action({
   args: {},
   handler: async (ctx) => {
     // 1. Seed issues & users (via internal mutation or assuming they exist)
     // For simplicity, we trigger the agent directly
-    console.log("Starting Auto-Assignment Validation...")
+    console.log('Starting Auto-Assignment Validation...')
     await ctx.runAction(internal.agents.runAutoAssignment, {})
-    return "Validation run initiated. Check server logs for AI output."
-  }
+    return 'Validation run initiated. Check server logs for AI output.'
+  },
 })
 
 export const ensureDevUser = mutation({
@@ -18,12 +18,13 @@ export const ensureDevUser = mutation({
   handler: async (ctx) => {
     const existing = await ctx.db
       .query('users')
-      .withIndex('by_clerkId', (q) => q.eq('clerkId', 'dev_user_123'))
+      .withIndex('by_clerkId', q => q.eq('clerkId', 'dev_user_123'))
       .first()
 
-    if (existing) return existing._id
+    if (existing)
+      return existing._id
 
-    return await ctx.db.insert('users', {
+    return ctx.db.insert('users', {
       clerkId: 'dev_user_123',
       name: 'Alice Developer',
       email: 'alice@taskora.io',
@@ -36,9 +37,10 @@ export const ensureDefaultUser = mutation({
   args: {},
   handler: async (ctx) => {
     const existing = await ctx.db.query('users').first()
-    if (existing) return existing._id
+    if (existing)
+      return existing._id
 
-    return await ctx.db.insert('users', {
+    return ctx.db.insert('users', {
       clerkId: 'user_2kI0fK...', // Mock clerk ID
       name: 'Default User',
       email: 'user@example.com',
@@ -54,7 +56,8 @@ export const seedHierarchy = mutation({
     let project = await ctx.db.query('projects').first()
     if (!project) {
       const user = await ctx.db.query('users').first()
-      if (!user) throw new Error('Need at least one user to seed')
+      if (!user)
+        throw new Error('Need at least one user to seed')
       const projectId = await ctx.db.insert('projects', {
         name: 'Taskora Core',
         key: 'TC',
@@ -64,7 +67,8 @@ export const seedHierarchy = mutation({
     }
 
     const user = await ctx.db.query('users').first()
-    if (!user) throw new Error('Need at least one user to seed')
+    if (!user)
+      throw new Error('Need at least one user to seed')
 
     // 2. Create Initiative
     const initiativeId = await ctx.db.insert('issues', {
@@ -125,32 +129,33 @@ export const getFullHierarchy = query({
   args: { initiativeId: v.id('issues') },
   handler: async (ctx, args) => {
     const initiative = await ctx.db.get(args.initiativeId)
-    if (!initiative) return null
+    if (!initiative)
+      return null
 
     const epics = await ctx.db
       .query('issues')
-      .withIndex('by_parent', (q) => q.eq('parentId', args.initiativeId))
+      .withIndex('by_parent', q => q.eq('parentId', args.initiativeId))
       .collect()
 
     const hierarchy = await Promise.all(
       epics.map(async (epic) => {
         const stories = await ctx.db
           .query('issues')
-          .withIndex('by_parent', (q) => q.eq('parentId', epic._id))
+          .withIndex('by_parent', q => q.eq('parentId', epic._id))
           .collect()
 
         const storyTree = await Promise.all(
           stories.map(async (story) => {
             const subtasks = await ctx.db
               .query('issues')
-              .withIndex('by_parent', (q) => q.eq('parentId', story._id))
+              .withIndex('by_parent', q => q.eq('parentId', story._id))
               .collect()
             return { ...story, subtasks }
-          })
+          }),
         )
 
         return { ...epic, stories: storyTree }
-      })
+      }),
     )
 
     return { ...initiative, epics: hierarchy }

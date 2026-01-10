@@ -1,14 +1,14 @@
-import * as React from 'react'
 import { Link } from '@tanstack/react-router'
 import {
   Code2,
+  Hash,
   LayoutPanelLeft,
   Search,
   Settings,
   User,
   Zap,
-  Hash,
 } from 'lucide-react'
+import * as React from 'react'
 import {
   CommandDialog,
   CommandEmpty,
@@ -19,17 +19,17 @@ import {
   CommandSeparator,
   CommandShortcut,
 } from '~/components/ui/command'
-import { RoleContext } from '~/routes/__root'
+import { RoleContext } from '~/context/RoleContext'
 
 export function CommandMenu() {
   const [open, setOpen] = React.useState(false)
-  const { role, setRole } = React.useContext(RoleContext)
+  const { setRole } = React.use(RoleContext)
 
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
         e.preventDefault()
-        setOpen((open) => !open)
+        setOpen(open => !open)
       }
     }
 
@@ -46,7 +46,8 @@ export function CommandMenu() {
         <Search className="w-4 h-4" />
         <span className="hidden sm:inline">Search...</span>
         <kbd className="pointer-events-none hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
-          <span className="text-xs">⌘</span>K
+          <span className="text-xs">⌘</span>
+          K
         </kbd>
       </button>
 
@@ -56,7 +57,7 @@ export function CommandMenu() {
           <CommandEmpty>No results found. Try another query.</CommandEmpty>
           <CommandGroup heading="Recent / Seeded">
             <CommandItem className="cursor-pointer" asChild>
-              <Link to="/tasks/$taskId" params={{ taskId: "jh74a4t1vbcsn7wpgkjtkpsrh97yztmm" }}>
+              <Link to="/tasks/$taskId" params={{ taskId: 'jh74a4t1vbcsn7wpgkjtkpsrh97yztmm' }}>
                 <Hash className="mr-2 h-4 w-4 text-purple-400" />
                 <span>Seeded Initiative (Taskora Alpha)</span>
               </Link>
