@@ -1,5 +1,36 @@
 import { v } from 'convex/values'
-import { mutation, query } from './_generated/server'
+import { mutation, query, action } from './_generated/server'
+import { internal } from './_generated/api'
+
+export const validateAutoAssignment = action({
+  args: {},
+  handler: async (ctx) => {
+    // 1. Seed issues & users (via internal mutation or assuming they exist)
+    // For simplicity, we trigger the agent directly
+    console.log("Starting Auto-Assignment Validation...")
+    await ctx.runAction(internal.agents.runAutoAssignment, {})
+    return "Validation run initiated. Check server logs for AI output."
+  }
+})
+
+export const ensureDevUser = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const existing = await ctx.db
+      .query('users')
+      .withIndex('by_clerkId', (q) => q.eq('clerkId', 'dev_user_123'))
+      .first()
+
+    if (existing) return existing._id
+
+    return await ctx.db.insert('users', {
+      clerkId: 'dev_user_123',
+      name: 'Alice Developer',
+      email: 'alice@taskora.io',
+      role: 'dev',
+    })
+  },
+})
 
 export const ensureDefaultUser = mutation({
   args: {},

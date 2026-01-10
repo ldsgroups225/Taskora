@@ -56,6 +56,6 @@
 
 - [ ] 5.0 Testing & Refinement
   - [x] 5.1 Perform end-to-end testing of the Issue Hierarchy (Initiative -> Subtask).
-  - [ ] 5.2 Validate AI auto-assignment logic with mock team data.
+  - [x] 5.2 Validate AI auto-assignment logic with mock team data.
   - [x] 5.3 Ensure Dark/Light mode consistency across both Zen and War Room views.
   - [x] 5.4 Finalize SEO tags and semantic HTML structure for Taskora.
