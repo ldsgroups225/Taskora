@@ -2,6 +2,7 @@ import { Link } from '@tanstack/react-router'
 import { motion } from 'framer-motion'
 import { AlertCircle, Bot, CheckCircle2, Circle, Clock, Loader2, Plus, Sparkles, Zap } from 'lucide-react'
 import * as React from 'react'
+import { TaskForm } from '~/components/TaskForm'
 import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
 import { useMyTasks } from '~/hooks/useMyTasks'
@@ -9,6 +10,7 @@ import { cn } from '~/lib/utils'
 
 export function ZenMode() {
   const { tasks, isLoading } = useMyTasks()
+  const [isTaskFormOpen, setIsTaskFormOpen] = React.useState(false)
 
   return (
     <motion.div
@@ -19,7 +21,11 @@ export function ZenMode() {
     >
       <div className="flex items-center justify-between mb-12">
         <h1 className="text-3xl font-bold text-white tracking-tight">Your Focus</h1>
-        <Button size="icon" className="rounded-full bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-500/20">
+        <Button
+          size="icon"
+          onClick={() => setIsTaskFormOpen(true)}
+          className="rounded-full bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-500/20"
+        >
           <Plus className="w-6 h-6" />
         </Button>
       </div>
@@ -135,6 +141,8 @@ export function ZenMode() {
           "The secret of getting ahead is getting started."
         </p>
       </div>
+
+      <TaskForm open={isTaskFormOpen} onOpenChange={setIsTaskFormOpen} />
     </motion.div>
   )
 }
