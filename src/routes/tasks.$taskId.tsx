@@ -40,6 +40,7 @@ import {
 } from '~/components/ui/dropdown-menu'
 import { Input } from '~/components/ui/input'
 import { Textarea } from '~/components/ui/textarea'
+import { useViewMode } from '~/context/ViewModeContext'
 import { cn } from '~/lib/utils'
 import { issueQueries, userQueries, useUpdateIssueMutation } from '~/queries'
 import { api } from '../../convex/_generated/api'
@@ -74,6 +75,7 @@ function TaskPending() {
 }
 
 function TaskDetail() {
+  const { viewMode } = useViewMode()
   const { taskId } = Route.useParams()
   const { data: issue } = useSuspenseQuery(issueQueries.detail(taskId as Id<'issues'>))
   const { data: children } = useSuspenseQuery(issueQueries.children(taskId as Id<'issues'>))
@@ -177,15 +179,23 @@ function TaskDetail() {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 md:px-8 py-8 max-w-6xl">
+      <main className="grow">
         <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-          className="grid grid-cols-1 lg:grid-cols-3 gap-8"
+          key={viewMode}
+          initial={{ opacity: 0, x: viewMode === 'zen' ? 20 : -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className={cn(
+            'container mx-auto px-4 md:px-8 py-8 md:py-12 transition-all duration-500',
+            viewMode === 'zen'
+              ? 'max-w-3xl flex flex-col items-center'
+              : 'grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-12',
+          )}
         >
-          {/* Main Content */}
-          <div className="lg:col-span-2 space-y-8">
+          <div className={cn(
+            'space-y-8 md:space-y-12 truncate',
+            viewMode === 'zen' ? 'w-full' : 'lg:col-span-2',
+          )}
+          >
             <div className="space-y-4">
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <Badge
@@ -324,7 +334,11 @@ function TaskDetail() {
           </div>
 
           {/* Sidebar */}
-          <div className="space-y-6">
+          <div className={cn(
+            'space-y-6',
+            viewMode === 'zen' ? 'w-full mt-12' : '',
+          )}
+          >
             <Card className="bg-white/5 border-white/10 rounded-2xl overflow-hidden">
               <CardHeader className="bg-white/5 border-b border-white/5 py-4">
                 <CardTitle className="text-sm font-bold text-slate-300">Properties</CardTitle>

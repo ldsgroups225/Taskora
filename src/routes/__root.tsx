@@ -23,15 +23,17 @@ import {
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 import { useMutation } from 'convex/react'
 import { ConvexProviderWithClerk } from 'convex/react-clerk'
-import { Code2, LayoutPanelLeft, Rocket, Settings as SettingsIcon } from 'lucide-react'
+import { Rocket, Settings as SettingsIcon } from 'lucide-react'
 import * as React from 'react'
 import { CommandMenu } from '~/components/CommandMenu'
 import { DefaultCatchBoundary } from '~/components/DefaultCatchBoundary'
 import { NotFound } from '~/components/NotFound'
 import { ProjectSelector } from '~/components/ProjectSelector'
 import { Toaster } from '~/components/ui/sonner'
+import { ViewModeToggle } from '~/components/ViewModeToggle'
 import { ProjectProvider, useProject } from '~/context/ProjectContext'
 import { RoleContext } from '~/context/RoleContext'
+import { useViewMode, ViewModeProvider } from '~/context/ViewModeContext'
 import { useCurrentUser } from '~/hooks/useCurrentUser'
 import { cn } from '~/lib/utils'
 import appCss from '~/styles/app.css?url'
@@ -111,23 +113,38 @@ function RootComponentInner() {
 
   return (
     <ProjectProvider>
-      <RoleContext value={{ role, setRole }}>
-        <RootDocument role={role} setRole={setRole}>
-          <Outlet />
-        </RootDocument>
-      </RoleContext>
+      <ViewModeProvider>
+        <RoleContext value={{ role, setRole }}>
+          <ViewModeSync role={role} />
+          <RootDocument>
+            <Outlet />
+          </RootDocument>
+        </RoleContext>
+      </ViewModeProvider>
     </ProjectProvider>
   )
 }
 
+function ViewModeSync({ role }: { role: UserRole }) {
+  const { setViewMode } = useViewMode()
+
+  // Logic 9.2: Set default view mode based on role
+  React.useEffect(() => {
+    if (role === 'manager') {
+      setViewMode('warroom')
+    }
+    else {
+      setViewMode('zen')
+    }
+  }, [role, setViewMode])
+
+  return null
+}
+
 function RootDocument({
   children,
-  role,
-  setRole,
 }: {
   children: React.ReactNode
-  role?: UserRole
-  setRole?: (role: UserRole) => void
 }) {
   return (
     <html lang="en" className="dark">
@@ -147,32 +164,7 @@ function RootDocument({
                   <span className="font-bold text-xl tracking-tight text-white uppercase italic">Taskora</span>
                 </Link>
 
-                <nav className="hidden md:flex items-center gap-1 bg-white/5 rounded-full p-1 border border-white/10 shrink-0">
-                  <button
-                    onClick={() => setRole?.('dev')}
-                    className={cn(
-                      'flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium transition-all',
-                      role === 'dev'
-                        ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20'
-                        : 'text-slate-400 hover:text-white',
-                    )}
-                  >
-                    <Code2 className="w-4 h-4" />
-                    Zen Mode
-                  </button>
-                  <button
-                    onClick={() => setRole?.('manager')}
-                    className={cn(
-                      'flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium transition-all',
-                      role === 'manager'
-                        ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20'
-                        : 'text-slate-400 hover:text-white',
-                    )}
-                  >
-                    <LayoutPanelLeft className="w-4 h-4" />
-                    War Room
-                  </button>
-                </nav>
+                <ViewModeToggle />
               </div>
 
               <div className="hidden sm:flex items-center gap-4 grow justify-center max-w-md">

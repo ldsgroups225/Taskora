@@ -9,3 +9,10 @@ export const RoleContext = React.createContext<{
   role: 'dev',
   setRole: () => { },
 })
+export function useRole() {
+  const context = React.use(RoleContext)
+  if (context === undefined) {
+    throw new Error('useRole must be used within a RoleProvider')
+  }
+  return context
+}

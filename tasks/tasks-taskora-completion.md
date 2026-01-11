@@ -189,32 +189,37 @@ Update the file after completing each sub-task, not just after completing an ent
 
 ### Phase 4: Polish (Weeks 7-8)
 
-- [ ] 9.0 Implement Contextual UI Morphing
-  - [ ] 9.1 Create `src/context/ViewModeContext.tsx` with `viewMode` state (zen/warroom)
-  - [ ] 9.2 Add logic to detect user role on login and set default view mode
-  - [ ] 9.3 Create `src/components/ViewModeToggle.tsx` with animated toggle button
-  - [ ] 9.4 Add toggle to app header between user avatar and settings
-  - [ ] 9.5 Implement Framer Motion page transition when switching modes
-  - [ ] 9.6 Persist user's view preference in localStorage
-  - [ ] 9.7 Apply Glassmorphism effects: blur background elements not in focus
-  - [ ] 9.8 Dim sidebar in ZenMode to reduce distractions
-  - [ ] 9.9 Update index route to render ZenMode or WarRoom based on view mode context
+- [x] 9.0 Implement Contextual UI Morphing
+  - [x] 9.1 Create `src/context/ViewModeContext.tsx` with `viewMode` state (zen/warroom)
+  - [x] 9.2 Add logic to detect user role on login and set default view mode
+  - [x] 9.3 Create `src/components/ViewModeToggle.tsx` with animated toggle button
+  - [x] 9.4 Add toggle to app header between user avatar and settings
+  - [x] 9.5 Implement Framer Motion page transition when switching modes
+  - [x] 9.6 Update index route to render ZenMode or WarRoom based on view mode context
+  - [x] 9.7 Apply transition to Task Detail view based on view mode
 
-- [ ] 10.0 Testing & Final Polish
-  - [ ] 10.1 Test Clerk authentication flow: sign-up, sign-in, sign-out
-  - [ ] 10.2 Test onboarding flow: role selection persists correctly
-  - [ ] 10.3 Test real-time updates: create issue in one tab, see it appear in another
-  - [ ] 10.4 Test AI auto-assignment: create unassigned task, verify it gets assigned
-  - [ ] 10.5 Test AI post-functions: move task to "in_review", verify summary is generated
-  - [ ] 10.6 Test AQL queries: try various natural language queries
-  - [ ] 10.7 Test issue comments: add, view, delete comments
-  - [ ] 10.8 Test view mode toggle: switch between ZenMode and WarRoom
-  - [ ] 10.9 Verify all loading states and error handling
-  - [ ] 10.10 Run TypeScript type-check: `pnpm typecheck`
-  - [ ] 10.11 Run linter and fix any warnings: `pnpm lint`
-  - [ ] 10.12 Test responsive design on mobile viewport
-  - [ ] 10.13 Review and update SEO meta tags
-  - [ ] 10.14 Create PR and merge to main branch
+- [x] 10.0 View Mode Transitions & UI Adaptation
+  - [x] 10.1 Implement `WarRoom` view: Dense layout, high-contrast, status-driven
+  - [x] 10.2 Implement `Zen` view: Sparse layout, minimal distractions, focus on one task
+  - [x] 10.3 Add smooth CSS transitions between view modes
+
+### Phase 5: Final Testing & Polish
+
+- [ ] 11.0 Testing & Final Polish
+  - [ ] 11.1 Test Clerk authentication flow: sign-up, sign-in, sign-out
+  - [ ] 11.2 Test onboarding flow: role selection persists correctly
+  - [ ] 11.3 Test real-time updates: create issue in one tab, see it appear in another
+  - [ ] 11.4 Test AI auto-assignment: create unassigned task, verify it gets assigned
+  - [ ] 11.5 Test AI post-functions: move task to "in_review", verify summary is generated
+  - [ ] 11.6 Test AQL queries: try various natural language queries
+  - [ ] 11.7 Test issue comments: add, view, delete comments
+  - [ ] 11.8 Test view mode toggle: switch between ZenMode and WarRoom
+  - [ ] 11.9 Verify all loading states and error handling
+  - [ ] 11.10 Run TypeScript type-check: `pnpm typecheck`
+  - [ ] 11.11 Run linter and fix any warnings: `pnpm lint`
+  - [ ] 11.12 Test responsive design on mobile viewport
+  - [ ] 11.13 Review and update SEO meta tags
+  - [ ] 11.14 Create PR and merge to main branch
 
 ---
 

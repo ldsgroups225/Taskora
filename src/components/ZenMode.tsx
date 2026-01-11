@@ -1,3 +1,4 @@
+import { Link } from '@tanstack/react-router'
 import { motion } from 'framer-motion'
 import { AlertCircle, Bot, CheckCircle2, Circle, Clock, Loader2, Plus, Sparkles, Zap } from 'lucide-react'
 import * as React from 'react'
@@ -34,80 +35,86 @@ export function ZenMode() {
           : tasks && tasks.length > 0
             ? (
                 tasks.map((task, index) => (
-                  <motion.div
+                  <Link
                     key={task._id}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    className="group relative flex items-center gap-4 bg-white/5 border border-white/10 p-4 rounded-2xl hover:bg-white/8 hover:border-white/20 transition-all cursor-pointer overflow-hidden shadow-sm hover:shadow-md"
+                    to="/tasks/$taskId"
+                    params={{ taskId: task._id }}
+                    className="block outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500 rounded-2xl"
                   >
-                    <div className={cn(
-                      'absolute inset-y-0 left-0 w-1 bg-primary/20',
-                      task.priority === 'critical'
-                        ? 'bg-red-500'
-                        : task.priority === 'high'
-                          ? 'bg-orange-500'
-                          : 'bg-blue-500',
-                    )}
-                    />
-
-                    <div className="shrink-0">
-                      {task.status === 'done'
-                        ? (
-                            <CheckCircle2 className="w-6 h-6 text-emerald-500" />
-                          )
-                        : task.status === 'in_progress'
-                          ? (
-                              <Clock className="w-6 h-6 text-indigo-400" />
-                            )
-                          : (
-                              <Circle className="w-6 h-6 text-slate-500 group-hover:text-slate-300 transition-colors" />
-                            )}
-                    </div>
-
-                    <div className="grow min-w-0">
-                      <h3 className={cn(
-                        'font-medium text-lg leading-snug truncate transition-colors',
-                        task.status === 'done' ? 'text-slate-500 line-through' : 'text-slate-200',
+                    <motion.div
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                      className="group relative flex items-center gap-4 bg-white/5 border border-white/10 p-4 rounded-2xl hover:bg-white/8 hover:border-white/20 transition-all cursor-pointer overflow-hidden shadow-sm hover:shadow-md"
+                    >
+                      <div className={cn(
+                        'absolute inset-y-0 left-0 w-1 bg-primary/20',
+                        task.priority === 'critical'
+                          ? 'bg-red-500'
+                          : task.priority === 'high'
+                            ? 'bg-orange-500'
+                            : 'bg-blue-500',
                       )}
-                      >
-                        {task.title}
-                      </h3>
-                      <div className="flex items-center gap-3 mt-1.5 flex-wrap">
-                        <Badge variant="outline" className="text-[10px] uppercase font-bold py-0 h-4 border-slate-700 bg-slate-900/50 text-slate-400">
-                          {task.status.replace('_', ' ')}
-                        </Badge>
-                        <div className="flex items-center gap-1">
-                          <Badge
-                            variant="outline"
-                            className={cn(
-                              'text-[10px] uppercase font-bold py-0 h-4 border-slate-700 bg-slate-900/50',
-                              task.priority === 'critical'
-                                ? 'text-red-400 border-red-500/20'
-                                : task.priority === 'high'
-                                  ? 'text-orange-400 border-orange-500/20'
-                                  : 'text-blue-400 border-blue-500/20',
-                            )}
-                          >
-                            <AlertCircle className="w-2 h-2 mr-1" />
-                            {task.priority}
-                          </Badge>
-                        </div>
-                        {(task.properties?.aiReviewSummary || task.properties?.aiImpactSummary) && (
-                          <Badge variant="outline" className="text-[10px] uppercase font-bold py-0 h-4 border-purple-500/20 bg-purple-900/20 text-purple-400">
-                            <Sparkles className="w-2 h-2 mr-1" />
-                            AI
-                          </Badge>
-                        )}
-                        {task.properties?.aiAssigned && (
-                          <Badge variant="outline" className="text-[10px] uppercase font-bold py-0 h-4 border-indigo-500/20 bg-indigo-900/20 text-indigo-400">
-                            <Bot className="w-2 h-2 mr-1" />
-                            AI Assigned
-                          </Badge>
-                        )}
+                      />
+
+                      <div className="shrink-0">
+                        {task.status === 'done'
+                          ? (
+                              <CheckCircle2 className="w-6 h-6 text-emerald-500" />
+                            )
+                          : task.status === 'in_progress'
+                            ? (
+                                <Clock className="w-6 h-6 text-indigo-400" />
+                              )
+                            : (
+                                <Circle className="w-6 h-6 text-slate-500 group-hover:text-slate-300 transition-colors" />
+                              )}
                       </div>
-                    </div>
-                  </motion.div>
+
+                      <div className="grow min-w-0">
+                        <h3 className={cn(
+                          'font-medium text-lg leading-snug truncate transition-colors',
+                          task.status === 'done' ? 'text-slate-500 line-through' : 'text-slate-200',
+                        )}
+                        >
+                          {task.title}
+                        </h3>
+                        <div className="flex items-center gap-3 mt-1.5 flex-wrap">
+                          <Badge variant="outline" className="text-[10px] uppercase font-bold py-0 h-4 border-slate-700 bg-slate-900/50 text-slate-400">
+                            {task.status.replace('_', ' ')}
+                          </Badge>
+                          <div className="flex items-center gap-1">
+                            <Badge
+                              variant="outline"
+                              className={cn(
+                                'text-[10px] uppercase font-bold py-0 h-4 border-slate-700 bg-slate-900/50',
+                                task.priority === 'critical'
+                                  ? 'text-red-400 border-red-500/20'
+                                  : task.priority === 'high'
+                                    ? 'text-orange-400 border-orange-500/20'
+                                    : 'text-blue-400 border-blue-500/20',
+                              )}
+                            >
+                              <AlertCircle className="w-2 h-2 mr-1" />
+                              {task.priority}
+                            </Badge>
+                          </div>
+                          {(task.properties?.aiReviewSummary || task.properties?.aiImpactSummary) && (
+                            <Badge variant="outline" className="text-[10px] uppercase font-bold py-0 h-4 border-purple-500/20 bg-purple-900/20 text-purple-400">
+                              <Sparkles className="w-2 h-2 mr-1" />
+                              AI
+                            </Badge>
+                          )}
+                          {task.properties?.aiAssigned && (
+                            <Badge variant="outline" className="text-[10px] uppercase font-bold py-0 h-4 border-indigo-500/20 bg-indigo-900/20 text-indigo-400">
+                              <Bot className="w-2 h-2 mr-1" />
+                              AI Assigned
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                    </motion.div>
+                  </Link>
                 ))
               )
             : (

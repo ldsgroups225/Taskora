@@ -3,7 +3,8 @@ import { AnimatePresence } from 'framer-motion'
 import * as React from 'react'
 import { WarRoom } from '~/components/WarRoom'
 import { ZenMode } from '~/components/ZenMode'
-import { RoleContext } from '~/context/RoleContext'
+import { useRole } from '~/context/RoleContext'
+import { useViewMode } from '~/context/ViewModeContext'
 import { useCurrentUser } from '~/hooks/useCurrentUser'
 
 export const Route = createFileRoute('/')({
@@ -11,7 +12,8 @@ export const Route = createFileRoute('/')({
 })
 
 function Home() {
-  const { role, setRole } = React.use(RoleContext)
+  const { viewMode } = useViewMode()
+  const { role, setRole } = useRole()
   const { user, isLoading, isAuthenticated } = useCurrentUser()
   const navigate = useNavigate()
 
@@ -54,7 +56,7 @@ function Home() {
   return (
     <div className="grow flex flex-col min-h-0 overflow-y-auto">
       <AnimatePresence mode="wait">
-        {role === 'dev'
+        {viewMode === 'zen'
           ? (
               <ZenMode key="zen" />
             )
