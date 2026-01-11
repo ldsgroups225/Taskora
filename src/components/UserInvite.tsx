@@ -48,26 +48,26 @@ export function UserInvite({ open, onOpenChange }: UserInviteProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px] bg-slate-900 border-white/10 text-white rounded-3xl">
+      <DialogContent className="sm:max-w-[425px] bg-background border-border/10 text-foreground rounded-3xl">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold flex items-center gap-2">
-            <User className="w-6 h-6 text-indigo-400" />
+            <User className="w-6 h-6 text-primary" />
             Invite Member
           </DialogTitle>
-          <DialogDescription className="text-slate-400">
+          <DialogDescription className="text-muted-foreground">
             Invite a new member to your team.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-6 pt-4">
           <div className="space-y-2">
-            <Label htmlFor="email" className="text-slate-300">Email Address</Label>
+            <Label htmlFor="email" className="text-foreground">Email Address</Label>
             <div className="relative">
-              <Mail className="absolute left-3 top-3 w-4 h-4 text-slate-500" />
+              <Mail className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
               <Input
                 id="email"
                 type="email"
                 placeholder="colleague@company.com"
-                className="bg-white/5 border-white/10 rounded-xl pl-10 focus:ring-indigo-500"
+                className="bg-card/5 border-border/10 rounded-xl pl-10 focus:ring-primary"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 required
@@ -76,19 +76,19 @@ export function UserInvite({ open, onOpenChange }: UserInviteProps) {
           </div>
 
           <div className="space-y-2">
-            <Label className="text-slate-300">Initial Role</Label>
+            <Label className="text-foreground">Initial Role</Label>
             <div className="grid grid-cols-2 gap-3">
               <button
                 type="button"
                 onClick={() => setRole('dev')}
                 className={`flex flex-col items-center gap-2 p-4 rounded-2xl border transition-all ${
                   role === 'dev'
-                    ? 'bg-indigo-600/10 border-indigo-500/50 text-white'
-                    : 'bg-white/5 border-white/10 text-slate-400 hover:bg-white/10'
+                    ? 'bg-primary/10 border-primary/50 text-foreground'
+                    : 'bg-card/5 border-border/10 text-muted-foreground hover:bg-card/10'
                 }`}
               >
-                <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${role === 'dev' ? 'bg-indigo-600' : 'bg-slate-800'}`}>
-                  <User className="w-4 h-4 text-white" />
+                <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${role === 'dev' ? 'bg-primary' : 'bg-secondary'}`}>
+                  <User className="w-4 h-4 text-foreground" />
                 </div>
                 <span className="text-xs font-bold uppercase tracking-wider">Developer</span>
               </button>
@@ -98,12 +98,12 @@ export function UserInvite({ open, onOpenChange }: UserInviteProps) {
                 onClick={() => setRole('manager')}
                 className={`flex flex-col items-center gap-2 p-4 rounded-2xl border transition-all ${
                   role === 'manager'
-                    ? 'bg-indigo-600/10 border-indigo-500/50 text-white'
-                    : 'bg-white/5 border-white/10 text-slate-400 hover:bg-white/10'
+                    ? 'bg-primary/10 border-primary/50 text-foreground'
+                    : 'bg-card/5 border-border/10 text-muted-foreground hover:bg-card/10'
                 }`}
               >
-                <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${role === 'manager' ? 'bg-indigo-600' : 'bg-slate-800'}`}>
-                  <Shield className="w-4 h-4 text-white" />
+                <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${role === 'manager' ? 'bg-primary' : 'bg-secondary'}`}>
+                  <Shield className="w-4 h-4 text-foreground" />
                 </div>
                 <span className="text-xs font-bold uppercase tracking-wider">Manager</span>
               </button>
@@ -115,14 +115,14 @@ export function UserInvite({ open, onOpenChange }: UserInviteProps) {
               type="button"
               variant="ghost"
               onClick={() => onOpenChange(false)}
-              className="text-slate-400 hover:text-white"
+              className="text-muted-foreground hover:text-foreground"
             >
               Cancel
             </Button>
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="bg-indigo-600 hover:bg-indigo-700 rounded-xl px-8"
+              className="bg-primary hover:bg-primary rounded-xl px-8"
             >
               Send Invite
             </Button>

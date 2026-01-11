@@ -80,7 +80,7 @@ export function CommandMenu() {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-slate-400 hover:text-white transition-colors text-sm"
+        className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-card/5 border border-border/10 text-muted-foreground hover:text-foreground transition-colors text-sm"
       >
         <Search className="w-4 h-4" />
         <span className="hidden sm:inline">Search...</span>
@@ -100,21 +100,21 @@ export function CommandMenu() {
         </div>
         <CommandList>
           {isParsing && (
-            <div className="p-4 flex items-center justify-center gap-2 text-sm text-indigo-400 animate-pulse">
+            <div className="p-4 flex items-center justify-center gap-2 text-sm text-primary animate-pulse">
               <Loader2 className="w-4 h-4 animate-spin" />
               AI is parsing your query...
             </div>
           )}
 
           {parsedFilter && !isParsing && (
-            <div className="px-4 py-2 border-b border-white/5 bg-indigo-500/5 flex items-center gap-2">
-              <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
-              <span className="text-xs text-indigo-300">
+            <div className="px-4 py-2 border-b border-border/5 bg-primary/5 flex items-center gap-2">
+              <Sparkles className="w-3.5 h-3.5 text-primary" />
+              <span className="text-xs text-primary">
                 {parsedFilter.explanation || 'AI Interpreted Query'}
               </span>
               <button
                 onClick={() => setParsedFilter(null)}
-                className="ml-auto text-[10px] text-slate-500 hover:text-slate-300 uppercase tracking-wider font-bold"
+                className="ml-auto text-[10px] text-muted-foreground hover:text-foreground uppercase tracking-wider font-bold"
               >
                 Clear
               </button>
@@ -132,10 +132,10 @@ export function CommandMenu() {
                   }}
                   className="cursor-pointer"
                 >
-                  <FileText className="mr-2 h-4 w-4 text-indigo-400" />
+                  <FileText className="mr-2 h-4 w-4 text-primary" />
                   <div className="flex flex-col">
-                    <span className="font-medium text-slate-200">{issue.title}</span>
-                    <span className="text-[10px] text-slate-500 uppercase tracking-tighter">
+                    <span className="font-medium text-foreground">{issue.title}</span>
+                    <span className="text-[10px] text-muted-foreground uppercase tracking-tighter">
                       {issue.status}
                       {' '}
                       •
@@ -153,7 +153,7 @@ export function CommandMenu() {
               <CommandGroup heading="Recent / Seeded">
                 <CommandItem className="cursor-pointer" asChild>
                   <Link to="/tasks/$taskId" params={{ taskId: 'jh74a4t1vbcsn7wpgkjtkpsrh97yztmm' }}>
-                    <Hash className="mr-2 h-4 w-4 text-purple-400" />
+                    <Hash className="mr-2 h-4 w-4 text-accent" />
                     <span>Seeded Initiative (Taskora Alpha)</span>
                   </Link>
                 </CommandItem>
@@ -161,7 +161,7 @@ export function CommandMenu() {
               <CommandSeparator />
               <CommandGroup heading="Suggestions">
                 <CommandItem className="cursor-pointer">
-                  <Zap className="mr-2 h-4 w-4 text-indigo-400" />
+                  <Zap className="mr-2 h-4 w-4 text-primary" />
                   <span>Groom Backlog</span>
                   <CommandShortcut>⌘G</CommandShortcut>
                 </CommandItem>

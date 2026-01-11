@@ -46,7 +46,7 @@ export function Board({ boardId }: { boardId: string }) {
   }, [board.columns, itemsById])
 
   return (
-    <div className="grow flex flex-col min-h-0 bg-slate-950/20">
+    <div className="grow flex flex-col min-h-0 bg-background/20">
       <header className="px-8 py-6 shrink-0 flex items-center justify-between">
         <h1 className="flex items-center gap-4">
           <div
@@ -60,7 +60,7 @@ export function Board({ boardId }: { boardId: string }) {
                 : board.name
             }
             fieldName="boardName"
-            buttonClassName="text-2xl font-bold text-white tracking-tight px-0 hover:bg-transparent"
+            buttonClassName="text-2xl font-bold text-foreground tracking-tight px-0 hover:bg-transparent"
             inputClassName="text-2xl font-bold tracking-tight bg-transparent border-none focus-visible:ring-0 p-0 h-auto"
             buttonLabel={`Edit board "${board.name}" name`}
             inputLabel="Edit board name"
@@ -99,7 +99,7 @@ export function Board({ boardId }: { boardId: string }) {
           {/* Spacer for scroll end */}
           <div className="w-12 shrink-0 h-full" />
         </div>
-        <ScrollBar orientation="horizontal" className="bg-white/5" />
+        <ScrollBar orientation="horizontal" className="bg-card/5" />
       </ScrollArea>
     </div>
   )

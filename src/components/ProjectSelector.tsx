@@ -31,49 +31,49 @@ export function ProjectSelector({ selectedId, onSelect }: ProjectSelectorProps) 
         <Button
           variant="ghost"
           size="sm"
-          className="h-9 px-3 bg-white/5 border border-white/10 hover:bg-white/10 text-white flex items-center gap-2 rounded-xl transition-all"
+          className="h-9 px-3 bg-card/5 border border-border/10 hover:bg-card/10 text-foreground flex items-center gap-2 rounded-xl transition-all"
         >
-          <div className="w-5 h-5 rounded bg-indigo-600/20 flex items-center justify-center text-indigo-400">
+          <div className="w-5 h-5 rounded bg-primary/20 flex items-center justify-center text-primary">
             <LayoutPanelLeft className="w-3 h-3" />
           </div>
           <span className="max-w-[100px] truncate font-bold text-xs uppercase tracking-wider">
             {selectedProject?.name || 'Select Project'}
           </span>
-          <ChevronsUpDown className="w-3 h-3 text-slate-500" />
+          <ChevronsUpDown className="w-3 h-3 text-muted-foreground" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56 bg-slate-900 border-white/10 text-white rounded-2xl p-1" align="start">
-        <DropdownMenuLabel className="text-[10px] font-bold text-slate-500 uppercase px-2 py-1.5 tracking-widest">
+      <DropdownMenuContent className="w-56 bg-background border-border/10 text-foreground rounded-2xl p-1" align="start">
+        <DropdownMenuLabel className="text-[10px] font-bold text-muted-foreground uppercase px-2 py-1.5 tracking-widest">
           PROJECTS
         </DropdownMenuLabel>
         {projects === undefined
           ? (
-              <div className="px-2 py-1.5 text-xs text-slate-500 animate-pulse">Loading...</div>
+              <div className="px-2 py-1.5 text-xs text-muted-foreground animate-pulse">Loading...</div>
             )
           : projects.length === 0
             ? (
-                <div className="px-2 py-1.5 text-xs text-slate-500">No projects found</div>
+                <div className="px-2 py-1.5 text-xs text-muted-foreground">No projects found</div>
               )
             : (
                 projects.map(project => (
                   <DropdownMenuItem
                     key={project._id}
                     onClick={() => onSelect(project._id)}
-                    className="flex items-center justify-between px-3 py-2 rounded-xl cursor-pointer hover:bg-white/5 data-highlighted:bg-white/5"
+                    className="flex items-center justify-between px-3 py-2 rounded-xl cursor-pointer hover:bg-card/5 data-highlighted:bg-card/5"
                   >
                     <div className="flex items-center gap-2">
-                      <div className="text-xs font-bold text-white uppercase italic">{project.key}</div>
-                      <div className="text-xs text-slate-400 truncate max-w-[100px]">{project.name}</div>
+                      <div className="text-xs font-bold text-foreground uppercase italic">{project.key}</div>
+                      <div className="text-xs text-muted-foreground truncate max-w-[100px]">{project.name}</div>
                     </div>
-                    {selectedId === project._id && <Check className="w-3 h-3 text-indigo-400" />}
+                    {selectedId === project._id && <Check className="w-3 h-3 text-primary" />}
                   </DropdownMenuItem>
                 ))
               )}
-        <DropdownMenuSeparator className="bg-white/5 mx-1 my-1" />
+        <DropdownMenuSeparator className="bg-card/5 mx-1 my-1" />
         <DropdownMenuItem asChild>
           <Link
             to="/settings/projects"
-            className="flex items-center gap-2 px-3 py-2 rounded-xl cursor-pointer text-indigo-400 hover:text-indigo-300 hover:bg-indigo-400/5 data-highlighted:bg-indigo-400/5"
+            className="flex items-center gap-2 px-3 py-2 rounded-xl cursor-pointer text-primary hover:text-primary hover:bg-primary/5 data-highlighted:bg-primary/5"
           >
             <Plus className="w-4 h-4" />
             <span className="text-xs font-bold">Manage Projects</span>

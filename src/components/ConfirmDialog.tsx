@@ -33,23 +33,23 @@ export function ConfirmDialog({
 }: ConfirmDialogProps) {
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent className="bg-slate-900 border-white/10 rounded-2xl">
+      <AlertDialogContent className="bg-background border-border/10 rounded-2xl">
         <AlertDialogHeader>
-          <AlertDialogTitle className="text-white">{title}</AlertDialogTitle>
-          <AlertDialogDescription className="text-slate-400">
+          <AlertDialogTitle className="text-foreground">{title}</AlertDialogTitle>
+          <AlertDialogDescription className="text-muted-foreground">
             {description}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel className="bg-white/5 border-white/10 text-white hover:bg-white/10 rounded-xl">
+          <AlertDialogCancel className="bg-card/5 border-border/10 text-foreground hover:bg-card/10 rounded-xl">
             {cancelText}
           </AlertDialogCancel>
           <AlertDialogAction
             onClick={onConfirm}
             className={
               variant === 'destructive'
-                ? 'bg-red-600 hover:bg-red-700 text-white rounded-xl'
-                : 'bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl'
+                ? 'bg-destructive hover:bg-destructive text-foreground rounded-xl'
+                : 'bg-primary hover:bg-primary text-foreground rounded-xl'
             }
           >
             {confirmText}

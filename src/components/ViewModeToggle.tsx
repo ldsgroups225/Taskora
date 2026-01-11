@@ -14,7 +14,7 @@ export function ViewModeToggle() {
   ] as const
 
   return (
-    <nav className="hidden md:flex items-center gap-1 bg-white/5 rounded-full p-1 border border-white/10 shrink-0 relative">
+    <nav className="hidden md:flex items-center gap-1 bg-card/5 rounded-full p-1 border border-border/10 shrink-0 relative">
       {modes.map((mode) => {
         const isActive = viewMode === mode.id
         const Icon = mode.icon
@@ -28,13 +28,13 @@ export function ViewModeToggle() {
             }}
             className={cn(
               'relative flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium transition-colors z-10',
-              isActive ? 'text-white' : 'text-slate-400 hover:text-white',
+              isActive ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
             )}
           >
             {isActive && (
               <motion.div
                 layoutId="view-mode-pill"
-                className="absolute inset-0 bg-indigo-600 rounded-full shadow-lg shadow-indigo-500/20"
+                className="absolute inset-0 bg-primary rounded-full shadow-lg shadow-primary/20"
                 transition={{ type: 'spring', bounce: 0.25, duration: 0.5 }}
               />
             )}

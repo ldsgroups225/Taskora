@@ -18,14 +18,14 @@ export function BacklogReviewPanel() {
     return null
 
   return (
-    <Card className="col-span-1 md:col-span-4 bg-linear-to-b from-indigo-500/10 to-transparent border-indigo-500/20 rounded-3xl overflow-hidden">
-      <CardHeader className="p-6 border-b border-white/10 flex-row items-center justify-between space-y-0">
+    <Card className="col-span-1 md:col-span-4 bg-linear-to-b from-primary/10 to-transparent border-primary/20 rounded-3xl overflow-hidden">
+      <CardHeader className="p-6 border-b border-border/10 flex-row items-center justify-between space-y-0">
         <div>
-          <CardTitle className="text-lg font-bold text-white flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-indigo-400" />
+          <CardTitle className="text-lg font-bold text-foreground flex items-center gap-2">
+            <Sparkles className="w-5 h-5 text-primary" />
             AI Backlog Refinement
           </CardTitle>
-          <p className="text-xs text-slate-500 mt-1">
+          <p className="text-xs text-muted-foreground mt-1">
             Gemini suggested new priorities for
             {' '}
             {proposed.length}
@@ -34,7 +34,7 @@ export function BacklogReviewPanel() {
           </p>
         </div>
         <Link to="/settings/ai">
-          <Button size="sm" className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold gap-2">
+          <Button size="sm" className="bg-primary hover:bg-primary text-foreground rounded-xl text-xs font-bold gap-2">
             REVIEW & APPLY
             <ChevronRight className="w-3 h-3" />
           </Button>
@@ -44,11 +44,11 @@ export function BacklogReviewPanel() {
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse">
             <thead>
-              <tr className="border-b border-white/5 bg-white/2">
-                <th className="px-6 py-3 font-bold text-slate-400 uppercase tracking-tighter w-16 text-center">Rank</th>
-                <th className="px-6 py-3 font-bold text-slate-400 uppercase tracking-tighter">Issue</th>
-                <th className="px-6 py-3 font-bold text-slate-400 uppercase tracking-tighter">Reasoning</th>
-                <th className="px-6 py-3 font-bold text-slate-400 uppercase tracking-tighter text-right">Delta</th>
+              <tr className="border-b border-border/5 bg-card/2">
+                <th className="px-6 py-3 font-bold text-muted-foreground uppercase tracking-tighter w-16 text-center">Rank</th>
+                <th className="px-6 py-3 font-bold text-muted-foreground uppercase tracking-tighter">Issue</th>
+                <th className="px-6 py-3 font-bold text-muted-foreground uppercase tracking-tighter">Reasoning</th>
+                <th className="px-6 py-3 font-bold text-muted-foreground uppercase tracking-tighter text-right">Delta</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
@@ -58,34 +58,34 @@ export function BacklogReviewPanel() {
                 const delta = currentOrder - proposedRank
 
                 return (
-                  <tr key={issue._id} className="group hover:bg-white/2 transition-colors">
+                  <tr key={issue._id} className="group hover:bg-card/2 transition-colors">
                     <td className="px-6 py-4">
-                      <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-indigo-400 font-bold border border-slate-700 mx-auto">
+                      <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-primary font-bold border border-border mx-auto">
                         {proposedRank}
                       </div>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex flex-col">
-                        <span className="font-bold text-slate-200 line-clamp-1">{issue.title}</span>
+                        <span className="font-bold text-foreground line-clamp-1">{issue.title}</span>
                         <div className="flex gap-2 mt-1">
-                          <Badge variant="outline" className="text-[9px] h-3.5 px-1 py-0 border-slate-700 text-slate-500">
+                          <Badge variant="outline" className="text-[9px] h-3.5 px-1 py-0 border-border text-muted-foreground">
                             {issue.priority}
                           </Badge>
-                          <Badge variant="outline" className="text-[9px] h-3.5 px-1 py-0 border-slate-700 text-slate-500">
+                          <Badge variant="outline" className="text-[9px] h-3.5 px-1 py-0 border-border text-muted-foreground">
                             {issue.type}
                           </Badge>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 max-w-xs">
-                      <p className="text-slate-400 italic line-clamp-1 group-hover:line-clamp-none transition-all">
+                      <p className="text-muted-foreground italic line-clamp-1 group-hover:line-clamp-none transition-all">
                         {(issue.properties)?.reprioritizationReason}
                       </p>
                     </td>
                     <td className="px-6 py-4 text-right">
                       {delta > 0
                         ? (
-                            <span className="text-emerald-400 font-bold">
+                            <span className="text-success font-bold">
                               +
                               {delta}
                               {' '}
@@ -101,7 +101,7 @@ export function BacklogReviewPanel() {
                               </span>
                             )
                           : (
-                              <span className="text-slate-500">—</span>
+                              <span className="text-muted-foreground">—</span>
                             )}
                     </td>
                   </tr>
@@ -110,8 +110,8 @@ export function BacklogReviewPanel() {
             </tbody>
           </table>
           {proposed.length > 5 && (
-            <div className="p-3 text-center bg-white/2 border-t border-white/5">
-              <Link to="/settings/ai" className="text-[10px] text-indigo-400 font-bold hover:underline uppercase tracking-widest">
+            <div className="p-3 text-center bg-card/2 border-t border-border/5">
+              <Link to="/settings/ai" className="text-[10px] text-primary font-bold hover:underline uppercase tracking-widest">
                 View
                 {' '}
                 {proposed.length - 5}

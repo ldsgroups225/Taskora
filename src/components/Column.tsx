@@ -115,7 +115,7 @@ export function Column({ ref, name, columnId, boardId, items, nextOrder, previou
       )}
     >
       {acceptColumnDrop === 'left' && (
-        <div className="absolute left-3 top-0 bottom-0 w-1 bg-indigo-500 rounded-full animate-pulse" />
+        <div className="absolute left-3 top-0 bottom-0 w-1 bg-primary rounded-full animate-pulse" />
       )}
 
       <div
@@ -128,8 +128,8 @@ export function Column({ ref, name, columnId, boardId, items, nextOrder, previou
           )
         }}
         className={cn(
-          'flex flex-col w-72 md:w-80 bg-slate-950/40 backdrop-blur-sm border border-white/5 rounded-2xl max-h-full transition-all group/column box-border',
-          acceptCardDrop && 'ring-2 ring-indigo-500 ring-inset',
+          'flex flex-col w-72 md:w-80 bg-background/40 backdrop-blur-sm border border-border/5 rounded-2xl max-h-full transition-all group/column box-border',
+          acceptCardDrop && 'ring-2 ring-primary ring-inset',
         )}
         {...(!items.length ? cardDndProps : {})}
       >
@@ -145,7 +145,7 @@ export function Column({ ref, name, columnId, boardId, items, nextOrder, previou
               }
               inputLabel="Edit column name"
               buttonLabel={`Edit column "${name}" name`}
-              buttonClassName="text-sm font-bold text-white uppercase tracking-wider"
+              buttonClassName="text-sm font-bold text-foreground uppercase tracking-wider"
               onChange={(value) => {
                 updateColumnMutation.mutate({
                   boardId,
@@ -154,7 +154,7 @@ export function Column({ ref, name, columnId, boardId, items, nextOrder, previou
                 })
               }}
             />
-            <Badge variant="secondary" className="bg-white/5 text-slate-400 border-none font-mono text-[10px] py-0 h-4">
+            <Badge variant="secondary" className="bg-card/5 text-muted-foreground border-none font-mono text-[10px] py-0 h-4">
               {items.length}
             </Badge>
           </div>
@@ -166,7 +166,7 @@ export function Column({ ref, name, columnId, boardId, items, nextOrder, previou
                 deleteColumnMutation.mutate({ id: columnId, boardId })
               }}
             >
-              <Button variant="ghost" size="icon" className="h-7 w-7 text-slate-500 hover:text-red-400 hover:bg-red-400/10" type="submit">
+              <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-destructive hover:bg-destructive/10" type="submit">
                 <Trash2 className="w-3.5 h-3.5" />
               </Button>
             </form>
@@ -207,7 +207,7 @@ export function Column({ ref, name, columnId, boardId, items, nextOrder, previou
             : (
                 <Button
                   variant="ghost"
-                  className="w-full justify-start text-xs text-slate-500 hover:text-indigo-400 hover:bg-indigo-500/5 h-9 rounded-xl font-bold uppercase tracking-wider gap-2"
+                  className="w-full justify-start text-xs text-muted-foreground hover:text-primary hover:bg-primary/5 h-9 rounded-xl font-bold uppercase tracking-wider gap-2"
                   onClick={() => setIsAddingCard(true)}
                 >
                   <Plus className="w-4 h-4" />
@@ -218,7 +218,7 @@ export function Column({ ref, name, columnId, boardId, items, nextOrder, previou
       </div>
 
       {acceptColumnDrop === 'right' && (
-        <div className="absolute right-3 top-0 bottom-0 w-1 bg-indigo-500 rounded-full animate-pulse" />
+        <div className="absolute right-3 top-0 bottom-0 w-1 bg-primary rounded-full animate-pulse" />
       )}
     </div>
   )

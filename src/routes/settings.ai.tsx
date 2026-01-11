@@ -43,34 +43,34 @@ function AIGroomingSettings() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">AI Backlog Grooming</h1>
-          <p className="text-slate-400">Review and apply AI-suggested priority rankings.</p>
+          <h1 className="text-2xl font-bold text-foreground">AI Backlog Grooming</h1>
+          <p className="text-muted-foreground">Review and apply AI-suggested priority rankings.</p>
         </div>
         <Button
           onClick={handleRun}
-          className="bg-indigo-600 hover:bg-indigo-700 text-white gap-2"
+          className="bg-primary hover:bg-primary text-foreground gap-2"
         >
           <RefreshCw className="w-4 h-4" />
           Run AI Analysis
         </Button>
       </div>
 
-      <Card className="bg-white/5 border-white/10 rounded-2xl overflow-hidden">
-        <CardHeader className="border-b border-white/5 bg-slate-900/50">
+      <Card className="bg-card/5 border-border/10 rounded-2xl overflow-hidden">
+        <CardHeader className="border-b border-border/5 bg-background/50">
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-lg font-bold text-white flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-indigo-400" />
+              <CardTitle className="text-lg font-bold text-foreground flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-primary" />
                 Proposed Rankings
               </CardTitle>
-              <CardDescription className="text-slate-500">
+              <CardDescription className="text-muted-foreground">
                 AI suggested order based on priority, age, and complexity.
               </CardDescription>
             </div>
             {proposed && proposed.length > 0 && (
               <Button
                 onClick={handleApply}
-                className="bg-emerald-600 hover:bg-emerald-700 text-white gap-2"
+                className="bg-success hover:bg-success text-foreground gap-2"
               >
                 <Check className="w-4 h-4" />
                 Apply All Changes
@@ -81,14 +81,14 @@ function AIGroomingSettings() {
         <CardContent className="p-0">
           {!proposed
             ? (
-                <div className="p-12 text-center text-slate-500 flex flex-col items-center gap-3">
-                  <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
+                <div className="p-12 text-center text-muted-foreground flex flex-col items-center gap-3">
+                  <Loader2 className="w-8 h-8 animate-spin text-primary" />
                   <p>Fetching proposed rankings...</p>
                 </div>
               )
             : proposed.length === 0
               ? (
-                  <div className="p-12 text-center text-slate-500 flex flex-col items-center gap-3">
+                  <div className="p-12 text-center text-muted-foreground flex flex-col items-center gap-3">
                     <AlertCircle className="w-8 h-8 opacity-20" />
                     <p>No proposed rankings found. Run analysis to get suggestions.</p>
                   </div>
@@ -96,26 +96,26 @@ function AIGroomingSettings() {
               : (
                   <div className="divide-y divide-white/5">
                     {proposed.map(issue => (
-                      <div key={issue._id} className="p-4 flex items-center gap-4 hover:bg-white/5 transition-colors group">
-                        <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-indigo-400 font-bold border border-slate-700">
+                      <div key={issue._id} className="p-4 flex items-center gap-4 hover:bg-card/5 transition-colors group">
+                        <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-primary font-bold border border-border">
                           {issue.properties?.proposedOrder}
                         </div>
                         <div className="grow min-w-0">
                           <div className="flex items-center gap-2">
-                            <h4 className="font-medium text-white truncate">{issue.title}</h4>
-                            <Badge variant="outline" className="text-[10px] bg-slate-900/50 text-slate-400 uppercase">
+                            <h4 className="font-medium text-foreground truncate">{issue.title}</h4>
+                            <Badge variant="outline" className="text-[10px] bg-background/50 text-muted-foreground uppercase">
                               {issue.priority}
                             </Badge>
                           </div>
-                          <p className="text-xs text-slate-500 mt-1 italic">
+                          <p className="text-xs text-muted-foreground mt-1 italic">
                             "
                             {(issue.properties).reprioritizationReason}
                             "
                           </p>
                         </div>
                         <div className="text-right shrink-0">
-                          <p className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Current Order</p>
-                          <p className="text-sm font-mono text-slate-400">{issue.order}</p>
+                          <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Current Order</p>
+                          <p className="text-sm font-mono text-muted-foreground">{issue.order}</p>
                         </div>
                       </div>
                     ))}
@@ -124,8 +124,8 @@ function AIGroomingSettings() {
         </CardContent>
       </Card>
 
-      <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 flex gap-3 text-sm text-amber-200/80">
-        <AlertCircle className="w-5 h-5 shrink-0 text-amber-500" />
+      <div className="bg-warning/10 border border-warning/20 rounded-xl p-4 flex gap-3 text-sm text-warning/80">
+        <AlertCircle className="w-5 h-5 shrink-0 text-warning" />
         <p>
           <strong>Warning:</strong>
           {' '}

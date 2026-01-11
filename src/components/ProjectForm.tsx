@@ -99,10 +99,10 @@ export function ProjectForm({ open, onOpenChange, project }: ProjectFormProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px] bg-slate-900 border-white/10 text-white rounded-3xl">
+      <DialogContent className="sm:max-w-[425px] bg-background border-border/10 text-foreground rounded-3xl">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">{project ? 'Edit Project' : 'New Project'}</DialogTitle>
-          <DialogDescription className="text-slate-400">
+          <DialogDescription className="text-muted-foreground">
             {project
               ? 'Update the project details below.'
               : 'Add a new project to start tracking your work.'}
@@ -115,15 +115,15 @@ export function ProjectForm({ open, onOpenChange, project }: ProjectFormProps) {
               name="name"
               render={({ field }: { field: ControllerRenderProps<FormValues, 'name'> }) => (
                 <FormItem>
-                  <FormLabel className="text-slate-300">Project Name</FormLabel>
+                  <FormLabel className="text-foreground">Project Name</FormLabel>
                   <FormControl>
                     <Input
                       placeholder="e.g. Acme Platform"
-                      className="bg-white/5 border-white/10 rounded-xl focus:ring-indigo-500"
+                      className="bg-card/5 border-border/10 rounded-xl focus:ring-primary"
                       {...field}
                     />
                   </FormControl>
-                  <FormMessage className="text-red-400" />
+                  <FormMessage className="text-destructive" />
                 </FormItem>
               )}
             />
@@ -132,19 +132,19 @@ export function ProjectForm({ open, onOpenChange, project }: ProjectFormProps) {
               name="key"
               render={({ field }: { field: ControllerRenderProps<FormValues, 'key'> }) => (
                 <FormItem>
-                  <FormLabel className="text-slate-300">Project Key</FormLabel>
+                  <FormLabel className="text-foreground">Project Key</FormLabel>
                   <FormControl>
                     <Input
                       placeholder="e.g. ACME"
                       disabled={!!project}
-                      className="bg-white/5 border-white/10 rounded-xl uppercase font-mono tracking-wider focus:ring-indigo-500"
+                      className="bg-card/5 border-border/10 rounded-xl uppercase font-mono tracking-wider focus:ring-primary"
                       {...field}
                     />
                   </FormControl>
-                  <FormDescription className="text-xs text-slate-500">
+                  <FormDescription className="text-xs text-muted-foreground">
                     Short uppercase identifier (2-5 chars). Cannot be changed later.
                   </FormDescription>
-                  <FormMessage className="text-red-400" />
+                  <FormMessage className="text-destructive" />
                 </FormItem>
               )}
             />
@@ -153,16 +153,16 @@ export function ProjectForm({ open, onOpenChange, project }: ProjectFormProps) {
               name="description"
               render={({ field }: { field: ControllerRenderProps<FormValues, 'description'> }) => (
                 <FormItem>
-                  <FormLabel className="text-slate-300">Description</FormLabel>
+                  <FormLabel className="text-foreground">Description</FormLabel>
                   <FormControl>
                     <Textarea
                       placeholder="What is this project about?"
-                      className="bg-white/5 border-white/10 rounded-xl min-h-[100px] resize-none focus:ring-indigo-500"
+                      className="bg-card/5 border-border/10 rounded-xl min-h-[100px] resize-none focus:ring-primary"
                       {...field}
                       value={field.value || ''}
                     />
                   </FormControl>
-                  <FormMessage className="text-red-400" />
+                  <FormMessage className="text-destructive" />
                 </FormItem>
               )}
             />
@@ -171,11 +171,11 @@ export function ProjectForm({ open, onOpenChange, project }: ProjectFormProps) {
                 type="button"
                 variant="ghost"
                 onClick={() => onOpenChange(false)}
-                className="text-slate-400 hover:text-white"
+                className="text-muted-foreground hover:text-foreground"
               >
                 Cancel
               </Button>
-              <Button type="submit" className="bg-indigo-600 hover:bg-indigo-700 rounded-xl px-8">
+              <Button type="submit" className="bg-primary hover:bg-primary rounded-xl px-8">
                 {project ? 'Update' : 'Create'}
               </Button>
             </div>

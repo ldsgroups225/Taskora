@@ -37,10 +37,10 @@ import { RoleContext } from '~/context/RoleContext'
 import { useViewMode, ViewModeProvider } from '~/context/ViewModeContext'
 import { useCurrentUser } from '~/hooks/useCurrentUser'
 import { cn } from '~/lib/utils'
-import appCss from '~/styles/app.css?url'
 import { seo } from '~/utils/seo'
-
 import { api } from '../../convex/_generated/api'
+
+import '~/styles/app.css'
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient
@@ -56,7 +56,6 @@ export const Route = createRootRouteWithContext<{
       }),
     ],
     links: [
-      { rel: 'stylesheet', href: appCss },
       { rel: 'icon', href: '/favicon.ico' },
     ],
   }),
@@ -153,18 +152,18 @@ function RootDocument({
       <head>
         <HeadContent />
       </head>
-      <body className="antialiased selection:bg-indigo-500/30">
+      <body className="antialiased selection:bg-primary/30">
         <TooltipProvider>
-          <div className="h-screen flex flex-col min-h-0 bg-slate-950 text-slate-200">
+          <div className="h-screen flex flex-col min-h-0 bg-background text-foreground">
             {/* Header */}
-            <header className="sticky top-0 z-50 w-full border-b border-white/5 bg-slate-950/50 backdrop-blur-xl">
+            <header className="sticky top-0 z-50 w-full border-b border-border/5 bg-background/50 backdrop-blur-xl">
               <div className="container mx-auto px-4 md:px-8 h-16 flex items-center justify-between gap-4">
                 <div className="flex items-center gap-8">
                   <Link to="/" className="flex items-center gap-2 group shrink-0">
-                    <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-500/20 group-hover:scale-110 transition-transform">
-                      <Rocket className="w-5 h-5 text-white" />
+                    <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">
+                      <Rocket className="w-5 h-5 text-foreground" />
                     </div>
-                    <span className="font-bold text-xl tracking-tight text-white uppercase italic">Taskora</span>
+                    <span className="font-bold text-xl tracking-tight text-foreground uppercase italic">Taskora</span>
                   </Link>
 
                   <ViewModeToggle />
@@ -183,7 +182,7 @@ function RootDocument({
                   <div className="flex items-center gap-3">
                     <Link
                       to="/settings/projects"
-                      className="p-2 text-slate-400 hover:text-white hover:bg-white/5 rounded-xl transition-all"
+                      className="p-2 text-muted-foreground hover:text-foreground hover:bg-card/5 rounded-xl transition-all"
                       title="Settings"
                     >
                       <SettingsIcon className="w-5 h-5" />
@@ -192,14 +191,14 @@ function RootDocument({
                       <UserButton
                         appearance={{
                           elements: {
-                            userButtonAvatarBox: 'w-8 h-8 rounded-full border border-white/10',
+                            userButtonAvatarBox: 'w-8 h-8 rounded-full border border-border/10',
                           },
                         }}
                       />
                     </SignedIn>
                     <SignedOut>
                       <SignInButton mode="modal">
-                        <button className="text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <button className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
                           Sign In
                         </button>
                       </SignInButton>
@@ -237,9 +236,9 @@ function LoadingIndicator() {
     )}
     >
       <div className="flex gap-1">
-        <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-bounce" style={{ animationDelay: '0ms' }} />
-        <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-bounce" style={{ animationDelay: '150ms' }} />
-        <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-bounce" style={{ animationDelay: '300ms' }} />
+        <div className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce" style={{ animationDelay: '0ms' }} />
+        <div className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce" style={{ animationDelay: '150ms' }} />
+        <div className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce" style={{ animationDelay: '300ms' }} />
       </div>
     </div>
   )

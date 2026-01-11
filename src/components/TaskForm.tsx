@@ -49,20 +49,20 @@ export function TaskForm({ open, onOpenChange, parentId, initialProjectId }: Tas
 
   // Sync selected project with context or prop
   React.useEffect(() => {
-    if (initialProjectId) {
-      setSelectedProjectId(initialProjectId)
+    if (open) {
+      const targetId = initialProjectId || contextProjectId || ''
+      if (targetId && selectedProjectId !== targetId) {
+        setSelectedProjectId(targetId)
+      }
     }
-    else if (contextProjectId) {
-      setSelectedProjectId(contextProjectId)
-    }
-  }, [contextProjectId, initialProjectId, open])
+  }, [contextProjectId, initialProjectId, open, selectedProjectId])
 
   // Reset type when parentId changes
   React.useEffect(() => {
-    if (parentId) {
+    if (parentId && type !== 'subtask') {
       setType('subtask')
     }
-  }, [parentId])
+  }, [parentId, type])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -99,28 +99,28 @@ export function TaskForm({ open, onOpenChange, parentId, initialProjectId }: Tas
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] bg-slate-900 border-white/10 text-white rounded-3xl overflow-hidden shadow-2xl">
+      <DialogContent className="sm:max-w-[500px] bg-background border-border/10 text-foreground rounded-3xl overflow-hidden shadow-2xl">
         <DialogHeader className="px-1">
           <DialogTitle className="text-2xl font-bold flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
-              <Plus className="w-5 h-5 text-white" />
+            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
+              <Plus className="w-5 h-5 text-foreground" />
             </div>
             {parentId ? 'Add Sub-task' : 'Create New Task'}
           </DialogTitle>
-          <DialogDescription className="text-slate-400">
+          <DialogDescription className="text-muted-foreground">
             {parentId ? 'Decompose this task into smaller manageable pieces.' : 'Add a new item to your backlog or focus list.'}
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6 pt-4">
           <div className="space-y-2">
-            <Label htmlFor="title" className="text-sm font-bold text-slate-300 uppercase tracking-wider ml-1">
+            <Label htmlFor="title" className="text-sm font-bold text-foreground uppercase tracking-wider ml-1">
               Title
             </Label>
             <Input
               id="title"
               placeholder={parentId ? 'Sub-task title...' : 'What needs to be done?'}
-              className="bg-white/5 border-white/10 rounded-2xl h-12 px-4 focus:ring-indigo-500 text-lg font-medium placeholder:text-slate-600"
+              className="bg-card/5 border-border/10 rounded-2xl h-12 px-4 focus:ring-primary text-lg font-medium placeholder:text-muted-foreground"
               value={title}
               onChange={e => setTitle(e.target.value)}
               required
@@ -129,13 +129,13 @@ export function TaskForm({ open, onOpenChange, parentId, initialProjectId }: Tas
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description" className="text-sm font-bold text-slate-300 uppercase tracking-wider ml-1">
+            <Label htmlFor="description" className="text-sm font-bold text-foreground uppercase tracking-wider ml-1">
               Description (Optional)
             </Label>
             <Textarea
               id="description"
               placeholder="Add more details..."
-              className="bg-white/5 border-white/10 rounded-2xl min-h-[100px] p-4 focus:ring-indigo-500 placeholder:text-slate-600"
+              className="bg-card/5 border-border/10 rounded-2xl min-h-[100px] p-4 focus:ring-primary placeholder:text-muted-foreground"
               value={description}
               onChange={e => setDescription(e.target.value)}
             />
@@ -144,18 +144,18 @@ export function TaskForm({ open, onOpenChange, parentId, initialProjectId }: Tas
           <div className="grid grid-cols-2 gap-4">
             {!parentId && (
               <div className="space-y-2">
-                <Label className="text-sm font-bold text-slate-300 uppercase tracking-wider ml-1">
+                <Label className="text-sm font-bold text-foreground uppercase tracking-wider ml-1">
                   Project
                 </Label>
                 <Select value={selectedProjectId} onValueChange={setSelectedProjectId}>
-                  <SelectTrigger className="bg-white/5 border-white/10 rounded-xl h-11 focus:ring-indigo-500">
+                  <SelectTrigger className="bg-card/5 border-border/10 rounded-xl h-11 focus:ring-primary">
                     <SelectValue placeholder="Select project" />
                   </SelectTrigger>
-                  <SelectContent className="bg-slate-900 border-white/10 text-white rounded-xl">
-                    {projects?.map(project => (
+                  <SelectContent className="bg-background border-border/10 text-foreground rounded-xl">
+                    {projects && projects.map(project => (
                       <SelectItem key={project._id} value={project._id} className="rounded-lg">
                         <div className="flex items-center gap-2">
-                          <span className="font-mono text-[10px] text-indigo-400 font-bold uppercase">{project.key}</span>
+                          <span className="font-mono text-[10px] text-primary font-bold uppercase">{project.key}</span>
                           <span>{project.name}</span>
                         </div>
                       </SelectItem>
@@ -166,14 +166,14 @@ export function TaskForm({ open, onOpenChange, parentId, initialProjectId }: Tas
             )}
 
             <div className={cn('space-y-2', parentId ? 'col-span-2' : '')}>
-              <Label className="text-sm font-bold text-slate-300 uppercase tracking-wider ml-1">
+              <Label className="text-sm font-bold text-foreground uppercase tracking-wider ml-1">
                 Priority
               </Label>
               <Select value={priority} onValueChange={(val: any) => setPriority(val)}>
-                <SelectTrigger className="bg-white/5 border-white/10 rounded-xl h-11 focus:ring-indigo-500">
+                <SelectTrigger className="bg-card/5 border-border/10 rounded-xl h-11 focus:ring-primary">
                   <SelectValue placeholder="Select priority" />
                 </SelectTrigger>
-                <SelectContent className="bg-slate-900 border-white/10 text-white rounded-xl">
+                <SelectContent className="bg-background border-border/10 text-foreground rounded-xl">
                   <SelectItem value="low">Low</SelectItem>
                   <SelectItem value="medium">Medium</SelectItem>
                   <SelectItem value="high">High</SelectItem>
@@ -185,7 +185,7 @@ export function TaskForm({ open, onOpenChange, parentId, initialProjectId }: Tas
 
           {!parentId && (
             <div className="space-y-2">
-              <Label className="text-sm font-bold text-slate-300 uppercase tracking-wider ml-1">
+              <Label className="text-sm font-bold text-foreground uppercase tracking-wider ml-1">
                 Issue Type
               </Label>
               <div className="flex flex-wrap gap-2">
@@ -196,8 +196,8 @@ export function TaskForm({ open, onOpenChange, parentId, initialProjectId }: Tas
                     onClick={() => setType(t)}
                     className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider border transition-all ${
                       type === t
-                        ? 'bg-indigo-600/10 border-indigo-500/50 text-white shadow-lg shadow-indigo-500/10'
-                        : 'bg-white/5 border-white/10 text-slate-400 hover:bg-white/10'
+                        ? 'bg-primary/10 border-primary/50 text-foreground shadow-lg shadow-primary/10'
+                        : 'bg-card/5 border-border/10 text-muted-foreground hover:bg-card/10'
                     }`}
                   >
                     {t}
@@ -212,14 +212,14 @@ export function TaskForm({ open, onOpenChange, parentId, initialProjectId }: Tas
               type="button"
               variant="ghost"
               onClick={() => onOpenChange(false)}
-              className="text-slate-400 hover:text-white rounded-xl h-12"
+              className="text-muted-foreground hover:text-foreground rounded-xl h-12"
             >
               Cancel
             </Button>
             <Button
               type="submit"
               disabled={isSubmitting || !selectedProjectId}
-              className="bg-indigo-600 hover:bg-indigo-700 rounded-xl h-12 px-8 font-bold shadow-lg shadow-indigo-500/20 grow sm:grow-0"
+              className="bg-primary hover:bg-primary rounded-xl h-12 px-8 font-bold shadow-lg shadow-primary/20 grow sm:grow-0"
             >
               {isSubmitting ? 'Creating...' : (parentId ? 'Add Child' : 'Create Task')}
             </Button>

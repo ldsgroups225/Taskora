@@ -53,15 +53,15 @@ function ProjectsSettings() {
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-white tracking-tight">Projects</h1>
-          <p className="text-slate-500">Manage your project environments and keys.</p>
+          <h1 className="text-3xl font-bold text-foreground tracking-tight">Projects</h1>
+          <p className="text-muted-foreground">Manage your project environments and keys.</p>
         </div>
         <Button
           onClick={() => {
             setEditingProject(null)
             setIsFormOpen(true)
           }}
-          className="bg-indigo-600 hover:bg-indigo-700 rounded-xl flex items-center gap-2"
+          className="bg-primary hover:bg-primary rounded-xl flex items-center gap-2"
         >
           <Plus className="w-4 h-4" />
           New Project
@@ -73,32 +73,32 @@ function ProjectsSettings() {
           ? (
               Array.from({ length: 3 }).map((_, i) => (
                 // eslint-disable-next-line react/no-array-index-key
-                <Skeleton key={`skeleton-${i}`} className="h-32 w-full rounded-2xl bg-white/5" />
+                <Skeleton key={`skeleton-${i}`} className="h-32 w-full rounded-2xl bg-card/5" />
               ))
             )
           : projects.length === 0
             ? (
-                <div className="text-center py-12 bg-white/5 rounded-3xl border border-dashed border-white/10">
-                  <div className="w-12 h-12 bg-indigo-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Rocket className="w-6 h-6 text-indigo-400" />
+                <div className="text-center py-12 bg-card/5 rounded-3xl border border-dashed border-border/10">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Rocket className="w-6 h-6 text-primary" />
                   </div>
-                  <h3 className="text-lg font-medium text-white">No projects yet</h3>
-                  <p className="text-slate-500 text-sm max-w-sm mx-auto mt-2">
+                  <h3 className="text-lg font-medium text-foreground">No projects yet</h3>
+                  <p className="text-muted-foreground text-sm max-w-sm mx-auto mt-2">
                     Create your first project to start tracking issues and orchestrating agents.
                   </p>
                 </div>
               )
             : (
                 projects.map(project => (
-                  <Card key={project._id} className="bg-white/5 border-white/10 rounded-2xl overflow-hidden group hover:bg-white/8 transition-all">
+                  <Card key={project._id} className="bg-card/5 border-border/10 rounded-2xl overflow-hidden group hover:bg-card/8 transition-all">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 p-6">
                       <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-indigo-600/20 rounded-xl flex items-center justify-center text-indigo-400">
+                        <div className="w-12 h-12 bg-primary/20 rounded-xl flex items-center justify-center text-primary">
                           <LayoutPanelLeft className="w-6 h-6" />
                         </div>
                         <div>
-                          <CardTitle className="text-xl text-white">{project.name}</CardTitle>
-                          <CardDescription className="font-mono text-indigo-400 mt-1 uppercase">
+                          <CardTitle className="text-xl text-foreground">{project.name}</CardTitle>
+                          <CardDescription className="font-mono text-primary mt-1 uppercase">
                             {project.key}
                           </CardDescription>
                         </div>
@@ -108,7 +108,7 @@ function ProjectsSettings() {
                           variant="ghost"
                           size="icon"
                           onClick={() => handleEdit(project)}
-                          className="text-slate-400 hover:text-white hover:bg-white/10 rounded-lg"
+                          className="text-muted-foreground hover:text-foreground hover:bg-card/10 rounded-lg"
                         >
                           <Edit2 className="w-4 h-4" />
                         </Button>
@@ -116,7 +116,7 @@ function ProjectsSettings() {
                           variant="ghost"
                           size="icon"
                           onClick={async () => handleDelete(project._id)}
-                          className="text-slate-400 hover:text-red-400 hover:bg-red-400/10 rounded-lg"
+                          className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg"
                         >
                           <Trash2 className="w-4 h-4" />
                         </Button>
@@ -124,7 +124,7 @@ function ProjectsSettings() {
                     </CardHeader>
                     {project.description && (
                       <CardContent className="px-6 pb-6 pt-0">
-                        <p className="text-slate-400 text-sm leading-relaxed">{project.description}</p>
+                        <p className="text-muted-foreground text-sm leading-relaxed">{project.description}</p>
                       </CardContent>
                     )}
                   </Card>

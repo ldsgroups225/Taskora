@@ -50,7 +50,7 @@ export function EditableText({
             aria-label={inputLabel}
             name={fieldName}
             defaultValue={value}
-            className={cn('h-8 px-2 focus-visible:ring-indigo-500 bg-slate-900 border-white/10 text-white', inputClassName)}
+            className={cn('h-8 px-2 focus-visible:ring-primary bg-background border-border/10 text-foreground', inputClassName)}
             autoFocus
             onKeyDown={(event) => {
               if (event.key === 'Escape') {
@@ -82,12 +82,12 @@ export function EditableText({
             inputRef.current?.select()
           }}
           className={cn(
-            'text-left transition-colors hover:bg-white/5 rounded px-2 py-1 -ml-2',
+            'text-left transition-colors hover:bg-card/5 rounded px-2 py-1 -ml-2',
             buttonClassName,
           )}
         >
           {value || (
-            <span className="text-slate-500 italic">
+            <span className="text-muted-foreground italic">
               Add
               {fieldName}
               ...

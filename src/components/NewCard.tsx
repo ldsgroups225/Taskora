@@ -24,7 +24,7 @@ export function NewCard({
   return (
     <form
       method="post"
-      className="p-3 bg-slate-900 border border-indigo-500/30 rounded-xl space-y-3 shadow-xl shadow-indigo-500/5 transition-all animate-in fade-in zoom-in duration-200"
+      className="p-3 bg-background border border-primary/30 rounded-xl space-y-3 shadow-xl shadow-primary/5 transition-all animate-in fade-in zoom-in duration-200"
       onSubmit={(event) => {
         event.preventDefault()
 
@@ -64,7 +64,7 @@ export function NewCard({
         ref={textAreaRef}
         name={ItemMutationFields.title.name}
         placeholder="Card title..."
-        className="min-h-[80px] bg-slate-950 border-white/10 focus-visible:ring-indigo-500 resize-none text-sm p-3"
+        className="min-h-[80px] bg-background border-border/10 focus-visible:ring-primary resize-none text-sm p-3"
         onKeyDown={(event) => {
           if (event.key === 'Enter' && !event.shiftKey) {
             event.preventDefault()
@@ -76,10 +76,10 @@ export function NewCard({
         }}
       />
       <div className="flex items-center gap-2">
-        <Button size="sm" className="bg-indigo-600 hover:bg-indigo-700 text-xs font-bold grow" ref={buttonRef}>
+        <Button size="sm" className="bg-primary hover:bg-primary text-xs font-bold grow" ref={buttonRef}>
           Add Card
         </Button>
-        <Button size="sm" variant="ghost" className="text-slate-500 hover:text-white text-xs grow" onClick={onComplete}>
+        <Button size="sm" variant="ghost" className="text-muted-foreground hover:text-foreground text-xs grow" onClick={onComplete}>
           Cancel
         </Button>
       </div>

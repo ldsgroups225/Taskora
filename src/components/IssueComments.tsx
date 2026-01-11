@@ -52,10 +52,10 @@ export function IssueComments({ issueId }: IssueCommentsProps) {
 
   return (
     <div className="space-y-6 mt-8">
-      <div className="flex items-center gap-2 border-b border-white/10 pb-2">
-        <MessageSquare className="w-5 h-5 text-indigo-400" />
-        <h3 className="font-bold text-white">Comments</h3>
-        <span className="ml-auto text-xs text-slate-500 font-mono bg-white/5 px-2 py-0.5 rounded-full">
+      <div className="flex items-center gap-2 border-b border-border/10 pb-2">
+        <MessageSquare className="w-5 h-5 text-primary" />
+        <h3 className="font-bold text-foreground">Comments</h3>
+        <span className="ml-auto text-xs text-muted-foreground font-mono bg-card/5 px-2 py-0.5 rounded-full">
           {comments.length}
         </span>
       </div>
@@ -68,23 +68,23 @@ export function IssueComments({ issueId }: IssueCommentsProps) {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="flex gap-4 p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/8 transition-colors group"
+              className="flex gap-4 p-4 rounded-2xl bg-card/5 border border-border/5 hover:bg-card/8 transition-colors group"
             >
               <Avatar className="w-8 h-8 ring-1 ring-white/10">
                 <AvatarImage src={comment.authorAvatar} />
-                <AvatarFallback className="bg-indigo-500 text-white text-[10px]">
+                <AvatarFallback className="bg-primary text-foreground text-[10px]">
                   {comment.authorName[0]}
                 </AvatarFallback>
               </Avatar>
 
               <div className="flex-1 space-y-1">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-bold text-slate-200">{comment.authorName}</span>
-                  <span className="text-[10px] text-slate-500 font-mono">
+                  <span className="text-sm font-bold text-foreground">{comment.authorName}</span>
+                  <span className="text-[10px] text-muted-foreground font-mono">
                     {new Date(comment._creationTime).toLocaleString()}
                   </span>
                 </div>
-                <p className="text-sm text-slate-300 leading-relaxed whitespace-pre-wrap">
+                <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">
                   {comment.content}
                 </p>
               </div>
@@ -93,7 +93,7 @@ export function IssueComments({ issueId }: IssueCommentsProps) {
                 variant="ghost"
                 size="sm"
                 onClick={() => deleteCommentMutation.mutate({ id: comment._id })}
-                className="opacity-0 group-hover:opacity-100 transition-opacity text-slate-500 hover:text-red-400 -mr-2"
+                className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive -mr-2"
               >
                 <Trash2 className="w-3.5 h-3.5" />
               </Button>
@@ -102,7 +102,7 @@ export function IssueComments({ issueId }: IssueCommentsProps) {
         </AnimatePresence>
 
         {comments.length === 0 && (
-          <div className="py-8 text-center text-slate-500 italic text-sm">
+          <div className="py-8 text-center text-muted-foreground italic text-sm">
             Be the first to comment on this issue.
           </div>
         )}
@@ -113,13 +113,13 @@ export function IssueComments({ issueId }: IssueCommentsProps) {
           placeholder="Write a comment..."
           value={content}
           onChange={e => setContent(e.target.value)}
-          className="min-h-[100px] bg-white/5 border-white/10 rounded-2xl focus:ring-indigo-500 text-slate-200 resize-none pb-12"
+          className="min-h-[100px] bg-card/5 border-border/10 rounded-2xl focus:ring-primary text-foreground resize-none pb-12"
         />
         <div className="absolute bottom-3 right-3">
           <Button
             type="submit"
             disabled={!content.trim() || addCommentMutation.isPending}
-            className="bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl px-4 py-2 h-9 border-0 shadow-lg shadow-indigo-900/20 transition-all active:scale-95"
+            className="bg-primary hover:bg-primary text-foreground rounded-xl px-4 py-2 h-9 border-0 shadow-lg shadow-primary/20 transition-all active:scale-95"
           >
             {addCommentMutation.isPending
               ? 'Sending...'
