@@ -76,7 +76,7 @@ export function Card({ ref, title, content, id, columnId, boardId, order, nextOr
       )}
     >
       {acceptDrop === 'top' && (
-        <div className="absolute top-0 left-2 right-2 h-1 bg-indigo-500 rounded-full animate-pulse" />
+        <div className="absolute top-0 left-2 right-2 h-1 bg-primary rounded-full animate-pulse" />
       )}
 
       <ShadcnCard
@@ -89,13 +89,13 @@ export function Card({ ref, title, content, id, columnId, boardId, order, nextOr
           )
           event.stopPropagation()
         }}
-        className="bg-slate-900 border-white/10 hover:border-indigo-500/50 transition-colors shadow-sm cursor-grab active:cursor-grabbing group/card overflow-hidden"
+        className="bg-background border-border/10 hover:border-primary/50 transition-colors shadow-sm cursor-grab active:cursor-grabbing group/card overflow-hidden"
       >
         <CardContent className="p-3 space-y-2">
           <div className="flex items-start justify-between gap-2">
             <div className="flex items-center gap-2 grow">
-              <GripVertical className="w-4 h-4 text-slate-600 group-hover/card:text-slate-400 transition-colors shrink-0" />
-              <h3 className="text-sm font-semibold text-slate-200 leading-tight grow">{title}</h3>
+              <GripVertical className="w-4 h-4 text-muted-foreground group-hover/card:text-muted-foreground transition-colors shrink-0" />
+              <h3 className="text-sm font-semibold text-foreground leading-tight grow">{title}</h3>
             </div>
             <form
               onSubmit={(event) => {
@@ -112,7 +112,7 @@ export function Card({ ref, title, content, id, columnId, boardId, order, nextOr
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-6 w-6 text-slate-600 hover:text-red-400 hover:bg-red-400/10 opacity-0 group-hover/card:opacity-100 transition-opacity"
+                className="h-6 w-6 text-muted-foreground hover:text-destructive hover:bg-destructive/10 opacity-0 group-hover/card:opacity-100 transition-opacity"
                 type="submit"
               >
                 <Trash2 className="w-3 h-3" />
@@ -120,7 +120,7 @@ export function Card({ ref, title, content, id, columnId, boardId, order, nextOr
             </form>
           </div>
           {content && (
-            <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed pl-6">
+            <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed pl-6">
               {content}
             </p>
           )}
@@ -128,7 +128,7 @@ export function Card({ ref, title, content, id, columnId, boardId, order, nextOr
       </ShadcnCard>
 
       {acceptDrop === 'bottom' && (
-        <div className="absolute bottom-0 left-2 right-2 h-1 bg-indigo-500 rounded-full animate-pulse" />
+        <div className="absolute bottom-0 left-2 right-2 h-1 bg-primary rounded-full animate-pulse" />
       )}
     </li>
   )

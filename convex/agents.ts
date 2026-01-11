@@ -1,11 +1,11 @@
-import type { Doc } from './_generated/dataModel'
+import type { Id } from './_generated/dataModel'
 import { v } from 'convex/values'
 import { internal } from './_generated/api'
-import { internalAction, mutation } from './_generated/server'
+import { internalAction, internalMutation, internalQuery, query } from './_generated/server'
 
-export const assignTasks = mutation({
-  args: {},
-  handler: async (ctx) => {
+export const getUnassignedIssues = internalQuery({
+  args: { projectId: v.optional(v.id('projects')) },
+  handler: async (ctx, args) => {
     // 1. Get unassigned issues
     const issues = await ctx.db
       .query('issues')
@@ -13,67 +13,102 @@ export const assignTasks = mutation({
       .filter(q => q.neq(q.field('status'), 'done'))
       .collect()
 
-    if (issues.length === 0)
-      return { message: 'No unassigned tasks' }
-
-    // 2. Get available developers
-    const users = await ctx.db
-      .query('users')
-      .withIndex('by_clerkId') // Just get text index or scan
-      .collect()
-
-    // Filter for devs in memory for now
-    const devs = users.filter(u => u.role === 'dev')
-
-    if (devs.length === 0)
-      return { message: 'No developers found' }
-
-    // 3. Call AI action to get assignments
-    // We need to schedule this or use an action if we want to wait (but mutations can't await actions directly unless using scheduler)
-    // For "validation" purposes (Step 5.2), we'll do this in a test flow or action.
-    // BUT, a proper agent would be an ACTION that queries DB, calls AI, then calls a MUTATION to update.
-
-    // So let's return data for the caller (Action) to use
-    return { issues, devs }
+    // 2. Filter by project if needed
+    if (args.projectId) {
+      return issues.filter(i => i.projectId === args.projectId)
+    }
+    return issues
   },
 })
 
-// The actual agent execution flow
+export const getAgentLogs = query({
+  args: { projectId: v.optional(v.id('projects')) },
+  handler: async (ctx, args) => {
+    if (args.projectId) {
+      return ctx.db
+        .query('agentLogs')
+        .withIndex('by_project', q => q.eq('projectId', args.projectId!))
+        .order('desc')
+        .take(20)
+    }
+    return ctx.db.query('agentLogs').order('desc').take(20)
+  },
+})
+
 export const runAutoAssignment = internalAction({
-  args: {},
-  handler: async (ctx) => {
-    // 1. Fetch data via query/mutation
-    const data = await ctx.runMutation((internal as any).agents.assignTasks, {}) as
-      | { message: string }
-      | { issues: Doc<'issues'>[], devs: Doc<'users'>[] }
-    if ('message' in data) {
-      console.log(data.message)
+  args: {
+    projectId: v.optional(v.id('projects')),
+  },
+  handler: async (ctx, args) => {
+    // 1. Get Unassigned Issues
+    const issues = await ctx.runQuery(internal.agents.getUnassignedIssues, { projectId: args.projectId })
+
+    if (issues.length === 0) {
+      console.log('No unassigned issues found.')
       return
     }
 
-    const { issues, devs } = data
+    // 2. Get Developer Capacity
+    const capacity = await ctx.runQuery(internal.capacity.getDeveloperCapacity, {})
 
-    // 2. Call Gemini
-    const assignments = await ctx.runAction((internal as any).ai.groomBacklog, {
-      issues: issues.map(i => ({ id: i._id, title: i.title, priority: i.priority })),
-      team: devs.map(u => ({ id: u._id, name: u.name, role: u.role })),
+    if (capacity.length === 0) {
+      console.log('No developers found.')
+      return
+    }
+
+    console.log(`Auto-assigning ${issues.length} issues among ${capacity.length} developers...`)
+
+    // 3. Ask AI for Assignments
+    const assignments = await ctx.runAction(internal.ai.suggestAssignments, {
+      issues: issues.map(i => ({
+        id: i._id,
+        title: i.title,
+        priority: i.priority,
+        storyPoints: i.storyPoints,
+        type: i.type,
+      })),
+      capacity,
     })
 
-    console.log('AI Recommendations:', assignments)
-
-    // 3. Apply updates (Mock implementation of applying logic)
-    if (Array.isArray(assignments)) {
-      await ctx.runMutation((internal as any).agents.applyAssignments, { assignments })
+    if (!Array.isArray(assignments) || assignments.length === 0) {
+      console.log('No assignments suggested by AI.')
+      return
     }
+
+    // 4. Apply Assignments
+    await ctx.runMutation(internal.agents.applyAssignments, { assignments })
   },
 })
 
-export const applyAssignments = mutation({
+export const applyAssignments = internalMutation({
   args: { assignments: v.any() },
   handler: async (ctx, args) => {
     for (const assignment of args.assignments) {
-      if (assignment.assigneeId && assignment.id) {
-        await ctx.db.patch(assignment.id, { assigneeId: assignment.assigneeId })
+      const { issueId, assigneeId, reason } = assignment
+
+      if (issueId && assigneeId) {
+        const validIssueId = issueId as Id<'issues'>
+        const validAssigneeId = assigneeId as Id<'users'>
+        const issue = await ctx.db.get(validIssueId)
+
+        if (!issue || issue.assigneeId !== undefined)
+          continue
+
+        // Update issue
+        const properties = issue.properties || {}
+        await ctx.db.patch(validIssueId, {
+          assigneeId: validAssigneeId,
+          properties: { ...properties, aiAssigned: true },
+        })
+
+        // Log action (Task 5.6)
+        await ctx.db.insert('agentLogs', {
+          projectId: issue.projectId,
+          issueId: validIssueId,
+          action: 'auto_assignment',
+          result: `Assigned to user ${assigneeId}. Reason: ${reason}`,
+          status: 'success',
+        })
       }
     }
   },

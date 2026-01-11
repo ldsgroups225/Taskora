@@ -83,6 +83,31 @@ const schema = defineSchema({
     .index('by_assignee', ['assigneeId'])
     .index('by_status', ['status'])
     .index('by_parent', ['parentId']),
+
+  agentLogs: defineTable({
+    projectId: v.id('projects'),
+    issueId: v.optional(v.id('issues')),
+    action: v.string(),
+    result: v.string(),
+    status: v.union(v.literal('pending'), v.literal('success'), v.literal('failed')),
+    error: v.optional(v.string()),
+  })
+    .index('by_project', ['projectId'])
+    .index('by_issue', ['issueId']),
+
+  comments: defineTable({
+    issueId: v.id('issues'),
+    authorId: v.id('users'),
+    content: v.string(),
+  }).index('by_issue', ['issueId']),
+
+  activityLog: defineTable({
+    issueId: v.id('issues'),
+    userId: v.id('users'),
+    action: v.string(),
+    oldValue: v.optional(v.string()),
+    newValue: v.optional(v.string()),
+  }).index('by_issue', ['issueId']),
 })
 
 export default schema
@@ -118,3 +143,7 @@ export const deleteColumnSchema = v.object({
 export type Board = Infer<typeof board>
 export type Column = Infer<typeof column>
 export type Item = Infer<typeof item>
+export type User = Infer<typeof schema.tables.users.validator>
+export type Project = Infer<typeof schema.tables.projects.validator>
+export type Issue = Infer<typeof schema.tables.issues.validator>
+export type DocIssue = Issue & { _id: string, _creationTime: number }

@@ -1,4 +1,5 @@
 import { v } from 'convex/values'
+import { internal } from './_generated/api'
 import { mutation, query } from './_generated/server'
 
 /**
@@ -37,19 +38,34 @@ export const createIssue = mutation({
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity()
-    // For now, we'll assume a creatorId exists or fallback to a system user in simplified dev mode
-    // In a real app, identity.subject would be matched to a record in our 'users' table
-    const creator = await ctx.db.query('users').first() // Temporary creator resolution
+    if (!identity)
+      throw new Error('Not authenticated')
+
+    const creator = await ctx.db
+      .query('users')
+      .withIndex('by_clerkId', q => q.eq('clerkId', identity.subject))
+      .unique()
+
     if (!creator)
-      throw new Error('No users found to assign as creator')
+      throw new Error('User not found in database')
 
-    const lastIssue = await ctx.db
-      .query('issues')
-      .withIndex('by_project', q => q.eq('projectId', args.projectId))
-      .order('desc')
-      .first()
-
-    const order = lastIssue ? lastIssue.order + 1 : 1
+    let order: number
+    if (args.priority === 'critical' && args.type === 'bug') {
+      const firstIssue = await ctx.db
+        .query('issues')
+        .withIndex('by_project', q => q.eq('projectId', args.projectId))
+        .order('asc')
+        .first()
+      order = firstIssue ? firstIssue.order - 1 : 0
+    }
+    else {
+      const lastIssue = await ctx.db
+        .query('issues')
+        .withIndex('by_project', q => q.eq('projectId', args.projectId))
+        .order('desc')
+        .first()
+      order = lastIssue ? lastIssue.order + 1 : 1
+    }
 
     const id = await ctx.db.insert('issues', {
       ...args,
@@ -94,14 +110,70 @@ export const updateIssue = mutation({
     }),
   },
   handler: async (ctx, { id, patch }) => {
+    const identity = await ctx.auth.getUserIdentity()
+    if (!identity)
+      throw new Error('Not authenticated')
+
+    const user = await ctx.db
+      .query('users')
+      .withIndex('by_clerkId', q => q.eq('clerkId', identity.subject))
+      .unique()
+
+    if (!user)
+      throw new Error('User not found')
+
     const issue = await ctx.db.get(id)
     if (!issue)
       throw new Error('Issue not found')
 
-    // AI Trigger Hook: If status changes to 'in_review', we could trigger an agent here
+    // Track changes for activity log
+    const changes: { action: string, oldValue?: string, newValue?: string }[] = []
+
     if (patch.status && patch.status !== issue.status) {
-      console.log(`Transitioning issue ${id} from ${issue.status} to ${patch.status}`)
-      // Future: ctx.scheduler.runAfter(0, internal.agents.analyzeReview, { issueId: id })
+      changes.push({ action: 'status_change', oldValue: issue.status, newValue: patch.status })
+
+      // AI Trigger Hook
+      if (patch.status === 'in_review') {
+        await ctx.scheduler.runAfter(0, internal.postFunctions.onTransitionToReview, {
+          issueId: id,
+          projectId: issue.projectId,
+          title: issue.title,
+          description: issue.description ?? '',
+        })
+      }
+      else if (patch.status === 'done') {
+        await ctx.scheduler.runAfter(0, internal.postFunctions.onTransitionToDone, {
+          issueId: id,
+          projectId: issue.projectId,
+          title: issue.title,
+          description: issue.description ?? '',
+        })
+      }
+    }
+
+    if (patch.priority && patch.priority !== issue.priority) {
+      changes.push({ action: 'priority_change', oldValue: issue.priority, newValue: patch.priority })
+    }
+
+    if (patch.assigneeId !== undefined && patch.assigneeId !== issue.assigneeId) {
+      changes.push({
+        action: 'assignee_change',
+        oldValue: issue.assigneeId ? String(issue.assigneeId) : 'unassigned',
+        newValue: patch.assigneeId ? String(patch.assigneeId) : 'unassigned',
+      })
+    }
+
+    if (patch.title && patch.title !== issue.title) {
+      changes.push({ action: 'title_change', oldValue: issue.title, newValue: patch.title })
+    }
+
+    // Log all changes
+    for (const change of changes) {
+      await ctx.db.insert('activityLog', {
+        issueId: id,
+        userId: user._id,
+        ...change,
+      })
     }
 
     await ctx.db.patch(id, patch)
@@ -124,6 +196,33 @@ export const deleteIssue = mutation({
     }
 
     await ctx.db.delete(id)
+  },
+})
+
+/**
+ * List issues assigned to the current user
+ */
+export const listMyIssues = query({
+  args: {},
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity()
+    if (!identity) {
+      return []
+    }
+
+    const user = await ctx.db
+      .query('users')
+      .withIndex('by_clerkId', q => q.eq('clerkId', identity.subject))
+      .unique()
+
+    if (!user) {
+      return []
+    }
+
+    return ctx.db
+      .query('issues')
+      .withIndex('by_assignee', q => q.eq('assigneeId', user._id))
+      .collect()
   },
 })
 
