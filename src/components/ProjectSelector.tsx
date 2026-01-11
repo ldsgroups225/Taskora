@@ -22,7 +22,7 @@ export function ProjectSelector({ selectedId, onSelect }: ProjectSelectorProps) 
   const projects = useQuery(api.projects.listProjects)
 
   const selectedProject = React.useMemo(() => {
-    return (projects as any[])?.find(p => p._id === selectedId)
+    return projects?.find(p => p._id === selectedId)
   }, [projects, selectedId])
 
   return (

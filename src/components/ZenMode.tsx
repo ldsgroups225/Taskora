@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { AlertCircle, CheckCircle2, Circle, Clock, Loader2, Plus, Sparkles, Zap } from 'lucide-react'
+import { AlertCircle, Bot, CheckCircle2, Circle, Clock, Loader2, Plus, Sparkles, Zap } from 'lucide-react'
 import * as React from 'react'
 import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
@@ -97,6 +97,12 @@ export function ZenMode() {
                           <Badge variant="outline" className="text-[10px] uppercase font-bold py-0 h-4 border-purple-500/20 bg-purple-900/20 text-purple-400">
                             <Sparkles className="w-2 h-2 mr-1" />
                             AI
+                          </Badge>
+                        )}
+                        {task.properties?.aiAssigned && (
+                          <Badge variant="outline" className="text-[10px] uppercase font-bold py-0 h-4 border-indigo-500/20 bg-indigo-900/20 text-indigo-400">
+                            <Bot className="w-2 h-2 mr-1" />
+                            AI Assigned
                           </Badge>
                         )}
                       </div>

@@ -134,16 +134,16 @@ Update the file after completing each sub-task, not just after completing an ent
   - [x] 4.8 Add visual indicator (sparkle icon) in issue cards when AI content is present
   - [x] 4.9 Display AI summaries in issue detail view with expandable section
 
-- [ ] 5.0 Build Auto-Assignment Agent
-  - [ ] 5.1 Create `convex/capacity.ts` with query to calculate developer workload (open task count, story points)
-  - [ ] 5.2 Update `convex/ai.ts` with `suggestAssignments` action using Gemini
-  - [ ] 5.3 Update `convex/agents.ts` `runAutoAssignment` to use new capacity data
-  - [ ] 5.4 Add developer skill matching based on past task types (store in user properties)
-  - [ ] 5.5 Update `convex/crons.ts` to schedule auto-assignment daily at 2:00 AM UTC
-  - [ ] 5.6 Log all assignment decisions with reasoning to `agentLogs`
-  - [ ] 5.7 Create `src/components/AgentActivityFeed.tsx` to show recent AI actions in WarRoom
-  - [ ] 5.8 Add "AI Assigned" badge to issues that were auto-assigned
-  - [ ] 5.9 Allow manual override of AI assignments without breaking the system
+- [x] 5.0 Build Auto-Assignment Agent
+  - [x] 5.1 Create `convex/capacity.ts` with query to calculate developer workload (open task count, story points)
+  - [x] 5.2 Update `convex/ai.ts` with `suggestAssignments` action using Gemini
+  - [x] 5.3 Update `convex/agents.ts` `runAutoAssignment` to use new capacity data
+  - [x] 5.4 Add developer skill matching based on past task types (store in user properties)
+  - [x] 5.5 Update `convex/crons.ts` to schedule auto-assignment daily at 2:00 AM UTC
+  - [x] 5.6 Log all assignment decisions with reasoning to `agentLogs`
+  - [x] 5.7 Create `src/components/AgentActivityFeed.tsx` to show recent AI actions in WarRoom
+  - [x] 5.8 Add "AI Assigned" badge to issues that were auto-assigned
+  - [x] 5.9 Allow manual override of AI assignments without breaking the system
 
 - [ ] 6.0 Build Dynamic Re-Prioritization Agent
   - [ ] 6.1 Create `convex/reprioritization.ts` with internal action for backlog ranking

@@ -43,7 +43,7 @@ function TeamSettings() {
               ))
             )
           : (
-              (users as any[]).map(user => (
+              users.map(user => (
                 <Card key={user._id} className="bg-white/5 border-white/10 rounded-2xl overflow-hidden hover:bg-white/8 transition-all">
                   <CardContent className="p-4 flex items-center justify-between gap-4">
                     <div className="flex items-center gap-4">

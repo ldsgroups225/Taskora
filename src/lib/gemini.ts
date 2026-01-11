@@ -1,4 +1,5 @@
 import { GoogleGenAI } from '@google/genai'
+import { AI_MODEL } from './constants'
 
 const API_KEY = process.env.GEMINI_API_KEY || ''
 const client = new GoogleGenAI({ apiKey: API_KEY })
@@ -20,7 +21,7 @@ export async function groomBacklog(issues: any[], context: any) {
   `
 
   const result = await client.models.generateContent({
-    model: 'gemini-2.5-flash',
+    model: AI_MODEL,
     contents: [{ role: 'user', parts: [{ text: prompt }] }],
   })
   return result.text
@@ -42,7 +43,7 @@ export async function analyzeReviewRequest(issue: any, codeDiff: string) {
   `
 
   const result = await client.models.generateContent({
-    model: 'gemini-2.0-flash',
+    model: AI_MODEL,
     contents: [{ role: 'user', parts: [{ text: prompt }] }],
   })
   return result.text
@@ -61,7 +62,7 @@ export async function parseAQL(query: string) {
   `
 
   const result = await client.models.generateContent({
-    model: 'gemini-2.0-flash',
+    model: AI_MODEL,
     contents: [{ role: 'user', parts: [{ text: prompt }] }],
   })
 

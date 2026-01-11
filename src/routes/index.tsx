@@ -20,7 +20,7 @@ function Home() {
       void navigate({ to: '/onboarding' })
     }
     if (!isLoading && user?.role && user.role !== role) {
-      setRole(user.role as any)
+      setRole(user.role)
     }
   }, [user, isLoading, isAuthenticated, role, setRole, navigate])
 

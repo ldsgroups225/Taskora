@@ -3,6 +3,7 @@ import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { motion } from 'framer-motion'
 import {
+  Bot,
   Calendar,
   CheckCircle2,
   ChevronRight,
@@ -139,6 +140,15 @@ function TaskDetail() {
                 >
                   {issue.type}
                 </Badge>
+                {issue.properties?.aiAssigned && (
+                  <Badge
+                    variant="outline"
+                    className="uppercase tracking-wider font-bold px-3 py-1 border-indigo-500/50 text-indigo-400 bg-indigo-500/10 flex items-center gap-1"
+                  >
+                    <Bot className="w-3 h-3" />
+                    AI Assigned
+                  </Badge>
+                )}
                 <div className="flex items-center gap-3 text-xs font-mono text-slate-500">
                   <span className="flex items-center gap-1.5 px-2 py-1 rounded bg-white/5">
                     <Clock className="w-3 h-3" />

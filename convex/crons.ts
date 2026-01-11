@@ -3,6 +3,12 @@ import { internal } from './_generated/api'
 
 const crons = cronJobs()
 
-crons.cron('clear messages table', '0,20,40 * * * *', internal.board.clear)
+// Auto-assign tasks daily at 2:00 AM UTC
+crons.daily(
+  'auto assignment',
+  { hourUTC: 2, minuteUTC: 0 },
+  internal.agents.runAutoAssignment,
+  {},
+)
 
 export default crons

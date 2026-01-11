@@ -77,7 +77,7 @@ function ProjectsSettings() {
                 </div>
               )
             : (
-                (projects as any[]).map(project => (
+                projects.map(project => (
                   <Card key={project._id} className="bg-white/5 border-white/10 rounded-2xl overflow-hidden group hover:bg-white/8 transition-all">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 p-6">
                       <div className="flex items-center gap-4">

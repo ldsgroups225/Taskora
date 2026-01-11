@@ -12,6 +12,8 @@ import type * as agents from "../agents.js";
 import type * as ai from "../ai.js";
 import type * as auth from "../auth.js";
 import type * as board from "../board.js";
+import type * as capacity from "../capacity.js";
+import type * as constants from "../constants.js";
 import type * as crons from "../crons.js";
 import type * as deliverables from "../deliverables.js";
 import type * as issues from "../issues.js";
@@ -32,6 +34,8 @@ declare const fullApi: ApiFromModules<{
   ai: typeof ai;
   auth: typeof auth;
   board: typeof board;
+  capacity: typeof capacity;
+  constants: typeof constants;
   crons: typeof crons;
   deliverables: typeof deliverables;
   issues: typeof issues;

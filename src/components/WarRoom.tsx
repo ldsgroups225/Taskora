@@ -5,7 +5,6 @@ import {
   Target,
   TrendingUp,
   Trophy,
-  Users,
   Zap,
 } from 'lucide-react'
 import { Badge } from '~/components/ui/badge'
@@ -15,6 +14,7 @@ import { Progress } from '~/components/ui/progress'
 import { Skeleton } from '~/components/ui/skeleton'
 import { useDeliverables } from '~/hooks/useDeliverables'
 import { useProjectMetrics } from '~/hooks/useProjectMetrics'
+import { AgentActivityFeed } from './AgentActivityFeed'
 
 export function WarRoom() {
   const { metrics, isLoading: isLoadingMetrics } = useProjectMetrics()
@@ -95,20 +95,9 @@ export function WarRoom() {
           </CardContent>
         </Card>
 
-        <Card className="bg-white/5 border-white/10 rounded-3xl p-6 hover:bg-white/8 transition-colors cursor-pointer group">
-          <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-            <Users className="w-5 h-5 text-blue-500" />
-          </div>
-          <p className="text-slate-400 text-sm font-medium">Active Agents</p>
-          {isLoadingMetrics
-            ? (
-                <Skeleton className="h-9 w-12 mt-1 bg-white/5" />
-              )
-            : (
-                <h2 className="text-3xl font-bold text-white mt-1">{metrics?.activeAgents ?? 0}</h2>
-              )}
-          <p className="text-slate-500 text-xs mt-2">Running orchestration</p>
-        </Card>
+        <div className="md:col-span-1 md:row-span-2">
+          <AgentActivityFeed />
+        </div>
 
         {/* Deliverables Grid */}
         <Card className="col-span-1 md:col-span-3 bg-white/5 border-white/10 rounded-3xl overflow-hidden flex flex-col">

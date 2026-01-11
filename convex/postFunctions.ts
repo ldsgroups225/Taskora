@@ -2,6 +2,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai'
 import { v } from 'convex/values'
 import { internal } from './_generated/api'
 import { internalAction, internalMutation } from './_generated/server'
+import { AI_MODEL } from './constants'
 
 function getGenAI() {
   const apiKey = process.env.GOOGLE_API_KEY
@@ -51,7 +52,7 @@ export const onTransitionToReview = internalAction({
   handler: async (ctx, args) => {
     try {
       const genAI = getGenAI()
-      const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
+      const model = genAI.getGenerativeModel({ model: AI_MODEL })
 
       const prompt = `You are an AI code reviewer.
 Issue Title: ${args.title}
@@ -98,7 +99,7 @@ export const onTransitionToDone = internalAction({
   handler: async (ctx, args) => {
     try {
       const genAI = getGenAI()
-      const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
+      const model = genAI.getGenerativeModel({ model: AI_MODEL })
 
       const prompt = `You are an AI project manager.
 The following issue has just been completed:
