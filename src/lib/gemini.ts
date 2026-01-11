@@ -4,10 +4,26 @@ import { AI_MODEL } from './constants'
 const API_KEY = process.env.GEMINI_API_KEY || ''
 const client = new GoogleGenAI({ apiKey: API_KEY })
 
+interface Issue {
+  _id: string
+  title: string
+  priority: string
+  storyPoints?: number
+  type: string
+}
+
+interface Capacity {
+  team: {
+    _id: string
+    name: string
+    loadScore: number
+  }[]
+}
+
 /**
  * AI Agent for Backlog Grooming & Auto-assignment
  */
-export async function groomBacklog(issues: any[], context: any) {
+export async function groomBacklog(issues: Issue[], context: Capacity) {
   const prompt = `
     System: You are Taskora Orchestrator, an Agentic AI for project management.
     Task: Re-prioritize the following backlog and suggest assignments based on team capacity.
@@ -30,7 +46,7 @@ export async function groomBacklog(issues: any[], context: any) {
 /**
  * AI Post-Function: Analyze Review
  */
-export async function analyzeReviewRequest(issue: any, codeDiff: string) {
+export async function analyzeReviewRequest(issue: Issue, codeDiff: string) {
   const prompt = `
     Analyze the following issue and code changes for 'In Review' transition.
     Issue: ${issue.title}

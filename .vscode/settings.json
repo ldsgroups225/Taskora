@@ -66,5 +66,9 @@
     ".vscode",
     ".vscode-insiders",
     "tasks"
+  ],
+  "cSpell.words": [
+    "reprioritization",
+    "Reprioritized"
   ]
 }

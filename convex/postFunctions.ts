@@ -76,14 +76,14 @@ Please generate a structured code review summary checklist for this issue. Focus
         patch: { aiReviewSummary: text },
       })
     }
-    catch (e: any) {
+    catch (e) {
       await ctx.runMutation(internal.postFunctions.logAgentAction, {
         projectId: args.projectId,
         issueId: args.issueId,
         action: 'review_summary',
         result: '',
         status: 'failed',
-        error: e.message || 'Unknown error',
+        error: (e as Error).message || 'Unknown error',
       })
     }
   },
@@ -124,14 +124,14 @@ Generate a short impact summary celebrating this achievement and noting its pote
         patch: { aiImpactSummary: text },
       })
     }
-    catch (e: any) {
+    catch (e) {
       await ctx.runMutation(internal.postFunctions.logAgentAction, {
         projectId: args.projectId,
         issueId: args.issueId,
         action: 'impact_summary',
         result: '',
         status: 'failed',
-        error: e.message || 'Unknown error',
+        error: (e as Error).message || 'Unknown error',
       })
     }
   },

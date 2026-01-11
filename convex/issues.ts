@@ -49,13 +49,23 @@ export const createIssue = mutation({
     if (!creator)
       throw new Error('User not found in database')
 
-    const lastIssue = await ctx.db
-      .query('issues')
-      .withIndex('by_project', q => q.eq('projectId', args.projectId))
-      .order('desc')
-      .first()
-
-    const order = lastIssue ? lastIssue.order + 1 : 1
+    let order: number
+    if (args.priority === 'critical' && args.type === 'bug') {
+      const firstIssue = await ctx.db
+        .query('issues')
+        .withIndex('by_project', q => q.eq('projectId', args.projectId))
+        .order('asc')
+        .first()
+      order = firstIssue ? firstIssue.order - 1 : 0
+    }
+    else {
+      const lastIssue = await ctx.db
+        .query('issues')
+        .withIndex('by_project', q => q.eq('projectId', args.projectId))
+        .order('desc')
+        .first()
+      order = lastIssue ? lastIssue.order + 1 : 1
+    }
 
     const id = await ctx.db.insert('issues', {
       ...args,

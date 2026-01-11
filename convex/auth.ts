@@ -1,3 +1,4 @@
+import type { Doc } from './_generated/dataModel'
 import { v } from 'convex/values'
 import { internalMutation, mutation, query } from './_generated/server'
 
@@ -20,7 +21,7 @@ export const storeUser = mutation({
       .unique()
 
     if (existingUser) {
-      const patch: any = {}
+      const patch: Partial<Doc<'users'>> = {}
       if (email && existingUser.email !== email)
         patch.email = email
       if (name && existingUser.name !== name)

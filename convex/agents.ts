@@ -60,7 +60,7 @@ export const runAutoAssignment = internalAction({
 
     // 3. Ask AI for Assignments
     const assignments = await ctx.runAction(internal.ai.suggestAssignments, {
-      issues: issues.map((i: any) => ({
+      issues: issues.map(i => ({
         id: i._id,
         title: i.title,
         priority: i.priority,

@@ -15,6 +15,7 @@ import { Skeleton } from '~/components/ui/skeleton'
 import { useDeliverables } from '~/hooks/useDeliverables'
 import { useProjectMetrics } from '~/hooks/useProjectMetrics'
 import { AgentActivityFeed } from './AgentActivityFeed'
+import { BacklogReviewPanel } from './BacklogReviewPanel'
 
 export function WarRoom() {
   const { metrics, isLoading: isLoadingMetrics } = useProjectMetrics()
@@ -186,6 +187,10 @@ export function WarRoom() {
             VIEW ANALYTICS
           </Button>
         </Card>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-6">
+        <BacklogReviewPanel />
       </div>
     </motion.div>
   )

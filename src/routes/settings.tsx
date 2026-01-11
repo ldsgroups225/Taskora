@@ -1,5 +1,5 @@
 import { createFileRoute, Link, Outlet } from '@tanstack/react-router'
-import { FolderGit2, Users } from 'lucide-react'
+import { FolderGit2, Sparkles, Users } from 'lucide-react'
 
 export const Route = createFileRoute('/settings')({
   component: SettingsLayout,
@@ -25,6 +25,13 @@ function SettingsLayout() {
             >
               <Users className="w-4 h-4" />
               Team
+            </Link>
+            <Link
+              to="/settings/ai"
+              className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-all [&.active]:bg-indigo-600/10 [&.active]:text-indigo-400 [&.active]:font-medium"
+            >
+              <Sparkles className="w-4 h-4" />
+              AI Grooming
             </Link>
           </nav>
         </aside>

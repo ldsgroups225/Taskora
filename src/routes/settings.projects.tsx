@@ -1,3 +1,4 @@
+import type { Doc, Id } from '../../convex/_generated/dataModel'
 import { createFileRoute } from '@tanstack/react-router'
 import { useMutation, useQuery } from 'convex/react'
 import { Edit2, LayoutPanelLeft, Plus, Rocket, Trash2 } from 'lucide-react'
@@ -17,9 +18,9 @@ function ProjectsSettings() {
   const projects = useQuery(api.projects.listProjects)
   const deleteProject = useMutation(api.projects.deleteProject)
   const [isFormOpen, setIsFormOpen] = React.useState(false)
-  const [editingProject, setEditingProject] = React.useState<any>(null)
+  const [editingProject, setEditingProject] = React.useState<Doc<'projects'> | null>(null)
 
-  const handleDelete = async (id: any) => {
+  const handleDelete = async (id: Id<'projects'>) => {
     // eslint-disable-next-line no-alert
     if (window.confirm('Are you sure you want to delete this project? All associated issues will be lost.')) {
       try {
@@ -32,7 +33,7 @@ function ProjectsSettings() {
     }
   }
 
-  const handleEdit = (project: any) => {
+  const handleEdit = (project: Doc<'projects'>) => {
     setEditingProject(project)
     setIsFormOpen(true)
   }

@@ -20,6 +20,7 @@ import type * as issues from "../issues.js";
 import type * as metrics from "../metrics.js";
 import type * as postFunctions from "../postFunctions.js";
 import type * as projects from "../projects.js";
+import type * as reprioritization from "../reprioritization.js";
 import type * as test_utils from "../test_utils.js";
 import type * as users from "../users.js";
 
@@ -42,6 +43,7 @@ declare const fullApi: ApiFromModules<{
   metrics: typeof metrics;
   postFunctions: typeof postFunctions;
   projects: typeof projects;
+  reprioritization: typeof reprioritization;
   test_utils: typeof test_utils;
   users: typeof users;
 }>;

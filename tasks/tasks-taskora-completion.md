@@ -145,16 +145,16 @@ Update the file after completing each sub-task, not just after completing an ent
   - [x] 5.8 Add "AI Assigned" badge to issues that were auto-assigned
   - [x] 5.9 Allow manual override of AI assignments without breaking the system
 
-- [ ] 6.0 Build Dynamic Re-Prioritization Agent
-  - [ ] 6.1 Create `convex/reprioritization.ts` with internal action for backlog ranking
-  - [ ] 6.2 Implement scoring algorithm considering: priority, age, blocking status, story points
-  - [ ] 6.3 Call Gemini to enhance ranking with contextual reasoning
-  - [ ] 6.4 Store AI priority reasoning in `properties.aiPriorityReason`
-  - [ ] 6.5 Automatically bump `critical` bugs to top when created (immediate trigger)
-  - [ ] 6.6 Update `convex/crons.ts` to schedule re-prioritization daily at 3:00 AM UTC
-  - [ ] 6.7 Create "Review AI Changes" panel in WarRoom showing recent re-prioritizations
-  - [ ] 6.8 Add animation when issue order changes in backlog view
-  - [ ] 6.9 Log all re-prioritization actions with before/after positions
+- [x] 6.0 Build Dynamic Re-Prioritization Agent
+  - [x] 6.1 Create `convex/reprioritization.ts` with internal action for backlog ranking
+  - [x] 6.2 Implement scoring algorithm considering: priority, age, blocking status, story points
+  - [x] 6.3 Call Gemini to enhance ranking with contextual reasoning
+  - [x] 6.4 Store AI priority reasoning in `properties.aiPriorityReason`
+  - [x] 6.5 Automatically bump `critical` bugs to top when created (immediate trigger)
+  - [x] 6.6 Update `convex/crons.ts` to schedule re-prioritization daily at 3:00 AM UTC
+  - [x] 6.7 Create "Review AI Changes" panel in WarRoom showing recent re-prioritizations
+  - [x] 6.8 Add animation when issue order changes in backlog view
+  - [x] 6.9 Log all re-prioritization actions with before/after positions
 
 ---
 

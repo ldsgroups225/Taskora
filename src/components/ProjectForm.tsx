@@ -1,4 +1,5 @@
 import type { ControllerRenderProps } from 'react-hook-form'
+import type { Doc } from '../../convex/_generated/dataModel'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from 'convex/react'
 import * as React from 'react'
@@ -37,7 +38,7 @@ type FormValues = z.infer<typeof formSchema>
 interface ProjectFormProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  project?: any // For editing
+  project?: Doc<'projects'> | null // For editing
 }
 
 export function ProjectForm({ open, onOpenChange, project }: ProjectFormProps) {
@@ -90,8 +91,9 @@ export function ProjectForm({ open, onOpenChange, project }: ProjectFormProps) {
       }
       onOpenChange(false)
     }
-    catch (err: any) {
-      toast.error(err.message || 'Failed to save project')
+    catch (err) {
+      const error = err as Error
+      toast.error(error.message || 'Failed to save project')
     }
   }
 

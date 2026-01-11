@@ -1,4 +1,4 @@
-import type { Id } from '../../convex/_generated/dataModel'
+import type { Doc, Id } from '../../convex/_generated/dataModel'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { motion } from 'framer-motion'
@@ -187,7 +187,7 @@ function TaskDetail() {
 
               <div className="space-y-2">
                 {children && children.length > 0
-                  ? children.map((child: any) => (
+                  ? children.map((child: Doc<'issues'>) => (
                       <Link
                         key={child._id}
                         to="/tasks/$taskId"

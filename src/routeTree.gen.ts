@@ -18,6 +18,7 @@ import { Route as SettingsIndexRouteImport } from './routes/settings.index'
 import { Route as TasksTaskIdRouteImport } from './routes/tasks.$taskId'
 import { Route as SettingsTeamRouteImport } from './routes/settings.team'
 import { Route as SettingsProjectsRouteImport } from './routes/settings.projects'
+import { Route as SettingsAiRouteImport } from './routes/settings.ai'
 import { Route as BoardsBoardIdRouteImport } from './routes/boards.$boardId'
 
 const SignUpRoute = SignUpRouteImport.update({
@@ -65,6 +66,11 @@ const SettingsProjectsRoute = SettingsProjectsRouteImport.update({
   path: '/projects',
   getParentRoute: () => SettingsRoute,
 } as any)
+const SettingsAiRoute = SettingsAiRouteImport.update({
+  id: '/ai',
+  path: '/ai',
+  getParentRoute: () => SettingsRoute,
+} as any)
 const BoardsBoardIdRoute = BoardsBoardIdRouteImport.update({
   id: '/boards/$boardId',
   path: '/boards/$boardId',
@@ -78,6 +84,7 @@ export interface FileRoutesByFullPath {
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/boards/$boardId': typeof BoardsBoardIdRoute
+  '/settings/ai': typeof SettingsAiRoute
   '/settings/projects': typeof SettingsProjectsRoute
   '/settings/team': typeof SettingsTeamRoute
   '/tasks/$taskId': typeof TasksTaskIdRoute
@@ -89,6 +96,7 @@ export interface FileRoutesByTo {
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/boards/$boardId': typeof BoardsBoardIdRoute
+  '/settings/ai': typeof SettingsAiRoute
   '/settings/projects': typeof SettingsProjectsRoute
   '/settings/team': typeof SettingsTeamRoute
   '/tasks/$taskId': typeof TasksTaskIdRoute
@@ -102,6 +110,7 @@ export interface FileRoutesById {
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/boards/$boardId': typeof BoardsBoardIdRoute
+  '/settings/ai': typeof SettingsAiRoute
   '/settings/projects': typeof SettingsProjectsRoute
   '/settings/team': typeof SettingsTeamRoute
   '/tasks/$taskId': typeof TasksTaskIdRoute
@@ -116,6 +125,7 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/sign-up'
     | '/boards/$boardId'
+    | '/settings/ai'
     | '/settings/projects'
     | '/settings/team'
     | '/tasks/$taskId'
@@ -127,6 +137,7 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/sign-up'
     | '/boards/$boardId'
+    | '/settings/ai'
     | '/settings/projects'
     | '/settings/team'
     | '/tasks/$taskId'
@@ -139,6 +150,7 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/sign-up'
     | '/boards/$boardId'
+    | '/settings/ai'
     | '/settings/projects'
     | '/settings/team'
     | '/tasks/$taskId'
@@ -220,6 +232,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsProjectsRouteImport
       parentRoute: typeof SettingsRoute
     }
+    '/settings/ai': {
+      id: '/settings/ai'
+      path: '/ai'
+      fullPath: '/settings/ai'
+      preLoaderRoute: typeof SettingsAiRouteImport
+      parentRoute: typeof SettingsRoute
+    }
     '/boards/$boardId': {
       id: '/boards/$boardId'
       path: '/boards/$boardId'
@@ -231,12 +250,14 @@ declare module '@tanstack/react-router' {
 }
 
 interface SettingsRouteChildren {
+  SettingsAiRoute: typeof SettingsAiRoute
   SettingsProjectsRoute: typeof SettingsProjectsRoute
   SettingsTeamRoute: typeof SettingsTeamRoute
   SettingsIndexRoute: typeof SettingsIndexRoute
 }
 
 const SettingsRouteChildren: SettingsRouteChildren = {
+  SettingsAiRoute: SettingsAiRoute,
   SettingsProjectsRoute: SettingsProjectsRoute,
   SettingsTeamRoute: SettingsTeamRoute,
   SettingsIndexRoute: SettingsIndexRoute,

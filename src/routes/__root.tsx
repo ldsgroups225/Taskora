@@ -68,7 +68,7 @@ export const Route = createRootRouteWithContext<{
 function RootComponent() {
   const { convexClient } = Route.useRouteContext()
   const navigate = useNavigate()
-  const CLERK_PUBLISHABLE_KEY = (import.meta as any).env.VITE_CLERK_PUBLISHABLE_KEY
+  const CLERK_PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
 
   return (
     <ClerkProvider

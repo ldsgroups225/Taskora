@@ -1,8 +1,9 @@
 import { Link } from '@tanstack/react-router'
 import { FileQuestion } from 'lucide-react'
+import * as React from 'react'
 import { Button } from '~/components/ui/button'
 
-export function NotFound({ children }: { children?: any }) {
+export function NotFound({ children }: { children?: React.ReactNode }) {
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-6 text-center px-4">
       <div className="w-20 h-20 rounded-2xl bg-slate-900 border border-white/10 flex items-center justify-center shadow-2xl">

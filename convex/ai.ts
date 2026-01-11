@@ -95,3 +95,45 @@ export const groomBacklog = action({
     }
   },
 })
+
+/**
+ * AI Agent to rank backlog items based on score and strategic context
+ */
+export const rankBacklog = internalAction({
+  args: {
+    issues: v.any(),
+  },
+  handler: async (ctx, args) => {
+    const genAI = getGenAI()
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
+
+    const prompt = `
+      You are the Taskora Chief Product Officer AI.
+      
+      Task: Review the current backlog ranking and provide a refined list of priorities.
+      I have provided a 'rawScore' based on basic metrics (Priority, Age, Complexity). 
+      Your job is to provide the final relative Ranking (1 is top priority).
+      
+      Input Issues: ${JSON.stringify(args.issues)}
+      
+      Rules:
+      1. Return a JSON ARRAY of objects. Each object must have:
+         - "id": The ID of the issue
+         - "rank": The final suggested numeric rank (1, 2, 3...)
+         - "reason": A one-sentence strategic justification
+      2. High rawScore usually means higher rank, but use your judgment (e.g., if a Bug has been sitting for too long, rank it higher).
+      3. Output ONLY valid JSON.
+    `
+
+    try {
+      const result = await model.generateContent(prompt)
+      const text = result.response.text()
+      const cleanJson = text.replace(/```json\n?|\n?```/g, '').trim()
+      return JSON.parse(cleanJson)
+    }
+    catch (e) {
+      console.error('Gemini Ranking Error:', e)
+      return []
+    }
+  },
+})

@@ -37,8 +37,9 @@ export function UserInvite({ open, onOpenChange }: UserInviteProps) {
       setEmail('')
       onOpenChange(false)
     }
-    catch (err: any) {
-      toast.error(err.message || 'Failed to send invitation')
+    catch (err) {
+      const error = err as Error
+      toast.error(error.message || 'Failed to send invitation')
     }
     finally {
       setIsSubmitting(false)
