@@ -205,21 +205,21 @@ Update the file after completing each sub-task, not just after completing an ent
 
 ### Phase 5: Final Testing & Polish
 
-- [ ] 11.0 Testing & Final Polish
-  - [ ] 11.1 Test Clerk authentication flow: sign-up, sign-in, sign-out
-  - [ ] 11.2 Test onboarding flow: role selection persists correctly
-  - [ ] 11.3 Test real-time updates: create issue in one tab, see it appear in another
-  - [ ] 11.4 Test AI auto-assignment: create unassigned task, verify it gets assigned
-  - [ ] 11.5 Test AI post-functions: move task to "in_review", verify summary is generated
-  - [ ] 11.6 Test AQL queries: try various natural language queries
-  - [ ] 11.7 Test issue comments: add, view, delete comments
-  - [ ] 11.8 Test view mode toggle: switch between ZenMode and WarRoom
-  - [ ] 11.9 Verify all loading states and error handling
-  - [ ] 11.10 Run TypeScript type-check: `pnpm typecheck`
-  - [ ] 11.11 Run linter and fix any warnings: `pnpm lint`
-  - [ ] 11.12 Test responsive design on mobile viewport
-  - [ ] 11.13 Review and update SEO meta tags
-  - [ ] 11.14 Create PR and merge to main branch
+- [x] 11.0 Testing & Final Polish
+  - [x] 11.1 Test Clerk authentication flow: sign-up, sign-in, sign-out
+  - [x] 11.2 Test onboarding flow: role selection persists correctly
+  - [x] 11.3 Test real-time updates: create issue in one tab, see it appear in another
+  - [x] 11.4 Test AI auto-assignment: create unassigned task, verify it gets assigned
+  - [x] 11.5 Test AI post-functions: move task to "in_review", verify summary is generated
+  - [x] 11.6 Test AQL queries: try various natural language queries
+  - [x] 11.7 Test issue comments: add, view, delete comments
+  - [x] 11.8 Test view mode toggle: switch between ZenMode and WarRoom
+  - [x] 11.9 Verify all loading states and error handling
+  - [x] 11.10 Run TypeScript type-check: `pnpm typecheck`
+  - [x] 11.11 Run linter and fix any warnings: `pnpm lint`
+  - [x] 11.12 Test responsive design on mobile viewport
+  - [x] 11.13 Review and update SEO meta tags
+  - [x] 11.14 Create PR and merge to main branch
 
 ---
 
