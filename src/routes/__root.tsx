@@ -23,12 +23,14 @@ import {
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 import { useMutation } from 'convex/react'
 import { ConvexProviderWithClerk } from 'convex/react-clerk'
-import { Code2, LayoutPanelLeft, Rocket } from 'lucide-react'
+import { Code2, LayoutPanelLeft, Rocket, Settings as SettingsIcon } from 'lucide-react'
 import * as React from 'react'
 import { CommandMenu } from '~/components/CommandMenu'
 import { DefaultCatchBoundary } from '~/components/DefaultCatchBoundary'
 import { NotFound } from '~/components/NotFound'
+import { ProjectSelector } from '~/components/ProjectSelector'
 import { Toaster } from '~/components/ui/sonner'
+import { ProjectProvider, useProject } from '~/context/ProjectContext'
 import { RoleContext } from '~/context/RoleContext'
 import { useCurrentUser } from '~/hooks/useCurrentUser'
 import { cn } from '~/lib/utils'
@@ -108,11 +110,13 @@ function RootComponentInner() {
   }, [])
 
   return (
-    <RoleContext value={{ role, setRole }}>
-      <RootDocument role={role} setRole={setRole}>
-        <Outlet />
-      </RootDocument>
-    </RoleContext>
+    <ProjectProvider>
+      <RoleContext value={{ role, setRole }}>
+        <RootDocument role={role} setRole={setRole}>
+          <Outlet />
+        </RootDocument>
+      </RoleContext>
+    </ProjectProvider>
   )
 }
 
@@ -176,11 +180,19 @@ function RootDocument({
               </div>
 
               <div className="flex items-center gap-4 shrink-0">
+                <ProjectSelectorWrapper />
                 <LoadingIndicator />
                 <div className="sm:hidden">
                   <CommandMenu />
                 </div>
                 <div className="flex items-center gap-3">
+                  <Link
+                    to="/settings/projects"
+                    className="p-2 text-slate-400 hover:text-white hover:bg-white/5 rounded-xl transition-all"
+                    title="Settings"
+                  >
+                    <SettingsIcon className="w-5 h-5" />
+                  </Link>
                   <SignedIn>
                     <UserButton
                       appearance={{
@@ -213,6 +225,11 @@ function RootDocument({
       </body>
     </html>
   )
+}
+
+function ProjectSelectorWrapper() {
+  const { projectId, setProjectId } = useProject()
+  return <ProjectSelector selectedId={projectId || undefined} onSelect={setProjectId} />
 }
 
 function LoadingIndicator() {

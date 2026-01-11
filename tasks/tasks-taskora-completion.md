@@ -107,17 +107,17 @@ Update the file after completing each sub-task, not just after completing an ent
   - [x] 2.9 Update WarRoom deliverables section to use real data
   - [x] 2.10 Add loading skeletons to WarRoom cards
 
-- [ ] 3.0 Create User & Project Management
-  - [ ] 3.1 Create `convex/projects.ts` with `createProject`, `updateProject`, `deleteProject`, `listProjects` functions
-  - [ ] 3.2 Create `convex/users.ts` with `updateUserRole`, `listUsers`, `inviteUser` functions
-  - [ ] 3.3 Create `src/routes/settings.tsx` as layout for settings pages
-  - [ ] 3.4 Create `src/routes/settings.projects.tsx` with project list and CRUD UI
-  - [ ] 3.5 Create `src/components/ProjectForm.tsx` dialog for create/edit project
-  - [ ] 3.6 Create `src/routes/settings.team.tsx` with team member list
-  - [ ] 3.7 Create `src/components/UserInvite.tsx` dialog to invite new team members
-  - [ ] 3.8 Add navigation links to settings pages in the app header/sidebar
-  - [ ] 3.9 Implement project selection dropdown in header for multi-project support
-  - [ ] 3.10 Store selected project ID in URL or context
+- [x] 3.0 Create User & Project Management
+  - [x] 3.1 Create `convex/projects.ts` with `createProject`, `updateProject`, `deleteProject`, `listProjects` functions
+  - [x] 3.2 Create `convex/users.ts` with `updateUserRole`, `listUsers`, `inviteUser` functions
+  - [x] 3.3 Create `src/routes/settings.tsx` as layout for settings pages
+  - [x] 3.4 Create `src/routes/settings.projects.tsx` with project list and CRUD UI
+  - [x] 3.5 Create `src/components/ProjectForm.tsx` dialog for create/edit project
+  - [x] 3.6 Create `src/routes/settings.team.tsx` with team member list
+  - [x] 3.7 Create `src/components/UserInvite.tsx` dialog to invite new team members
+  - [x] 3.8 Add navigation links to settings pages in the app header/sidebar
+  - [x] 3.9 Implement project selection dropdown in header for multi-project support
+  - [x] 3.10 Store selected project ID in URL or context
 
 ---
 
