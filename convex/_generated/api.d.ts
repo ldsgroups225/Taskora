@@ -10,6 +10,7 @@
 
 import type * as agents from "../agents.js";
 import type * as ai from "../ai.js";
+import type * as aql from "../aql.js";
 import type * as auth from "../auth.js";
 import type * as board from "../board.js";
 import type * as capacity from "../capacity.js";
@@ -21,6 +22,7 @@ import type * as metrics from "../metrics.js";
 import type * as postFunctions from "../postFunctions.js";
 import type * as projects from "../projects.js";
 import type * as reprioritization from "../reprioritization.js";
+import type * as search from "../search.js";
 import type * as test_utils from "../test_utils.js";
 import type * as users from "../users.js";
 
@@ -33,6 +35,7 @@ import type {
 declare const fullApi: ApiFromModules<{
   agents: typeof agents;
   ai: typeof ai;
+  aql: typeof aql;
   auth: typeof auth;
   board: typeof board;
   capacity: typeof capacity;
@@ -44,6 +47,7 @@ declare const fullApi: ApiFromModules<{
   postFunctions: typeof postFunctions;
   projects: typeof projects;
   reprioritization: typeof reprioritization;
+  search: typeof search;
   test_utils: typeof test_utils;
   users: typeof users;
 }>;

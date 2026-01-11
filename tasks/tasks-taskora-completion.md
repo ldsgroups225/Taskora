@@ -160,18 +160,18 @@ Update the file after completing each sub-task, not just after completing an ent
 
 ### Phase 3: Intelligence (Weeks 5-6)
 
-- [ ] 7.0 Implement Natural Language Queries (AQL)
-  - [ ] 7.1 Create `convex/aql.ts` with `parseNaturalLanguageQuery` action using Gemini
-  - [ ] 7.2 Define AQL schema: `{ status?, priority?, assignee?, type?, dateFilter?, textSearch? }`
-  - [ ] 7.3 Implement query translation: "my tasks" → `{ assignee: currentUserId }`
-  - [ ] 7.4 Implement time filters: "not touched in 3 days" → `{ updatedBefore: Date.now() - 3days }`
-  - [ ] 7.5 Implement priority/status filters: "critical bugs" → `{ priority: 'critical', type: 'bug' }`
-  - [ ] 7.6 Create `convex/aql.ts` `executeAqlQuery` query to apply parsed filters
-  - [ ] 7.7 Update `CommandMenu.tsx` to send input to AQL parser on Enter
-  - [ ] 7.8 Display parsed filter interpretation below search input (e.g., "Showing: critical bugs assigned to you")
-  - [ ] 7.9 Show search results in Command Menu dropdown with issue previews
-  - [ ] 7.10 Add keyboard navigation (arrow keys) for search results
-  - [ ] 7.11 Allow clicking result to navigate to issue detail
+- [x] 7.0 Implement Natural Language Queries (AQL)
+  - [x] 7.1 Create `convex/aql.ts` with `parseNaturalLanguageQuery` action using Gemini
+  - [x] 7.2 Define AQL schema: `{ status?, priority?, assignee?, type?, dateFilter?, textSearch? }`
+  - [x] 7.3 Implement query translation: "my tasks" → `{ assignee: currentUserId }`
+  - [x] 7.4 Implement time filters: "not touched in 3 days" → `{ updatedBefore: Date.now() - 3days }`
+  - [x] 7.5 Implement priority/status filters: "critical bugs" → `{ priority: 'critical', type: 'bug' }`
+  - [x] 7.6 Create `convex/aql.ts` `executeAqlQuery` query to apply parsed filters
+  - [x] 7.7 Update `CommandMenu.tsx` to send input to AQL parser on Enter
+  - [x] 7.8 Display parsed filter interpretation below search input (e.g., "Showing: critical bugs assigned to you")
+  - [x] 7.9 Show search results in Command Menu dropdown with issue previews
+  - [x] 7.10 Add keyboard navigation (arrow keys) for search results
+  - [x] 7.11 Allow clicking result to navigate to issue detail
 
 - [ ] 8.0 Enhance Issue Detail View
   - [ ] 8.1 Update `convex/schema.ts` to add `comments` table
