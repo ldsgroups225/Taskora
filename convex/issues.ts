@@ -110,14 +110,29 @@ export const updateIssue = mutation({
     }),
   },
   handler: async (ctx, { id, patch }) => {
+    const identity = await ctx.auth.getUserIdentity()
+    if (!identity)
+      throw new Error('Not authenticated')
+
+    const user = await ctx.db
+      .query('users')
+      .withIndex('by_clerkId', q => q.eq('clerkId', identity.subject))
+      .unique()
+
+    if (!user)
+      throw new Error('User not found')
+
     const issue = await ctx.db.get(id)
     if (!issue)
       throw new Error('Issue not found')
 
-    // AI Trigger Hook: If status changes to 'in_review', we could trigger an agent here
-    if (patch.status && patch.status !== issue.status) {
-      console.log(`Transitioning issue ${id} from ${issue.status} to ${patch.status}`)
+    // Track changes for activity log
+    const changes: { action: string, oldValue?: string, newValue?: string }[] = []
 
+    if (patch.status && patch.status !== issue.status) {
+      changes.push({ action: 'status_change', oldValue: issue.status, newValue: patch.status })
+
+      // AI Trigger Hook
       if (patch.status === 'in_review') {
         await ctx.scheduler.runAfter(0, internal.postFunctions.onTransitionToReview, {
           issueId: id,
@@ -134,6 +149,31 @@ export const updateIssue = mutation({
           description: issue.description ?? '',
         })
       }
+    }
+
+    if (patch.priority && patch.priority !== issue.priority) {
+      changes.push({ action: 'priority_change', oldValue: issue.priority, newValue: patch.priority })
+    }
+
+    if (patch.assigneeId !== undefined && patch.assigneeId !== issue.assigneeId) {
+      changes.push({
+        action: 'assignee_change',
+        oldValue: issue.assigneeId ? String(issue.assigneeId) : 'unassigned',
+        newValue: patch.assigneeId ? String(patch.assigneeId) : 'unassigned',
+      })
+    }
+
+    if (patch.title && patch.title !== issue.title) {
+      changes.push({ action: 'title_change', oldValue: issue.title, newValue: patch.title })
+    }
+
+    // Log all changes
+    for (const change of changes) {
+      await ctx.db.insert('activityLog', {
+        issueId: id,
+        userId: user._id,
+        ...change,
+      })
     }
 
     await ctx.db.patch(id, patch)

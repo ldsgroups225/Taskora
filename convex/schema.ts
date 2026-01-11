@@ -94,6 +94,20 @@ const schema = defineSchema({
   })
     .index('by_project', ['projectId'])
     .index('by_issue', ['issueId']),
+
+  comments: defineTable({
+    issueId: v.id('issues'),
+    authorId: v.id('users'),
+    content: v.string(),
+  }).index('by_issue', ['issueId']),
+
+  activityLog: defineTable({
+    issueId: v.id('issues'),
+    userId: v.id('users'),
+    action: v.string(),
+    oldValue: v.optional(v.string()),
+    newValue: v.optional(v.string()),
+  }).index('by_issue', ['issueId']),
 })
 
 export default schema

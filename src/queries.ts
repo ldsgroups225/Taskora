@@ -11,6 +11,12 @@ export const boardQueries = {
 export const issueQueries = {
   detail: (id: Id<'issues'>) => convexQuery(api.issues.getIssue, { id }),
   children: (parentId: Id<'issues'>) => convexQuery(api.issues.getChildren, { parentId }),
+  comments: (issueId: Id<'issues'>) => convexQuery(api.comments.listComments, { issueId }),
+  activity: (issueId: Id<'issues'>) => convexQuery(api.activityLog.getActivityLog, { issueId }),
+}
+
+export const userQueries = {
+  list: () => convexQuery(api.users.listUsers, {}),
 }
 
 export function useCreateColumnMutation() {
@@ -138,5 +144,10 @@ export function useUpdateColumnMutation() {
     )
   })
 
+  return useMutation({ mutationFn })
+}
+
+export function useUpdateIssueMutation() {
+  const mutationFn = useConvexMutation(api.issues.updateIssue)
   return useMutation({ mutationFn })
 }

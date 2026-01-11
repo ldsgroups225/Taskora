@@ -173,17 +173,17 @@ Update the file after completing each sub-task, not just after completing an ent
   - [x] 7.10 Add keyboard navigation (arrow keys) for search results
   - [x] 7.11 Allow clicking result to navigate to issue detail
 
-- [ ] 8.0 Enhance Issue Detail View
-  - [ ] 8.1 Update `convex/schema.ts` to add `comments` table
-  - [ ] 8.2 Create `convex/comments.ts` with `addComment`, `listComments`, `deleteComment` functions
-  - [ ] 8.3 Create `src/components/IssueComments.tsx` with comment list and input form
-  - [ ] 8.4 Add comments section to `tasks.$taskId.tsx` below description
-  - [ ] 8.5 Create `convex/activityLog.ts` with `logActivity` mutation and `getActivityLog` query
-  - [ ] 8.6 Create `src/components/IssueActivity.tsx` timeline component
-  - [ ] 8.7 Log all issue state changes (status, assignee, priority) as activity entries
-  - [ ] 8.8 Display AI summaries (review, impact) in collapsible sections
-  - [ ] 8.9 Show issue hierarchy: link to parent issue, list child issues/subtasks
-  - [ ] 8.10 Implement inline editing for title, description, and all fields
+- [x] 8.0 Enhance Issue Detail View
+  - [x] 8.1 Update `convex/schema.ts` to add `comments` table
+  - [x] 8.2 Create `convex/comments.ts` with `addComment`, `listComments`, `deleteComment` functions
+  - [x] 8.3 Create `src/components/IssueComments.tsx` with comment list and input form
+  - [x] 8.4 Add comments section to `tasks.$taskId.tsx` below description
+  - [x] 8.5 Create `convex/activityLog.ts` with `logActivity` mutation and `getActivityLog` query
+  - [x] 8.6 Create `src/components/IssueActivity.tsx` timeline component
+  - [x] 8.7 Log all issue state changes (status, assignee, priority) as activity entries
+  - [x] 8.8 Display AI summaries (review, impact) in collapsible sections
+  - [x] 8.9 Show issue hierarchy: link to parent issue, list child issues/subtasks
+  - [x] 8.10 Implement inline editing for title, description, and all fields
 
 ---
 

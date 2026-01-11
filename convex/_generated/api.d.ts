@@ -8,12 +8,14 @@
  * @module
  */
 
+import type * as activityLog from "../activityLog.js";
 import type * as agents from "../agents.js";
 import type * as ai from "../ai.js";
 import type * as aql from "../aql.js";
 import type * as auth from "../auth.js";
 import type * as board from "../board.js";
 import type * as capacity from "../capacity.js";
+import type * as comments from "../comments.js";
 import type * as constants from "../constants.js";
 import type * as crons from "../crons.js";
 import type * as deliverables from "../deliverables.js";
@@ -33,12 +35,14 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  activityLog: typeof activityLog;
   agents: typeof agents;
   ai: typeof ai;
   aql: typeof aql;
   auth: typeof auth;
   board: typeof board;
   capacity: typeof capacity;
+  comments: typeof comments;
   constants: typeof constants;
   crons: typeof crons;
   deliverables: typeof deliverables;

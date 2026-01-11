@@ -1,4 +1,4 @@
-import type { Doc, Id } from '../../convex/_generated/dataModel'
+import type { Id } from '../../convex/_generated/dataModel'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { useAction, useQuery } from 'convex/react'
 import {
@@ -123,7 +123,7 @@ export function CommandMenu() {
 
           {results && results.length > 0 && (
             <CommandGroup heading="AI Query Results">
-              {(results as Doc<'issues'>[]).map(issue => (
+              {(results).map(issue => (
                 <CommandItem
                   key={issue._id}
                   onSelect={async () => {

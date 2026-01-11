@@ -1,11 +1,13 @@
 import type { Doc, Id } from '../../convex/_generated/dataModel'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
+import { useQuery } from 'convex/react'
 import { motion } from 'framer-motion'
 import {
   Bot,
   Calendar,
   CheckCircle2,
+  ChevronDown,
   ChevronRight,
   Circle,
   Clock,
@@ -18,7 +20,10 @@ import {
   Sparkles,
   User,
 } from 'lucide-react'
+import * as React from 'react'
 import { DefaultCatchBoundary } from '~/components/DefaultCatchBoundary'
+import { IssueActivity } from '~/components/IssueActivity'
+import { IssueComments } from '~/components/IssueComments'
 import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
 import {
@@ -27,8 +32,17 @@ import {
   CardHeader,
   CardTitle,
 } from '~/components/ui/card'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '~/components/ui/dropdown-menu'
+import { Input } from '~/components/ui/input'
+import { Textarea } from '~/components/ui/textarea'
 import { cn } from '~/lib/utils'
-import { issueQueries } from '~/queries'
+import { issueQueries, userQueries, useUpdateIssueMutation } from '~/queries'
+import { api } from '../../convex/_generated/api'
 
 export const Route = createFileRoute('/tasks/$taskId')({
   component: TaskDetail,
@@ -63,6 +77,41 @@ function TaskDetail() {
   const { taskId } = Route.useParams()
   const { data: issue } = useSuspenseQuery(issueQueries.detail(taskId as Id<'issues'>))
   const { data: children } = useSuspenseQuery(issueQueries.children(taskId as Id<'issues'>))
+  const { data: users } = useSuspenseQuery(userQueries.list()) as { data: Doc<'users'>[] }
+  const parent = useQuery(api.issues.getIssue, issue?.parentId ? { id: issue.parentId } : 'skip')
+
+  const [isAiInsightsOpen, setIsAiInsightsOpen] = React.useState(true)
+  const [isEditingTitle, setIsEditingTitle] = React.useState(false)
+  const [editedTitle, setEditedTitle] = React.useState(issue?.title || '')
+  const [isEditingDesc, setIsEditingDesc] = React.useState(false)
+  const [editedDesc, setEditedDesc] = React.useState(issue?.description || '')
+
+  const updateIssue = useUpdateIssueMutation()
+
+  React.useEffect(() => {
+    if (issue) {
+      setEditedTitle(issue.title)
+      setEditedDesc(issue.description || '')
+    }
+  }, [issue])
+
+  const handleUpdateTitle = async () => {
+    if (!issue || editedTitle.trim() === issue.title || !editedTitle.trim()) {
+      setIsEditingTitle(false)
+      return
+    }
+    await updateIssue.mutateAsync({ id: issue._id, patch: { title: editedTitle.trim() } })
+    setIsEditingTitle(false)
+  }
+
+  const handleUpdateDesc = async () => {
+    if (!issue || editedDesc === (issue.description || '')) {
+      setIsEditingDesc(false)
+      return
+    }
+    await updateIssue.mutateAsync({ id: issue._id, patch: { description: editedDesc } })
+    setIsEditingDesc(false)
+  }
 
   if (!issue) {
     return (
@@ -89,8 +138,20 @@ function TaskDetail() {
           </Link>
           <ChevronRight className="w-4 h-4 shrink-0" />
           <span className="truncate max-w-[150px] sm:max-w-xs font-medium text-slate-400">
-            {issue.projectId || 'Project'}
+            {issue.projectId}
           </span>
+          {parent && (
+            <>
+              <ChevronRight className="w-4 h-4 shrink-0" />
+              <Link
+                to="/tasks/$taskId"
+                params={{ taskId: parent._id }}
+                className="hover:text-white transition-colors truncate max-w-[100px] text-slate-500"
+              >
+                {parent.title}
+              </Link>
+            </>
+          )}
           <ChevronRight className="w-4 h-4 shrink-0" />
           <div className="flex items-center gap-2 text-indigo-400 font-medium truncate">
             <GitBranch className="w-4 h-4 shrink-0" />
@@ -161,15 +222,49 @@ function TaskDetail() {
                 </div>
               </div>
 
-              <h1 className="text-3xl md:text-4xl font-bold text-white leading-tight">
-                {issue.title}
-              </h1>
+              {isEditingTitle
+                ? (
+                    <div className="flex gap-2">
+                      <Input
+                        value={editedTitle}
+                        onChange={e => setEditedTitle(e.target.value)}
+                        onBlur={handleUpdateTitle}
+                        onKeyDown={async e => e.key === 'Enter' && handleUpdateTitle()}
+                        autoFocus
+                        className="text-3xl font-bold bg-white/5 border-indigo-500/50 h-auto py-2"
+                      />
+                    </div>
+                  )
+                : (
+                    <h1
+                      className="text-3xl md:text-4xl font-bold text-white leading-tight cursor-text hover:text-indigo-300 transition-colors"
+                      onClick={() => setIsEditingTitle(true)}
+                    >
+                      {issue.title}
+                    </h1>
+                  )}
             </div>
 
             <div className="prose prose-invert prose-slate max-w-none">
-              <p className="text-lg text-slate-300 leading-relaxed">
-                {issue.description || 'No description provided.'}
-              </p>
+              {isEditingDesc
+                ? (
+                    <Textarea
+                      value={editedDesc}
+                      onChange={e => setEditedDesc(e.target.value)}
+                      onBlur={handleUpdateDesc}
+                      autoFocus
+                      className="text-lg bg-white/5 border-indigo-500/50 min-h-[150px]"
+                      placeholder="Add a description..."
+                    />
+                  )
+                : (
+                    <p
+                      className="text-lg text-slate-300 leading-relaxed cursor-text hover:text-white transition-colors min-h-[24px]"
+                      onClick={() => setIsEditingDesc(true)}
+                    >
+                      {issue.description || <span className="text-slate-600 italic">No description provided. Click to add.</span>}
+                    </p>
+                  )}
             </div>
 
             {/* Subtasks / Children */}
@@ -223,6 +318,9 @@ function TaskDetail() {
                     )}
               </div>
             </div>
+
+            <IssueComments issueId={issue._id} />
+            <IssueActivity issueId={issue._id} />
           </div>
 
           {/* Sidebar */}
@@ -238,16 +336,40 @@ function TaskDetail() {
                     Assignee
                   </span>
                   <div className="flex items-center gap-2 text-slate-300 font-medium">
-                    {issue.assigneeId
-                      ? (
-                          <>
-                            <div className="w-5 h-5 rounded-full bg-indigo-500 flex items-center justify-center text-[10px] text-white">
-                              A
-                            </div>
-                            Alice Dev
-                          </>
-                        )
-                      : <span className="text-slate-500 italic">Unassigned</span>}
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm" className="h-auto p-0 hover:bg-transparent text-slate-300 gap-2 font-medium">
+                          {issue.assigneeId
+                            ? (
+                                <>
+                                  <div className="w-5 h-5 rounded-full bg-indigo-500 flex items-center justify-center text-[10px] text-white">
+                                    {users?.find(u => u._id === issue.assigneeId)?.name[0] || 'A'}
+                                  </div>
+                                  {users?.find(u => u._id === issue.assigneeId)?.name || 'Unknown'}
+                                </>
+                              )
+                            : <span className="text-slate-500 italic">Unassigned</span>}
+                          <ChevronDown className="w-3 h-3 text-slate-600" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="start" className="bg-slate-900 border-white/10 text-slate-300">
+                        <DropdownMenuItem
+                          onClick={() => updateIssue.mutate({ id: issue._id, patch: { assigneeId: undefined } })}
+                          className="hover:bg-white/5"
+                        >
+                          Unassigned
+                        </DropdownMenuItem>
+                        {users?.map(user => (
+                          <DropdownMenuItem
+                            key={user._id}
+                            onClick={() => updateIssue.mutate({ id: issue._id, patch: { assigneeId: user._id } })}
+                            className="hover:bg-white/5"
+                          >
+                            {user.name}
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
 
                   <span className="text-slate-500 flex items-center gap-2">
@@ -257,49 +379,97 @@ function TaskDetail() {
                   <span className="text-slate-300">Oct 24, 2024</span>
 
                   <span className="text-slate-500">Status</span>
-                  <Badge variant="outline" className="w-fit border-white/10 text-slate-300">
-                    {issue.status}
-                  </Badge>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="sm" className="h-auto p-0 hover:bg-transparent justify-start">
+                        <Badge variant="outline" className="w-fit border-white/10 text-slate-300 cursor-pointer hover:border-indigo-500/50 hover:bg-indigo-500/5">
+                          {issue.status}
+                          <ChevronDown className="w-3 h-3 ml-2 text-slate-600" />
+                        </Badge>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start" className="bg-slate-900 border-white/10 text-slate-300">
+                      {['backlog', 'todo', 'in_progress', 'in_review', 'done'].map(status => (
+                        <DropdownMenuItem
+                          key={status}
+                          onClick={() => updateIssue.mutate({ id: issue._id, patch: { status: status as any } })}
+                          className="capitalize hover:bg-white/5"
+                        >
+                          {status}
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
 
                   <span className="text-slate-500">Priority</span>
-                  <div className="flex items-center gap-1 text-orange-400 font-bold">
-                    {issue.priority}
-                  </div>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="sm" className="h-auto p-0 hover:bg-transparent justify-start">
+                        <div className="flex items-center gap-1 text-orange-400 font-bold hover:text-orange-300 cursor-pointer">
+                          {issue.priority}
+                          <ChevronDown className="w-3 h-3 ml-1 text-slate-600" />
+                        </div>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start" className="bg-slate-900 border-white/10 text-slate-300">
+                      {['low', 'medium', 'high', 'critical'].map(priorityItem => (
+                        <DropdownMenuItem
+                          key={priorityItem}
+                          onClick={() => updateIssue.mutate({ id: issue._id, patch: { priority: priorityItem as any } })}
+                          className="capitalize hover:bg-white/5"
+                        >
+                          {priorityItem}
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               </CardContent>
             </Card>
 
-            {/* AI Insights */}
+            {/* AI Insights (Collapsible) */}
             {(issue.properties?.aiReviewSummary || issue.properties?.aiImpactSummary) && (
-              <Card className="bg-linear-to-b from-purple-900/20 to-transparent border-purple-500/20 rounded-2xl">
-                <CardHeader className="py-4">
+              <Card className="bg-linear-to-b from-purple-900/20 to-transparent border-purple-500/20 rounded-2xl overflow-hidden transition-all duration-300">
+                <CardHeader
+                  className="py-4 cursor-pointer hover:bg-purple-500/5 select-none"
+                  onClick={() => setIsAiInsightsOpen(!isAiInsightsOpen)}
+                >
                   <CardTitle className="text-sm font-bold text-purple-300 flex items-center gap-2">
                     <Sparkles className="w-3.5 h-3.5" />
                     AI Insights
+                    <ChevronDown className={cn('w-4 h-4 ml-auto transition-transform', isAiInsightsOpen && 'rotate-180')} />
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="p-4 pt-0 text-sm text-purple-200/80 space-y-4">
-                  {issue.properties?.aiReviewSummary && (
-                    <div>
-                      <div className="text-[10px] font-bold text-purple-400 uppercase mb-1 flex items-center gap-1">
-                        Review Summary
-                      </div>
-                      <div className="whitespace-pre-wrap leading-relaxed opacity-90 text-xs">
-                        {issue.properties.aiReviewSummary}
-                      </div>
-                    </div>
-                  )}
-                  {issue.properties?.aiImpactSummary && (
-                    <div>
-                      <div className="text-[10px] font-bold text-emerald-400 uppercase mb-1 flex items-center gap-1">
-                        Impact Summary
-                      </div>
-                      <div className="whitespace-pre-wrap leading-relaxed opacity-90 text-xs text-emerald-100/80">
-                        {issue.properties.aiImpactSummary}
-                      </div>
-                    </div>
-                  )}
-                </CardContent>
+                {isAiInsightsOpen && (
+                  <CardContent className="p-4 pt-0 text-sm text-purple-200/80 space-y-4">
+                    {issue.properties?.aiReviewSummary && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                      >
+                        <div className="text-[10px] font-bold text-purple-400 uppercase mb-1 flex items-center gap-1">
+                          Review Summary
+                        </div>
+                        <div className="whitespace-pre-wrap leading-relaxed opacity-90 text-xs">
+                          {issue.properties.aiReviewSummary}
+                        </div>
+                      </motion.div>
+                    )}
+                    {issue.properties?.aiImpactSummary && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                      >
+                        <div className="text-[10px] font-bold text-emerald-400 uppercase mb-1 flex items-center gap-1">
+                          Impact Summary
+                        </div>
+                        <div className="whitespace-pre-wrap leading-relaxed opacity-90 text-xs text-emerald-100/80">
+                          {issue.properties.aiImpactSummary}
+                        </div>
+                      </motion.div>
+                    )}
+                  </CardContent>
+                )}
               </Card>
             )}
 
