@@ -4,6 +4,7 @@ import { useMutation, useQuery } from 'convex/react'
 import { Edit2, LayoutPanelLeft, Plus, Rocket, Trash2 } from 'lucide-react'
 import * as React from 'react'
 import { toast } from 'sonner'
+import { ConfirmDialog } from '~/components/ConfirmDialog'
 import { ProjectForm } from '~/components/ProjectForm'
 import { Button } from '~/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card'
@@ -19,17 +20,27 @@ function ProjectsSettings() {
   const deleteProject = useMutation(api.projects.deleteProject)
   const [isFormOpen, setIsFormOpen] = React.useState(false)
   const [editingProject, setEditingProject] = React.useState<Doc<'projects'> | null>(null)
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = React.useState(false)
+  const [projectToDelete, setProjectToDelete] = React.useState<Id<'projects'> | null>(null)
 
   const handleDelete = async (id: Id<'projects'>) => {
-    // eslint-disable-next-line no-alert
-    if (window.confirm('Are you sure you want to delete this project? All associated issues will be lost.')) {
-      try {
-        await deleteProject({ id })
-        toast.success('Project deleted')
-      }
-      catch {
-        toast.error('Failed to delete project')
-      }
+    setProjectToDelete(id)
+    setDeleteConfirmOpen(true)
+  }
+
+  const confirmDelete = async () => {
+    if (!projectToDelete)
+      return
+    try {
+      await deleteProject({ id: projectToDelete })
+      toast.success('Project deleted')
+    }
+    catch {
+      toast.error('Failed to delete project')
+    }
+    finally {
+      setDeleteConfirmOpen(false)
+      setProjectToDelete(null)
     }
   }
 
@@ -125,6 +136,16 @@ function ProjectsSettings() {
         open={isFormOpen}
         onOpenChange={setIsFormOpen}
         project={editingProject}
+      />
+
+      <ConfirmDialog
+        open={deleteConfirmOpen}
+        onOpenChange={setDeleteConfirmOpen}
+        onConfirm={confirmDelete}
+        title="Delete Project"
+        description="Are you sure you want to delete this project? All associated issues and data will be permanently lost."
+        confirmText="Delete Project"
+        variant="destructive"
       />
     </div>
   )

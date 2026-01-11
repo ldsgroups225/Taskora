@@ -21,10 +21,7 @@ function Home() {
     if (!isLoading && isAuthenticated && user && !user.role) {
       void navigate({ to: '/onboarding' })
     }
-    if (!isLoading && user?.role && user.role !== role) {
-      setRole(user.role)
-    }
-  }, [user, isLoading, isAuthenticated, role, setRole, navigate])
+  }, [user, isLoading, isAuthenticated, navigate])
 
   if (isLoading) {
     return (
