@@ -83,6 +83,17 @@ const schema = defineSchema({
     .index('by_assignee', ['assigneeId'])
     .index('by_status', ['status'])
     .index('by_parent', ['parentId']),
+
+  agentLogs: defineTable({
+    projectId: v.id('projects'),
+    issueId: v.optional(v.id('issues')),
+    action: v.string(),
+    result: v.string(),
+    status: v.union(v.literal('pending'), v.literal('success'), v.literal('failed')),
+    error: v.optional(v.string()),
+  })
+    .index('by_project', ['projectId'])
+    .index('by_issue', ['issueId']),
 })
 
 export default schema

@@ -16,6 +16,7 @@ import type * as crons from "../crons.js";
 import type * as deliverables from "../deliverables.js";
 import type * as issues from "../issues.js";
 import type * as metrics from "../metrics.js";
+import type * as postFunctions from "../postFunctions.js";
 import type * as projects from "../projects.js";
 import type * as test_utils from "../test_utils.js";
 import type * as users from "../users.js";
@@ -35,6 +36,7 @@ declare const fullApi: ApiFromModules<{
   deliverables: typeof deliverables;
   issues: typeof issues;
   metrics: typeof metrics;
+  postFunctions: typeof postFunctions;
   projects: typeof projects;
   test_utils: typeof test_utils;
   users: typeof users;

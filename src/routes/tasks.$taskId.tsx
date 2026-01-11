@@ -14,6 +14,7 @@ import {
   MoreHorizontal,
   Plus,
   Share2,
+  Sparkles,
   User,
 } from 'lucide-react'
 import { DefaultCatchBoundary } from '~/components/DefaultCatchBoundary'
@@ -258,23 +259,60 @@ function TaskDetail() {
               </CardContent>
             </Card>
 
-            <Card className="bg-linear-to-b from-indigo-900/20 to-transparent border-indigo-500/20 rounded-2xl">
-              <CardHeader className="py-4">
-                <CardTitle className="text-sm font-bold text-indigo-300 flex items-center gap-2">
-                  <MessageSquare className="w-3.5 h-3.5" />
-                  AI Orchestrator
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-4 pt-0 text-sm text-indigo-200/80">
-                <p>
-                  This task was automatically prioritized by Gemini based on the Q4 roadmap.
-                  Suggestion: Assign to @Alice due to recent work on "Backend Core".
-                </p>
-                <Button size="sm" className="w-full mt-4 bg-indigo-600 hover:bg-indigo-500 text-white border-0 shadow-lg shadow-indigo-900/40">
-                  Accept Suggestion
-                </Button>
-              </CardContent>
-            </Card>
+            {/* AI Insights */}
+            {(issue.properties?.aiReviewSummary || issue.properties?.aiImpactSummary) && (
+              <Card className="bg-linear-to-b from-purple-900/20 to-transparent border-purple-500/20 rounded-2xl">
+                <CardHeader className="py-4">
+                  <CardTitle className="text-sm font-bold text-purple-300 flex items-center gap-2">
+                    <Sparkles className="w-3.5 h-3.5" />
+                    AI Insights
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-4 pt-0 text-sm text-purple-200/80 space-y-4">
+                  {issue.properties?.aiReviewSummary && (
+                    <div>
+                      <div className="text-[10px] font-bold text-purple-400 uppercase mb-1 flex items-center gap-1">
+                        Review Summary
+                      </div>
+                      <div className="whitespace-pre-wrap leading-relaxed opacity-90 text-xs">
+                        {issue.properties.aiReviewSummary}
+                      </div>
+                    </div>
+                  )}
+                  {issue.properties?.aiImpactSummary && (
+                    <div>
+                      <div className="text-[10px] font-bold text-emerald-400 uppercase mb-1 flex items-center gap-1">
+                        Impact Summary
+                      </div>
+                      <div className="whitespace-pre-wrap leading-relaxed opacity-90 text-xs text-emerald-100/80">
+                        {issue.properties.aiImpactSummary}
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Legacy Placeholder (Only show if no AI content) */}
+            {(!issue.properties?.aiReviewSummary && !issue.properties?.aiImpactSummary) && (
+              <Card className="bg-linear-to-b from-indigo-900/20 to-transparent border-indigo-500/20 rounded-2xl">
+                <CardHeader className="py-4">
+                  <CardTitle className="text-sm font-bold text-indigo-300 flex items-center gap-2">
+                    <MessageSquare className="w-3.5 h-3.5" />
+                    AI Orchestrator
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-4 pt-0 text-sm text-indigo-200/80">
+                  <p>
+                    This task was automatically prioritized by Gemini based on the Q4 roadmap.
+                    Suggestion: Assign to @Alice due to recent work on "Backend Core".
+                  </p>
+                  <Button size="sm" className="w-full mt-4 bg-indigo-600 hover:bg-indigo-500 text-white border-0 shadow-lg shadow-indigo-900/40">
+                    Accept Suggestion
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </motion.div>
       </main>

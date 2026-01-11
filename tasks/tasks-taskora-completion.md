@@ -123,16 +123,16 @@ Update the file after completing each sub-task, not just after completing an ent
 
 ### Phase 2: AI Core (Weeks 3-4)
 
-- [ ] 4.0 Implement AI Post-Functions (Workflow Triggers)
-  - [ ] 4.1 Update `convex/schema.ts` to add `agentLogs` table for AI audit trail
-  - [ ] 4.2 Create `convex/postFunctions.ts` with internal actions for AI triggers
-  - [ ] 4.3 Implement `onTransitionToReview` action that calls Gemini to generate review summary
-  - [ ] 4.4 Implement `onTransitionToDone` action that generates impact summary
-  - [ ] 4.5 Update `convex/issues.ts` `updateIssue` to use `ctx.scheduler.runAfter()` for AI triggers
-  - [ ] 4.6 Store AI summaries in `properties.aiReviewSummary` and `properties.aiImpactSummary`
-  - [ ] 4.7 Create `logAgentAction` helper to record all AI actions in `agentLogs`
-  - [ ] 4.8 Add visual indicator (sparkle icon) in issue cards when AI content is present
-  - [ ] 4.9 Display AI summaries in issue detail view with expandable section
+- [x] 4.0 Implement AI Post-Functions (Workflow Triggers)
+  - [x] 4.1 Update `convex/schema.ts` to add `agentLogs` table for AI audit trail
+  - [x] 4.2 Create `convex/postFunctions.ts` with internal actions for AI triggers
+  - [x] 4.3 Implement `onTransitionToReview` action that calls Gemini to generate review summary
+  - [x] 4.4 Implement `onTransitionToDone` action that generates impact summary
+  - [x] 4.5 Update `convex/issues.ts` `updateIssue` to use `ctx.scheduler.runAfter()` for AI triggers
+  - [x] 4.6 Store AI summaries in `properties.aiReviewSummary` and `properties.aiImpactSummary`
+  - [x] 4.7 Create `logAgentAction` helper to record all AI actions in `agentLogs`
+  - [x] 4.8 Add visual indicator (sparkle icon) in issue cards when AI content is present
+  - [x] 4.9 Display AI summaries in issue detail view with expandable section
 
 - [ ] 5.0 Build Auto-Assignment Agent
   - [ ] 5.1 Create `convex/capacity.ts` with query to calculate developer workload (open task count, story points)

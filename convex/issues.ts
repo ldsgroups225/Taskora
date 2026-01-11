@@ -1,4 +1,5 @@
 import { v } from 'convex/values'
+import { internal } from './_generated/api'
 import { mutation, query } from './_generated/server'
 
 /**
@@ -106,7 +107,23 @@ export const updateIssue = mutation({
     // AI Trigger Hook: If status changes to 'in_review', we could trigger an agent here
     if (patch.status && patch.status !== issue.status) {
       console.log(`Transitioning issue ${id} from ${issue.status} to ${patch.status}`)
-      // Future: ctx.scheduler.runAfter(0, internal.agents.analyzeReview, { issueId: id })
+
+      if (patch.status === 'in_review') {
+        await ctx.scheduler.runAfter(0, internal.postFunctions.onTransitionToReview, {
+          issueId: id,
+          projectId: issue.projectId,
+          title: issue.title,
+          description: issue.description ?? '',
+        })
+      }
+      else if (patch.status === 'done') {
+        await ctx.scheduler.runAfter(0, internal.postFunctions.onTransitionToDone, {
+          issueId: id,
+          projectId: issue.projectId,
+          title: issue.title,
+          description: issue.description ?? '',
+        })
+      }
     }
 
     await ctx.db.patch(id, patch)
