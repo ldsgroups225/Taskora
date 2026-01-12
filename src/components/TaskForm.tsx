@@ -52,11 +52,9 @@ export function TaskForm({ open, onOpenChange, parentId, initialProjectId, dismi
   React.useEffect(() => {
     if (open) {
       const targetId = initialProjectId || contextProjectId || ''
-      if (targetId && selectedProjectId !== targetId) {
-        setSelectedProjectId(targetId)
-      }
+      setSelectedProjectId(targetId)
     }
-  }, [contextProjectId, initialProjectId, open, selectedProjectId])
+  }, [contextProjectId, initialProjectId, open])
 
   // Reset type when parentId changes
   React.useEffect(() => {
