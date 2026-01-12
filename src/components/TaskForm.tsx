@@ -1,6 +1,7 @@
 import type { Id } from 'convex/_generated/dataModel'
 import { useMutation, useQuery } from 'convex/react'
-import { Plus } from 'lucide-react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { Calendar, ChevronDown, ChevronUp, Link as LinkIcon, Plus, User } from 'lucide-react'
 import * as React from 'react'
 import { toast } from 'sonner'
 import { Button } from '~/components/ui/button'
@@ -39,6 +40,7 @@ export function TaskForm({ open, onOpenChange, parentId, initialProjectId, dismi
   const { projectId: contextProjectId } = useProject()
   const { user } = useCurrentUser()
   const projects = useQuery(api.projects.listProjects)
+  const users = useQuery(api.users.listUsers)
   const createIssue = useMutation(api.issues.createIssue)
 
   const [title, setTitle] = React.useState('')
@@ -47,6 +49,20 @@ export function TaskForm({ open, onOpenChange, parentId, initialProjectId, dismi
   const [priority, setPriority] = React.useState<'low' | 'medium' | 'high' | 'critical'>('medium')
   const [type, setType] = React.useState<'task' | 'bug' | 'story' | 'epic' | 'initiative' | 'subtask'>(parentId ? 'subtask' : 'task')
   const [isSubmitting, setIsSubmitting] = React.useState(false)
+
+  // More options state
+  const [isMoreOptionsOpen, setIsMoreOptionsOpen] = React.useState(false)
+  const [assigneeId, setAssigneeId] = React.useState<string>(user?._id || '')
+  const [startAt, setStartAt] = React.useState('')
+  const [dueDate, setDueDate] = React.useState('')
+  const [linkedToId, setLinkedToId] = React.useState<string>('')
+  const [linkType, setLinkType] = React.useState<string>('relates to')
+
+  // Fetch issues for linking (from current project)
+  const existingIssues = useQuery(
+    api.issues.listIssues,
+    selectedProjectId ? { projectId: selectedProjectId as Id<'projects'> } : 'skip',
+  )
 
   // Sync selected project with context or prop
   React.useEffect(() => {
@@ -62,6 +78,13 @@ export function TaskForm({ open, onOpenChange, parentId, initialProjectId, dismi
       setType('subtask')
     }
   }, [parentId, type])
+
+  // Sync default assignee when user is available
+  React.useEffect(() => {
+    if (user?._id && !assigneeId) {
+      setAssigneeId(user._id)
+    }
+  }, [user?._id, assigneeId])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -80,11 +103,21 @@ export function TaskForm({ open, onOpenChange, parentId, initialProjectId, dismi
         priority,
         type,
         status: 'todo',
-        assigneeId: user?._id,
+        assigneeId: assigneeId as any || undefined,
+        properties: {
+          startAt: startAt || undefined,
+          dueDate: dueDate || undefined,
+          linkedTo: linkedToId || undefined,
+          linkType: linkedToId ? linkType : undefined,
+        },
       })
       toast.success(parentId ? 'Sub-task created' : 'Task created successfully')
       setTitle('')
       setDescription('')
+      setStartAt('')
+      setDueDate('')
+      setLinkedToId('')
+      setIsMoreOptionsOpen(false)
       onOpenChange(false)
     }
     catch (err) {
@@ -99,7 +132,7 @@ export function TaskForm({ open, onOpenChange, parentId, initialProjectId, dismi
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="sm:max-w-[500px] bg-background border-border/10 text-foreground rounded-3xl overflow-hidden shadow-2xl"
+        className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto bg-background border-border/10 text-foreground rounded-3xl shadow-2xl custom-scrollbar"
         onInteractOutside={(e) => {
           if (!dismissOnOutsideClick) {
             e.preventDefault()
@@ -212,6 +245,127 @@ export function TaskForm({ open, onOpenChange, parentId, initialProjectId, dismi
               </div>
             </div>
           )}
+
+          {/* More Options Collapsible */}
+          <div className="pt-2">
+            <button
+              type="button"
+              onClick={() => setIsMoreOptionsOpen(!isMoreOptionsOpen)}
+              className="flex items-center gap-2 text-sm font-bold text-muted-foreground hover:text-foreground transition-colors uppercase tracking-widest"
+            >
+              {isMoreOptionsOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+              More options
+            </button>
+
+            <AnimatePresence>
+              {isMoreOptionsOpen && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.3, ease: 'easeInOut' }}
+                  className="overflow-hidden"
+                >
+                  <div className="space-y-6 pt-6 pb-2 px-1">
+                    {/* Assignee */}
+                    <div className="space-y-2">
+                      <Label className="text-xs font-bold text-muted-foreground uppercase flex items-center gap-2">
+                        <User className="w-3 h-3" />
+                        {' '}
+                        Assign To
+                      </Label>
+                      <Select value={assigneeId} onValueChange={setAssigneeId}>
+                        <SelectTrigger className="bg-card/5 border-border/10 rounded-xl h-11 focus:ring-primary">
+                          <SelectValue placeholder="Unassigned" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-background border-border/10 text-foreground rounded-xl">
+                          <SelectItem value="unassigned">Unassigned</SelectItem>
+                          {users?.map(u => (
+                            <SelectItem key={u._id} value={u._id}>
+                              {u.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Dates */}
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label className="text-xs font-bold text-muted-foreground uppercase flex items-center gap-2">
+                          <Calendar className="w-3 h-3" />
+                          {' '}
+                          Start At
+                        </Label>
+                        <Input
+                          type="date"
+                          value={startAt}
+                          onChange={e => setStartAt(e.target.value)}
+                          className="bg-card/5 border-border/10 rounded-xl h-11 focus:ring-primary"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="text-xs font-bold text-muted-foreground uppercase flex items-center gap-2">
+                          <Calendar className="w-3 h-3" />
+                          {' '}
+                          Due Date
+                        </Label>
+                        <Input
+                          type="date"
+                          value={dueDate}
+                          onChange={e => setDueDate(e.target.value)}
+                          className="bg-card/5 border-border/10 rounded-xl h-11 focus:ring-primary"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Linking */}
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label className="text-xs font-bold text-muted-foreground uppercase flex items-center gap-2">
+                          <LinkIcon className="w-3 h-3" />
+                          {' '}
+                          Linked To
+                        </Label>
+                        <Select value={linkedToId} onValueChange={setLinkedToId}>
+                          <SelectTrigger className="bg-card/5 border-border/10 rounded-xl h-11 focus:ring-primary">
+                            <SelectValue placeholder="None" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-background border-border/10 text-foreground rounded-xl">
+                            <SelectItem value="none">None</SelectItem>
+                            {existingIssues?.filter(i => i._id !== parentId && i.status !== 'done').map(i => (
+                              <SelectItem key={i._id} value={i._id}>
+                                {i.title}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="text-xs font-bold text-muted-foreground uppercase">
+                          Link Type
+                        </Label>
+                        <Select value={linkType} onValueChange={setLinkType} disabled={!linkedToId || linkedToId === 'none'}>
+                          <SelectTrigger className="bg-card/5 border-border/10 rounded-xl h-11 focus:ring-primary">
+                            <SelectValue placeholder="Relates to" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-background border-border/10 text-foreground rounded-xl">
+                            <SelectItem value="blocks">Blocks</SelectItem>
+                            <SelectItem value="blocked by">Blocked by</SelectItem>
+                            <SelectItem value="relates to">Relates to</SelectItem>
+                            <SelectItem value="duplicates">Duplicates</SelectItem>
+                            <SelectItem value="duplicated by">Duplicated by</SelectItem>
+                            <SelectItem value="parent of">Parent of</SelectItem>
+                            <SelectItem value="child of">Child of</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
 
           <DialogFooter className="pt-4 px-1 pb-1">
             <Button
