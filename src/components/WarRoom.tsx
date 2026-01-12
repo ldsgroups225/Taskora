@@ -3,10 +3,12 @@ import {
   AlertTriangle,
   ArrowUpRight,
   Target,
+  Terminal,
   TrendingUp,
   Trophy,
   Zap,
 } from 'lucide-react'
+import { toast } from 'sonner'
 import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
@@ -20,6 +22,26 @@ import { BacklogReviewPanel } from './BacklogReviewPanel'
 export function WarRoom() {
   const { metrics, isLoading: isLoadingMetrics } = useProjectMetrics()
   const { deliverables, isLoading: isLoadingDeliverables } = useDeliverables()
+
+  const handleCopyPrompt = async (e: React.MouseEvent, prompt?: string) => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    if (!prompt) {
+      toast.info('Prompt is being generated, please wait...')
+      return
+    }
+
+    try {
+      await navigator.clipboard.writeText(prompt)
+      toast.success('Developer prompt copied', {
+        icon: <Terminal className="w-4 h-4 text-primary" />,
+      })
+    }
+    catch {
+      toast.error('Failed to copy prompt')
+    }
+  }
 
   return (
     <motion.div
@@ -131,14 +153,27 @@ export function WarRoom() {
                 )
               : deliverables && deliverables.length > 0
                 ? (
-                    (deliverables as { _id: string, title: string, type: string, priority: string, status: string }[]).map(item => (
-                      <div key={item._id} className="px-6 py-4 flex items-center justify-between hover:bg-card/2 transition-colors">
-                        <div className="flex items-center gap-4">
-                          <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center text-primary font-bold text-xs uppercase">
+                    (deliverables as { _id: string, title: string, type: string, priority: string, status: string, generatedPrompt?: string }[]).map(item => (
+                      <div key={item._id} className="group px-6 py-4 flex items-center justify-between hover:bg-card/2 transition-colors">
+                        <div className="flex items-center gap-4 min-w-0 grow">
+                          <div className="shrink-0 w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center text-primary font-bold text-xs uppercase">
                             {item.type[0]}
                           </div>
-                          <div>
-                            <p className="text-sm font-bold text-foreground tracking-tight line-clamp-1">{item.title}</p>
+                          <div className="min-w-0 grow">
+                            <div className="flex items-center justify-between gap-2">
+                              <p className="text-sm font-bold text-foreground tracking-tight line-clamp-1">{item.title}</p>
+                              {item.generatedPrompt && (
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="shrink-0 h-8 w-8 rounded-lg text-muted-foreground hover:text-accent hover:bg-accent/10 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-all"
+                                  onClick={async e => handleCopyPrompt(e, item.generatedPrompt)}
+                                  title="Copy Developer Prompt"
+                                >
+                                  <Terminal className="w-3.5 h-3.5" />
+                                </Button>
+                              )}
+                            </div>
                             <p className="text-xs text-muted-foreground">
                               {' '}
                               Priority:
@@ -146,7 +181,7 @@ export function WarRoom() {
                             </p>
                           </div>
                         </div>
-                        <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-4 shrink-0 sm:ml-4">
                           <div className="hidden sm:flex items-center gap-1.5">
                             <Zap className="w-3 h-3 text-warning" />
                             <span className="text-xs font-bold text-muted-foreground">AI Tracked</span>

@@ -18,6 +18,7 @@ import {
   Plus,
   Share2,
   Sparkles,
+  Terminal,
   Trash2,
   User,
   Zap,
@@ -127,6 +128,22 @@ function TaskDetail() {
     setIsEditingDesc(false)
   }
 
+  const handleCopyPrompt = async () => {
+    if (!issue?.generatedPrompt) {
+      toast.info('Prompt is being generated, please wait...')
+      return
+    }
+    try {
+      await navigator.clipboard.writeText(issue.generatedPrompt)
+      toast.success('Developer prompt copied', {
+        icon: <Terminal className="w-4 h-4 text-primary" />,
+      })
+    }
+    catch {
+      toast.error('Failed to copy prompt')
+    }
+  }
+
   const handleShare = async () => {
     try {
       await navigator.clipboard.writeText(window.location.href)
@@ -221,6 +238,21 @@ function TaskDetail() {
         </div>
 
         <div className="flex items-center gap-1">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleCopyPrompt}
+                className="text-muted-foreground hover:text-accent hover:bg-accent/10 rounded-xl h-9 px-3 gap-2 flex items-center"
+              >
+                <Terminal className="w-4 h-4" />
+                <span className="hidden sm:inline font-bold text-xs uppercase tracking-wider">Copy Prompt</span>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent className="bg-background border-border/10 text-foreground">Copy developer prompt</TooltipContent>
+          </Tooltip>
+
           <Tooltip>
             <TooltipTrigger asChild>
               <Button

@@ -74,6 +74,14 @@ export const createIssue = mutation({
       properties: args.properties ?? {},
     })
 
+    await ctx.scheduler.runAfter(0, internal.postFunctions.generateIssuePrompt, {
+      issueId: id,
+      title: args.title,
+      description: args.description,
+      type: args.type,
+      priority: args.priority,
+    })
+
     return id
   },
 })
@@ -177,6 +185,19 @@ export const updateIssue = mutation({
     }
 
     await ctx.db.patch(id, patch)
+
+    if (patch.title || patch.description) {
+      const updatedIssue = await ctx.db.get(id)
+      if (updatedIssue) {
+        await ctx.scheduler.runAfter(0, internal.postFunctions.generateIssuePrompt, {
+          issueId: id,
+          title: updatedIssue.title,
+          description: updatedIssue.description,
+          type: updatedIssue.type,
+          priority: updatedIssue.priority,
+        })
+      }
+    }
   },
 })
 

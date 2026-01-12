@@ -3,6 +3,7 @@ import { v } from 'convex/values'
 import { internal } from './_generated/api'
 import { internalAction, internalMutation } from './_generated/server'
 import { AI_MODEL } from './constants'
+import { TEMPLATES } from './templates'
 
 function getGenAI() {
   const apiKey = process.env.GOOGLE_API_KEY
@@ -39,6 +40,67 @@ export const updateIssueAiProperties = internalMutation({
     await ctx.db.patch(args.issueId, {
       properties: { ...properties, ...args.patch },
     })
+  },
+})
+
+export const updateIssuePrompt = internalMutation({
+  args: {
+    issueId: v.id('issues'),
+    generatedPrompt: v.string(),
+  },
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.issueId, {
+      generatedPrompt: args.generatedPrompt,
+    })
+  },
+})
+
+export const generateIssuePrompt = internalAction({
+  args: {
+    issueId: v.id('issues'),
+    title: v.string(),
+    description: v.optional(v.string()),
+    type: v.string(),
+    priority: v.string(),
+  },
+  handler: async (ctx, args) => {
+    try {
+      const genAI = getGenAI()
+      const model = genAI.getGenerativeModel({ model: AI_MODEL })
+
+      const template = TEMPLATES[args.type as keyof typeof TEMPLATES] || TEMPLATES.task
+
+      const prompt = `You are a Senior Project Architect.
+Base Template:
+${template}
+
+Specific Issue:
+Title: ${args.title}
+Description: ${args.description || 'No description provided.'}
+Type: ${args.type}
+Priority: ${args.priority}
+
+Task: Generate a comprehensive, prompt ready to send to a developer or use as a system instruction to implement this specific issue. 
+It should include:
+1. Role definition based on the base template.
+2. Context about the specific issue.
+3. Steps to take.
+4. Acceptance criteria derived from the description.
+5. Technical considerations if applicable.
+
+Return ONLY the generated prompt, ready for copy-paste.`
+
+      const result = await model.generateContent(prompt)
+      const text = result.response.text()
+
+      await ctx.runMutation(internal.postFunctions.updateIssuePrompt, {
+        issueId: args.issueId,
+        generatedPrompt: text,
+      })
+    }
+    catch (e) {
+      console.error('Failed to generate prompt:', e)
+    }
   },
 })
 

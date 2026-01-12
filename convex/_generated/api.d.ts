@@ -21,10 +21,12 @@ import type * as crons from "../crons.js";
 import type * as deliverables from "../deliverables.js";
 import type * as issues from "../issues.js";
 import type * as metrics from "../metrics.js";
+import type * as migrations from "../migrations.js";
 import type * as postFunctions from "../postFunctions.js";
 import type * as projects from "../projects.js";
 import type * as reprioritization from "../reprioritization.js";
 import type * as search from "../search.js";
+import type * as templates from "../templates.js";
 import type * as test_utils from "../test_utils.js";
 import type * as users from "../users.js";
 
@@ -48,10 +50,12 @@ declare const fullApi: ApiFromModules<{
   deliverables: typeof deliverables;
   issues: typeof issues;
   metrics: typeof metrics;
+  migrations: typeof migrations;
   postFunctions: typeof postFunctions;
   projects: typeof projects;
   reprioritization: typeof reprioritization;
   search: typeof search;
+  templates: typeof templates;
   test_utils: typeof test_utils;
   users: typeof users;
 }>;

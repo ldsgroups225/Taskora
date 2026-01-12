@@ -1,7 +1,19 @@
 import { Link } from '@tanstack/react-router'
 import { motion } from 'framer-motion'
-import { AlertCircle, Bot, CheckCircle2, Circle, Clock, Loader2, Plus, Sparkles, Zap } from 'lucide-react'
+import {
+  AlertCircle,
+  Bot,
+  CheckCircle2,
+  Circle,
+  Clock,
+  Loader2,
+  Plus,
+  Sparkles,
+  Terminal,
+  Zap,
+} from 'lucide-react'
 import * as React from 'react'
+import { toast } from 'sonner'
 import { TaskForm } from '~/components/TaskForm'
 import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
@@ -11,6 +23,26 @@ import { cn } from '~/lib/utils'
 export function ZenMode() {
   const { tasks, isLoading } = useMyTasks()
   const [isTaskFormOpen, setIsTaskFormOpen] = React.useState(false)
+
+  const handleCopyPrompt = async (e: React.MouseEvent, prompt?: string) => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    if (!prompt) {
+      toast.info('Prompt is being generated, please wait...')
+      return
+    }
+
+    try {
+      await navigator.clipboard.writeText(prompt)
+      toast.success('Developer prompt copied', {
+        icon: <Terminal className="w-4 h-4 text-primary" />,
+      })
+    }
+    catch {
+      toast.error('Failed to copy prompt')
+    }
+  }
 
   return (
     <motion.div
@@ -78,13 +110,28 @@ export function ZenMode() {
                       </div>
 
                       <div className="grow min-w-0">
-                        <h3 className={cn(
-                          'font-medium text-lg leading-snug truncate transition-colors',
-                          task.status === 'done' ? 'text-muted-foreground line-through' : 'text-foreground',
-                        )}
-                        >
-                          {task.title}
-                        </h3>
+                        <div className="flex items-center justify-between gap-4">
+                          <h3 className={cn(
+                            'font-medium text-lg leading-snug truncate transition-colors',
+                            task.status === 'done' ? 'text-muted-foreground line-through' : 'text-foreground',
+                          )}
+                          >
+                            {task.title}
+                          </h3>
+
+                          {task.generatedPrompt && (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="shrink-0 h-8 w-8 rounded-lg text-muted-foreground hover:text-accent hover:bg-accent/10 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-all"
+                              onClick={async e => handleCopyPrompt(e, task.generatedPrompt)}
+                              title="Copy Developer Prompt"
+                            >
+                              <Terminal className="w-4 h-4" />
+                            </Button>
+                          )}
+                        </div>
+
                         <div className="flex items-center gap-3 mt-1.5 flex-wrap">
                           <Badge variant="outline" className="text-[10px] uppercase font-bold py-0 h-4 border-border bg-background/50 text-muted-foreground">
                             {task.status.replace('_', ' ')}
