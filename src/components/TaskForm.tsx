@@ -32,9 +32,10 @@ interface TaskFormProps {
   onOpenChange: (open: boolean) => void
   parentId?: Id<'issues'>
   initialProjectId?: string
+  dismissOnOutsideClick?: boolean
 }
 
-export function TaskForm({ open, onOpenChange, parentId, initialProjectId }: TaskFormProps) {
+export function TaskForm({ open, onOpenChange, parentId, initialProjectId, dismissOnOutsideClick = false }: TaskFormProps) {
   const { projectId: contextProjectId } = useProject()
   const { user } = useCurrentUser()
   const projects = useQuery(api.projects.listProjects)
@@ -99,7 +100,14 @@ export function TaskForm({ open, onOpenChange, parentId, initialProjectId }: Tas
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] bg-background border-border/10 text-foreground rounded-3xl overflow-hidden shadow-2xl">
+      <DialogContent
+        className="sm:max-w-[500px] bg-background border-border/10 text-foreground rounded-3xl overflow-hidden shadow-2xl"
+        onInteractOutside={(e) => {
+          if (!dismissOnOutsideClick) {
+            e.preventDefault()
+          }
+        }}
+      >
         <DialogHeader className="px-1">
           <DialogTitle className="text-2xl font-bold flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
