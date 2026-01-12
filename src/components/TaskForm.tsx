@@ -153,13 +153,13 @@ export function TaskForm({ open, onOpenChange, parentId, initialProjectId, dismi
 
         <form onSubmit={handleSubmit} className="space-y-6 pt-4">
           <div className="space-y-2">
-            <Label htmlFor="title" className="text-sm font-bold text-foreground uppercase tracking-wider ml-1">
+            <Label htmlFor="title" className="text-sm md:text-sm font-bold text-foreground uppercase tracking-wider ml-1">
               Title
             </Label>
             <Input
               id="title"
               placeholder={parentId ? 'Sub-task title...' : 'What needs to be done?'}
-              className="bg-card/5 border-border/10 rounded-2xl h-12 px-4 focus:ring-primary text-lg font-medium placeholder:text-muted-foreground"
+              className="bg-card/5 border-border/10 rounded-2xl h-14 md:h-12 px-4 focus:ring-primary text-xl md:text-lg font-medium placeholder:text-muted-foreground"
               value={title}
               onChange={e => setTitle(e.target.value)}
               required
@@ -168,13 +168,13 @@ export function TaskForm({ open, onOpenChange, parentId, initialProjectId, dismi
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description" className="text-sm font-bold text-foreground uppercase tracking-wider ml-1">
+            <Label htmlFor="description" className="text-sm md:text-sm font-bold text-foreground uppercase tracking-wider ml-1">
               Description (Optional)
             </Label>
             <Textarea
               id="description"
               placeholder="Add more details..."
-              className="bg-card/5 border-border/10 rounded-2xl min-h-[100px] p-4 focus:ring-primary placeholder:text-muted-foreground"
+              className="bg-card/5 border-border/10 rounded-2xl min-h-[120px] md:min-h-[100px] p-4 focus:ring-primary text-lg md:text-base placeholder:text-muted-foreground"
               value={description}
               onChange={e => setDescription(e.target.value)}
             />
@@ -187,7 +187,7 @@ export function TaskForm({ open, onOpenChange, parentId, initialProjectId, dismi
                   Project
                 </Label>
                 <Select value={selectedProjectId} onValueChange={setSelectedProjectId}>
-                  <SelectTrigger className="bg-card/5 border-border/10 rounded-xl h-11 focus:ring-primary">
+                  <SelectTrigger className="bg-card/5 border-border/10 rounded-xl h-12 md:h-11 focus:ring-primary">
                     <SelectValue placeholder="Select project" />
                   </SelectTrigger>
                   <SelectContent className="bg-background border-border/10 text-foreground rounded-xl">
@@ -209,7 +209,7 @@ export function TaskForm({ open, onOpenChange, parentId, initialProjectId, dismi
                 Priority
               </Label>
               <Select value={priority} onValueChange={(val: any) => setPriority(val)}>
-                <SelectTrigger className="bg-card/5 border-border/10 rounded-xl h-11 focus:ring-primary">
+                <SelectTrigger className="bg-card/5 border-border/10 rounded-xl h-12 md:h-11 focus:ring-primary">
                   <SelectValue placeholder="Select priority" />
                 </SelectTrigger>
                 <SelectContent className="bg-background border-border/10 text-foreground rounded-xl">
@@ -233,7 +233,7 @@ export function TaskForm({ open, onOpenChange, parentId, initialProjectId, dismi
                     key={t}
                     type="button"
                     onClick={() => setType(t)}
-                    className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider border transition-all ${
+                    className={`px-5 py-3 md:px-4 md:py-2 rounded-xl text-sm md:text-xs font-bold uppercase tracking-wider border transition-all min-w-[80px] md:min-w-0 ${
                       type === t
                         ? 'bg-primary/10 border-primary/50 text-foreground shadow-lg shadow-primary/10'
                         : 'bg-card/5 border-border/10 text-muted-foreground hover:bg-card/10'
@@ -251,9 +251,9 @@ export function TaskForm({ open, onOpenChange, parentId, initialProjectId, dismi
             <button
               type="button"
               onClick={() => setIsMoreOptionsOpen(!isMoreOptionsOpen)}
-              className="flex items-center gap-2 text-sm font-bold text-muted-foreground hover:text-foreground transition-colors uppercase tracking-widest"
+              className="flex items-center gap-2 text-base md:text-sm font-bold text-muted-foreground hover:text-foreground transition-colors uppercase tracking-widest py-2"
             >
-              {isMoreOptionsOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+              {isMoreOptionsOpen ? <ChevronUp className="w-5 h-5 md:w-4 md:h-4" /> : <ChevronDown className="w-5 h-5 md:w-4 md:h-4" />}
               More options
             </button>
 
@@ -275,7 +275,7 @@ export function TaskForm({ open, onOpenChange, parentId, initialProjectId, dismi
                         Assign To
                       </Label>
                       <Select value={assigneeId} onValueChange={setAssigneeId}>
-                        <SelectTrigger className="bg-card/5 border-border/10 rounded-xl h-11 focus:ring-primary">
+                        <SelectTrigger className="bg-card/5 border-border/10 rounded-xl h-12 md:h-11 focus:ring-primary">
                           <SelectValue placeholder="Unassigned" />
                         </SelectTrigger>
                         <SelectContent className="bg-background border-border/10 text-foreground rounded-xl">
@@ -292,8 +292,8 @@ export function TaskForm({ open, onOpenChange, parentId, initialProjectId, dismi
                     {/* Dates */}
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label className="text-xs font-bold text-muted-foreground uppercase flex items-center gap-2">
-                          <Calendar className="w-3 h-3" />
+                        <Label className="text-sm md:text-xs font-bold text-muted-foreground uppercase flex items-center gap-2">
+                          <Calendar className="w-4 h-4 md:w-3 md:h-3" />
                           {' '}
                           Start At
                         </Label>
@@ -301,12 +301,12 @@ export function TaskForm({ open, onOpenChange, parentId, initialProjectId, dismi
                           type="date"
                           value={startAt}
                           onChange={e => setStartAt(e.target.value)}
-                          className="bg-card/5 border-border/10 rounded-xl h-11 focus:ring-primary"
+                          className="bg-card/5 border-border/10 rounded-xl h-12 md:h-11 focus:ring-primary text-base"
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label className="text-xs font-bold text-muted-foreground uppercase flex items-center gap-2">
-                          <Calendar className="w-3 h-3" />
+                        <Label className="text-sm md:text-xs font-bold text-muted-foreground uppercase flex items-center gap-2">
+                          <Calendar className="w-4 h-4 md:w-3 md:h-3" />
                           {' '}
                           Due Date
                         </Label>
@@ -314,7 +314,7 @@ export function TaskForm({ open, onOpenChange, parentId, initialProjectId, dismi
                           type="date"
                           value={dueDate}
                           onChange={e => setDueDate(e.target.value)}
-                          className="bg-card/5 border-border/10 rounded-xl h-11 focus:ring-primary"
+                          className="bg-card/5 border-border/10 rounded-xl h-12 md:h-11 focus:ring-primary text-base"
                         />
                       </div>
                     </div>
@@ -328,7 +328,7 @@ export function TaskForm({ open, onOpenChange, parentId, initialProjectId, dismi
                           Linked To
                         </Label>
                         <Select value={linkedToId} onValueChange={setLinkedToId}>
-                          <SelectTrigger className="bg-card/5 border-border/10 rounded-xl h-11 focus:ring-primary">
+                          <SelectTrigger className="bg-card/5 border-border/10 rounded-xl h-12 md:h-11 focus:ring-primary">
                             <SelectValue placeholder="None" />
                           </SelectTrigger>
                           <SelectContent className="bg-background border-border/10 text-foreground rounded-xl">
@@ -346,7 +346,7 @@ export function TaskForm({ open, onOpenChange, parentId, initialProjectId, dismi
                           Link Type
                         </Label>
                         <Select value={linkType} onValueChange={setLinkType} disabled={!linkedToId || linkedToId === 'none'}>
-                          <SelectTrigger className="bg-card/5 border-border/10 rounded-xl h-11 focus:ring-primary">
+                          <SelectTrigger className="bg-card/5 border-border/10 rounded-xl h-12 md:h-11 focus:ring-primary">
                             <SelectValue placeholder="Relates to" />
                           </SelectTrigger>
                           <SelectContent className="bg-background border-border/10 text-foreground rounded-xl">

@@ -94,8 +94,8 @@ export function Card({ ref, title, content, id, columnId, boardId, order, nextOr
         <CardContent className="p-3 space-y-2">
           <div className="flex items-start justify-between gap-2">
             <div className="flex items-center gap-2 grow">
-              <GripVertical className="w-4 h-4 text-muted-foreground group-hover/card:text-muted-foreground transition-colors shrink-0" />
-              <h3 className="text-sm font-semibold text-foreground leading-tight grow">{title}</h3>
+              <GripVertical className="w-5 h-5 md:w-4 md:h-4 text-muted-foreground group-hover/card:text-muted-foreground transition-colors shrink-0" />
+              <h3 className="text-base md:text-sm font-semibold text-foreground leading-tight grow">{title}</h3>
             </div>
             <form
               onSubmit={(event) => {
@@ -112,7 +112,7 @@ export function Card({ ref, title, content, id, columnId, boardId, order, nextOr
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-6 w-6 text-muted-foreground hover:text-destructive hover:bg-destructive/10 opacity-0 group-hover/card:opacity-100 transition-opacity"
+                className="h-6 w-6 text-muted-foreground hover:text-destructive hover:bg-destructive/10 md:opacity-0 group-hover/card:opacity-100 transition-opacity"
                 type="submit"
               >
                 <Trash2 className="w-3 h-3" />
@@ -120,7 +120,7 @@ export function Card({ ref, title, content, id, columnId, boardId, order, nextOr
             </form>
           </div>
           {content && (
-            <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed pl-6">
+            <p className="text-sm md:text-xs text-muted-foreground line-clamp-3 md:line-clamp-2 leading-relaxed pl-7 md:pl-6">
               {content}
             </p>
           )}

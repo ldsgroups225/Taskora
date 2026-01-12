@@ -128,7 +128,7 @@ export function Column({ ref, name, columnId, boardId, items, nextOrder, previou
           )
         }}
         className={cn(
-          'flex flex-col w-72 md:w-80 bg-background/40 backdrop-blur-sm border border-border/5 rounded-2xl max-h-full transition-all group/column box-border',
+          'flex flex-col w-[85vw] md:w-80 bg-background/40 backdrop-blur-sm border border-border/5 rounded-2xl max-h-full transition-all group/column box-border',
           acceptCardDrop && 'ring-2 ring-primary ring-inset',
         )}
         {...(!items.length ? cardDndProps : {})}

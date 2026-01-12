@@ -184,13 +184,13 @@ function RootDocument({
           <div className="h-screen flex flex-col min-h-0 bg-background text-foreground">
             {/* Header */}
             <header className="sticky top-0 z-50 w-full border-b border-border/5 bg-background/50 backdrop-blur-xl">
-              <div className="container mx-auto px-4 md:px-8 h-16 flex items-center justify-between gap-4">
-                <div className="flex items-center gap-8">
+              <div className="container mx-auto px-4 md:px-8 h-16 flex items-center justify-between gap-2 md:gap-4 overflow-x-hidden">
+                <div className="flex items-center gap-2 md:gap-8 shrink-0">
                   <Link to="/" className="flex items-center gap-2 group shrink-0">
                     <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">
                       <Rocket className="w-5 h-5 text-foreground" />
                     </div>
-                    <span className="hidden md:inline font-bold text-xl tracking-tight text-foreground uppercase italic">Taskora</span>
+                    <span className="hidden lg:inline font-bold text-xl tracking-tight text-foreground uppercase italic">Taskora</span>
                   </Link>
 
                   <ViewModeToggle />
@@ -200,33 +200,35 @@ function RootDocument({
                   <CommandMenu />
                 </div>
 
-                <div className="flex items-center gap-4 shrink-0">
+                <div className="flex items-center gap-2 md:gap-4 shrink-0">
                   <ProjectSelectorWrapper />
                   <LoadingIndicator />
-                  <div className="sm:hidden">
+                  <div className="sm:hidden -ml-2">
                     <CommandMenu />
                   </div>
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-1.5 md:gap-3">
                     <ThemeToggle />
                     <Link
                       to="/settings/projects"
-                      className="p-2 text-muted-foreground hover:text-foreground hover:bg-card/5 rounded-xl transition-all"
+                      className="p-2 text-muted-foreground hover:text-foreground hover:bg-card/5 rounded-xl transition-all hidden xs:flex"
                       title="Settings"
                     >
                       <SettingsIcon className="w-5 h-5" />
                     </Link>
                     <SignedIn>
-                      <UserButton
-                        appearance={{
-                          elements: {
-                            userButtonAvatarBox: 'w-8 h-8 rounded-full border border-border/10',
-                          },
-                        }}
-                      />
+                      <div className="scale-90 md:scale-100">
+                        <UserButton
+                          appearance={{
+                            elements: {
+                              userButtonAvatarBox: 'w-8 h-8 rounded-full border border-border/10',
+                            },
+                          }}
+                        />
+                      </div>
                     </SignedIn>
                     <SignedOut>
                       <SignInButton mode="modal">
-                        <button className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+                        <button className="text-xs md:text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
                           Sign In
                         </button>
                       </SignInButton>
@@ -238,7 +240,7 @@ function RootDocument({
 
             <main className="grow min-h-0 h-full flex flex-col">
               {children}
-              <Toaster position="bottom-right" />
+              <Toaster position="bottom-center" />
             </main>
           </div>
         </TooltipProvider>

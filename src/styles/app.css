@@ -38,6 +38,8 @@
 
   --font-sans: "Plus Jakarta Sans", sans-serif;
   --font-mono: "IBM Plex Mono", monospace;
+
+  --breakpoint-xs: 480px;
 }
 
 :root {
@@ -94,11 +96,60 @@
 }
 
 @layer base {
+  html {
+    /* Slightly larger base for mobile readability, standard 16px for desktop */
+    font-size: 17px;
+  }
+
+  @media (min-width: 768px) {
+    html {
+      font-size: 16px;
+    }
+  }
+
+  html, body {
+    @apply overflow-x-hidden w-full;
+    position: relative;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: pan-y;
+    text-rendering: optimizeLegibility;
+  }
+  
   * {
     @apply border-border;
+    box-sizing: border-box;
   }
+
   body {
     @apply bg-background text-foreground antialiased;
     font-family: var(--font-sans);
+    line-height: 1.6;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply tracking-tight font-bold;
+    line-height: 1.2;
+  }
+}
+
+/* Scrollbar Customization for Mobile */
+@layer utilities {
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 0px;
+    height: 6px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-primary/20 rounded-full;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }

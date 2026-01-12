@@ -56,8 +56,8 @@ export function WarRoom() {
     >
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">Project Overview</h1>
-          <p className="text-muted-foreground">Taskora Intelligent Insights</p>
+          <h1 className="text-3xl md:text-3xl font-bold text-foreground tracking-tight leading-none">Project Overview</h1>
+          <p className="text-muted-foreground text-sm mt-1">Taskora Intelligent Insights</p>
         </div>
         <div className="flex items-center gap-2">
           <Badge variant="outline" className="bg-success/10 border-success/20 text-success px-3 py-1 font-bold">
@@ -165,22 +165,20 @@ export function WarRoom() {
                           </div>
                           <div className="min-w-0 grow">
                             <div className="flex items-center justify-between gap-2">
-                              <p className="text-sm font-bold text-foreground tracking-tight line-clamp-1">{item.title}</p>
+                              <p className="text-base md:text-sm font-bold text-foreground tracking-tight line-clamp-1">{item.title}</p>
                               {item.generatedPrompt && (
                                 <Button
                                   variant="ghost"
                                   size="icon"
-                                  className="shrink-0 h-8 w-8 rounded-lg text-muted-foreground hover:text-accent hover:bg-accent/10 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-all"
+                                  className="shrink-0 h-9 w-9 md:h-8 md:w-8 rounded-lg text-muted-foreground hover:text-accent hover:bg-accent/10 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-all"
                                   onClick={async e => handleCopyPrompt(e, item.generatedPrompt)}
                                   title="Copy Developer Prompt"
                                 >
-                                  <Terminal className="w-3.5 h-3.5" />
+                                  <Terminal className="w-4 h-4 md:w-3.5 md:h-3.5" />
                                 </Button>
                               )}
                             </div>
-                            <p className="text-xs text-muted-foreground">
-                              {' '}
-                              Priority:
+                            <p className="text-sm md:text-xs text-muted-foreground mt-0.5 uppercase tracking-wider font-semibold">
                               {item.priority}
                             </p>
                           </div>

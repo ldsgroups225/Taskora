@@ -33,12 +33,12 @@ export function ProjectSelector({ selectedId, onSelect, className }: ProjectSele
         <Button
           variant="ghost"
           size="sm"
-          className={cn('h-9 px-3 bg-card/5 border border-border/10 hover:bg-card/10 text-foreground flex items-center gap-2 rounded-xl transition-all', className)}
+          className={cn('h-11 md:h-9 px-3 bg-card/5 border border-border/10 hover:bg-card/10 text-foreground flex items-center gap-2 rounded-xl transition-all', className)}
         >
           <div className="w-5 h-5 rounded bg-primary/20 flex items-center justify-center text-primary shrink-0">
             <LayoutPanelLeft className="w-3 h-3" />
           </div>
-          <span className="max-w-[100px] truncate font-bold text-xs uppercase tracking-wider">
+          <span className="max-w-[120px] md:max-w-[100px] truncate font-bold text-sm md:text-xs uppercase tracking-wider">
             {selectedProject?.name || 'Select Project'}
           </span>
           <ChevronsUpDown className="w-3 h-3 text-muted-foreground shrink-0" />

@@ -14,8 +14,8 @@ export function AgentActivityFeed() {
   return (
     <Card className="bg-card/5 border-border/10 rounded-2xl h-full flex flex-col">
       <CardHeader className="py-4 border-b border-border/5 bg-background/50">
-        <CardTitle className="text-sm font-bold text-primary flex items-center gap-2">
-          <Bot className="w-4 h-4" />
+        <CardTitle className="text-base md:text-sm font-bold text-primary flex items-center gap-2">
+          <Bot className="w-5 h-5 md:w-4 md:h-4 transition-transform group-hover:rotate-12" />
           Agent Activity
         </CardTitle>
       </CardHeader>
@@ -50,14 +50,14 @@ export function AgentActivityFeed() {
                         </div>
                         <div className="grow space-y-1 min-w-0">
                           <div className="flex items-center justify-between gap-2">
-                            <span className="font-bold text-foreground capitalize truncate">
+                            <span className="font-bold text-foreground capitalize truncate text-sm md:text-xs">
                               {log.action.replace('_', ' ')}
                             </span>
-                            <span className="text-muted-foreground text-[10px] whitespace-nowrap">
+                            <span className="text-muted-foreground text-[11px] md:text-[10px] font-medium whitespace-nowrap">
                               {formatDistanceToNow(log._creationTime, { addSuffix: true })}
                             </span>
                           </div>
-                          <p className="text-muted-foreground leading-relaxed line-clamp-3 group-hover:line-clamp-none transition-all">
+                          <p className="text-muted-foreground text-sm md:text-xs leading-relaxed line-clamp-3">
                             {log.result}
                           </p>
                           {log.error && (

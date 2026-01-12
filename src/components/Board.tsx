@@ -74,8 +74,8 @@ export function Board({ boardId }: { boardId: string }) {
         </h1>
       </header>
 
-      <ScrollArea className="grow px-8 pb-8">
-        <div className="flex items-start h-full h-[calc(100vh-180px)]" ref={scrollContainerRef}>
+      <ScrollArea className="flex-1 px-4 md:px-8 pb-8 focus-visible:ring-0">
+        <div className="flex items-start h-full min-h-[500px]" ref={scrollContainerRef}>
           {columns.map((col, index) => (
             <ColumnComponent
               ref={columnRef}
@@ -99,7 +99,7 @@ export function Board({ boardId }: { boardId: string }) {
           {/* Spacer for scroll end */}
           <div className="w-12 shrink-0 h-full" />
         </div>
-        <ScrollBar orientation="horizontal" className="bg-card/5" />
+        <ScrollBar orientation="horizontal" className="h-2 bg-card/5" />
       </ScrollArea>
     </div>
   )
