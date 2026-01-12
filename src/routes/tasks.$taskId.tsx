@@ -1,7 +1,7 @@
 import type { Doc, Id } from '../../convex/_generated/dataModel'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { useMutation, useQuery } from 'convex/react'
+import { useAction, useMutation, useQuery } from 'convex/react'
 import { motion } from 'framer-motion'
 import {
   AlertCircle,
@@ -100,6 +100,8 @@ function TaskDetail() {
 
   const updateIssue = useUpdateIssueMutation()
   const deleteIssue = useMutation(api.issues.deleteIssue)
+  const generateSuggestion = useAction(api.ai.generateTaskSuggestion)
+  const [aiSuggestion, setAiSuggestion] = React.useState<string | null>(null)
 
   const lastTaskIdRef = React.useRef<string | null>(null)
   React.useEffect(() => {
@@ -107,6 +109,21 @@ function TaskDetail() {
       setEditedTitle(issue.title)
       setEditedDesc(issue.description || '')
       lastTaskIdRef.current = issue._id
+      setAiSuggestion(null) // Reset suggestion for new task
+
+      // Trigger new suggestion
+      if (issue.status !== 'in_progress') {
+        generateSuggestion({
+          issueId: issue._id,
+          title: issue.title,
+          description: issue.description,
+          status: issue.status,
+          priority: issue.priority,
+          type: issue.type,
+        })
+          .then(res => setAiSuggestion(res.suggestion))
+          .catch(console.error)
+      }
     }
   }, [issue])
 
@@ -663,8 +680,13 @@ function TaskDetail() {
                 </CardHeader>
                 <CardContent className="px-6 pb-6 pt-0 text-sm text-primary/70">
                   <div className="bg-primary/5 border border-primary/10 p-5 rounded-3xl space-y-4">
-                    <p className="leading-relaxed">
-                      This task aligns with our Q4 "Core Reliability" initiative. Gemini suggests promoting it to "In Progress" to meet the upcoming sprint deadline.
+                    <p className="leading-relaxed animate-in fade-in duration-500">
+                      {aiSuggestion || (
+                        <span className="flex items-center gap-2 text-muted-foreground italic">
+                          <Sparkles className="w-3 h-3 animate-pulse" />
+                          Analyzing task context for strategic insights...
+                        </span>
+                      )}
                     </p>
                     <Button
                       onClick={handleAcceptAiSuggestion}

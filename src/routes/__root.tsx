@@ -29,6 +29,8 @@ import { CommandMenu } from '~/components/CommandMenu'
 import { DefaultCatchBoundary } from '~/components/DefaultCatchBoundary'
 import { NotFound } from '~/components/NotFound'
 import { ProjectSelector } from '~/components/ProjectSelector'
+import { ThemeProvider } from '~/components/ThemeProvider'
+import { ThemeToggle } from '~/components/ThemeToggle'
 import { Toaster } from '~/components/ui/sonner'
 import { TooltipProvider } from '~/components/ui/tooltip'
 import { ViewModeToggle } from '~/components/ViewModeToggle'
@@ -135,9 +137,16 @@ function RootComponentInner() {
       <ViewModeProvider>
         <RoleContext value={{ role, setRole }}>
           <ViewModeSync role={role} />
-          <RootDocument>
-            <Outlet />
-          </RootDocument>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <RootDocument>
+              <Outlet />
+            </RootDocument>
+          </ThemeProvider>
         </RoleContext>
       </ViewModeProvider>
     </ProjectProvider>
@@ -166,7 +175,7 @@ function RootDocument({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en">
       <head>
         <HeadContent />
       </head>
@@ -181,7 +190,7 @@ function RootDocument({
                     <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">
                       <Rocket className="w-5 h-5 text-foreground" />
                     </div>
-                    <span className="font-bold text-xl tracking-tight text-foreground uppercase italic">Taskora</span>
+                    <span className="hidden md:inline font-bold text-xl tracking-tight text-foreground uppercase italic">Taskora</span>
                   </Link>
 
                   <ViewModeToggle />
@@ -198,6 +207,7 @@ function RootDocument({
                     <CommandMenu />
                   </div>
                   <div className="flex items-center gap-3">
+                    <ThemeToggle />
                     <Link
                       to="/settings/projects"
                       className="p-2 text-muted-foreground hover:text-foreground hover:bg-card/5 rounded-xl transition-all"
@@ -244,7 +254,13 @@ function RootDocument({
 
 function ProjectSelectorWrapper() {
   const { projectId, setProjectId } = useProject()
-  return <ProjectSelector selectedId={projectId || undefined} onSelect={setProjectId} />
+  return (
+    <ProjectSelector
+      selectedId={projectId || undefined}
+      onSelect={setProjectId}
+      className="max-w-[150px] md:max-w-none"
+    />
+  )
 }
 
 function LoadingIndicator() {

@@ -2,6 +2,7 @@ import type { Id } from '../../convex/_generated/dataModel'
 import { Link } from '@tanstack/react-router'
 import { useQuery } from 'convex/react'
 import { ChevronRight, Sparkles } from 'lucide-react'
+import { IssueTypeIcon } from '~/components/IssueTypeIcon'
 import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
@@ -10,9 +11,10 @@ import { api } from '../../convex/_generated/api'
 
 export function BacklogReviewPanel() {
   const { projectId } = useProject()
-  const proposed = useQuery(api.reprioritization.getProposedRankings, {
-    projectId: projectId as Id<'projects'>,
-  })
+  const proposed = useQuery(
+    api.reprioritization.getProposedRankings,
+    projectId ? { projectId: projectId as Id<'projects'> } : 'skip',
+  )
 
   if (!proposed || proposed.length === 0)
     return null
@@ -65,15 +67,18 @@ export function BacklogReviewPanel() {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="flex flex-col">
-                        <span className="font-bold text-foreground line-clamp-1">{issue.title}</span>
-                        <div className="flex gap-2 mt-1">
-                          <Badge variant="outline" className="text-[9px] h-3.5 px-1 py-0 border-border text-muted-foreground">
-                            {issue.priority}
-                          </Badge>
-                          <Badge variant="outline" className="text-[9px] h-3.5 px-1 py-0 border-border text-muted-foreground">
-                            {issue.type}
-                          </Badge>
+                      <div className="flex items-start gap-3">
+                        <IssueTypeIcon type={issue.type} className="w-4 h-4 shrink-0 mt-0.5" />
+                        <div className="flex flex-col min-w-0">
+                          <span className="font-bold text-foreground line-clamp-1">{issue.title}</span>
+                          <div className="flex gap-2 mt-1">
+                            <Badge variant="outline" className="text-[9px] h-3.5 px-1 py-0 border-border text-muted-foreground">
+                              {issue.priority}
+                            </Badge>
+                            <Badge variant="outline" className="text-[9px] h-3.5 px-1 py-0 border-border text-muted-foreground">
+                              {issue.type}
+                            </Badge>
+                          </div>
                         </div>
                       </div>
                     </td>

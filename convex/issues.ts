@@ -224,8 +224,10 @@ export const deleteIssue = mutation({
  * List issues assigned to the current user
  */
 export const listMyIssues = query({
-  args: {},
-  handler: async (ctx) => {
+  args: {
+    projectId: v.optional(v.id('projects')),
+  },
+  handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity()
     if (!identity) {
       return []
@@ -240,10 +242,17 @@ export const listMyIssues = query({
       return []
     }
 
-    return ctx.db
+    const issues = await ctx.db
       .query('issues')
       .withIndex('by_assignee', q => q.eq('assigneeId', user._id))
       .collect()
+
+    // Filter by project if projectId is provided
+    if (args.projectId) {
+      return issues.filter(issue => issue.projectId === args.projectId)
+    }
+
+    return issues
   },
 })
 

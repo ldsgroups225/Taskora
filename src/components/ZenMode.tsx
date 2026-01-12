@@ -1,3 +1,4 @@
+import type { Id } from '../../convex/_generated/dataModel'
 import { Link } from '@tanstack/react-router'
 import { motion } from 'framer-motion'
 import {
@@ -14,14 +15,17 @@ import {
 } from 'lucide-react'
 import * as React from 'react'
 import { toast } from 'sonner'
+import { IssueTypeIcon } from '~/components/IssueTypeIcon'
 import { TaskForm } from '~/components/TaskForm'
 import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
+import { useProject } from '~/context/ProjectContext'
 import { useMyTasks } from '~/hooks/useMyTasks'
 import { cn } from '~/lib/utils'
 
 export function ZenMode() {
-  const { tasks, isLoading } = useMyTasks()
+  const { projectId } = useProject()
+  const { tasks, isLoading } = useMyTasks(projectId as Id<'projects'>)
   const [isTaskFormOpen, setIsTaskFormOpen] = React.useState(false)
 
   const handleCopyPrompt = async (e: React.MouseEvent, prompt?: string) => {
@@ -111,13 +115,16 @@ export function ZenMode() {
 
                       <div className="grow min-w-0">
                         <div className="flex items-center justify-between gap-4">
-                          <h3 className={cn(
-                            'font-medium text-lg leading-snug truncate transition-colors',
-                            task.status === 'done' ? 'text-muted-foreground line-through' : 'text-foreground',
-                          )}
-                          >
-                            {task.title}
-                          </h3>
+                          <div className="flex items-center gap-3 min-w-0">
+                            <IssueTypeIcon type={task.type} className="w-5 h-5 shrink-0" />
+                            <h3 className={cn(
+                              'font-medium text-lg leading-snug truncate transition-colors',
+                              task.status === 'done' ? 'text-muted-foreground line-through' : 'text-foreground',
+                            )}
+                            >
+                              {task.title}
+                            </h3>
+                          </div>
 
                           {task.generatedPrompt && (
                             <Button

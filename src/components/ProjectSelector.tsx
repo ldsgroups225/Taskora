@@ -11,14 +11,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu'
+import { cn } from '~/lib/utils'
 import { api } from '../../convex/_generated/api'
 
 interface ProjectSelectorProps {
   selectedId?: string
   onSelect: (id: string) => void
+  className?: string
 }
 
-export function ProjectSelector({ selectedId, onSelect }: ProjectSelectorProps) {
+export function ProjectSelector({ selectedId, onSelect, className }: ProjectSelectorProps) {
   const projects = useQuery(api.projects.listProjects)
 
   const selectedProject = React.useMemo(() => {
@@ -31,15 +33,15 @@ export function ProjectSelector({ selectedId, onSelect }: ProjectSelectorProps) 
         <Button
           variant="ghost"
           size="sm"
-          className="h-9 px-3 bg-card/5 border border-border/10 hover:bg-card/10 text-foreground flex items-center gap-2 rounded-xl transition-all"
+          className={cn('h-9 px-3 bg-card/5 border border-border/10 hover:bg-card/10 text-foreground flex items-center gap-2 rounded-xl transition-all', className)}
         >
-          <div className="w-5 h-5 rounded bg-primary/20 flex items-center justify-center text-primary">
+          <div className="w-5 h-5 rounded bg-primary/20 flex items-center justify-center text-primary shrink-0">
             <LayoutPanelLeft className="w-3 h-3" />
           </div>
           <span className="max-w-[100px] truncate font-bold text-xs uppercase tracking-wider">
             {selectedProject?.name || 'Select Project'}
           </span>
-          <ChevronsUpDown className="w-3 h-3 text-muted-foreground" />
+          <ChevronsUpDown className="w-3 h-3 text-muted-foreground shrink-0" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56 bg-background border-border/10 text-foreground rounded-2xl p-1" align="start">

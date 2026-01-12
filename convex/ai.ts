@@ -137,3 +137,55 @@ export const rankBacklog = internalAction({
     }
   },
 })
+
+/**
+ * Generate a context-aware suggestion for a specific task
+ */
+export const generateTaskSuggestion = action({
+  args: {
+    issueId: v.id('issues'),
+    title: v.string(),
+    description: v.optional(v.string()),
+    status: v.string(),
+    priority: v.string(),
+    type: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const genAI = getGenAI()
+    const model = genAI.getGenerativeModel({ model: AI_MODEL })
+
+    const prompt = `
+      You are an expert Agile Project Manager and AI Orchestrator.
+      Analyze the following task and provide a single, concise, strategic suggestion (max 2 sentences).
+      
+      Task: "${args.title}"
+      Type: ${args.type}
+      Status: ${args.status}
+      Priority: ${args.priority}
+      Description: "${args.description || 'No description provided'}"
+      
+      Your goal is to suggest the most impactful next step.
+      Examples:
+      - If it's a bug & critical, suggest immediate assignment or reproduction.
+      - If it's a vague story, suggest breaking it down.
+      - If it's in progress for a long time, ask for an update.
+      - If it's done, suggest a review or closing related tickets.
+      
+      Output ONLY the suggestion text, no conversational filler.
+    `
+
+    try {
+      const result = await model.generateContent(prompt)
+      let text = result.response.text().trim()
+      // Fallback if empty
+      if (!text) {
+        text = 'Review this task\'s priority and ensure the description is up to date.'
+      }
+      return { suggestion: text }
+    }
+    catch (e) {
+      console.error('Gemini Suggestion Error:', e)
+      return { suggestion: 'Unable to generate suggestion at this time. Please check task details.' }
+    }
+  },
+})

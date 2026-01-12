@@ -1,3 +1,4 @@
+import type { Id } from '../../convex/_generated/dataModel'
 import { motion } from 'framer-motion'
 import {
   AlertTriangle,
@@ -14,14 +15,17 @@ import { Button } from '~/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
 import { Progress } from '~/components/ui/progress'
 import { Skeleton } from '~/components/ui/skeleton'
+import { useProject } from '~/context/ProjectContext'
 import { useDeliverables } from '~/hooks/useDeliverables'
 import { useProjectMetrics } from '~/hooks/useProjectMetrics'
 import { AgentActivityFeed } from './AgentActivityFeed'
 import { BacklogReviewPanel } from './BacklogReviewPanel'
+import { IssueTypeIcon } from './IssueTypeIcon'
 
 export function WarRoom() {
-  const { metrics, isLoading: isLoadingMetrics } = useProjectMetrics()
-  const { deliverables, isLoading: isLoadingDeliverables } = useDeliverables()
+  const { projectId } = useProject()
+  const { metrics, isLoading: isLoadingMetrics } = useProjectMetrics(projectId as Id<'projects'>)
+  const { deliverables, isLoading: isLoadingDeliverables } = useDeliverables(projectId as Id<'projects'>)
 
   const handleCopyPrompt = async (e: React.MouseEvent, prompt?: string) => {
     e.preventDefault()
@@ -156,8 +160,8 @@ export function WarRoom() {
                     (deliverables as { _id: string, title: string, type: string, priority: string, status: string, generatedPrompt?: string }[]).map(item => (
                       <div key={item._id} className="group px-6 py-4 flex items-center justify-between hover:bg-card/2 transition-colors">
                         <div className="flex items-center gap-4 min-w-0 grow">
-                          <div className="shrink-0 w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center text-primary font-bold text-xs uppercase">
-                            {item.type[0]}
+                          <div className="shrink-0 w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
+                            <IssueTypeIcon type={item.type} className="w-4 h-4" />
                           </div>
                           <div className="min-w-0 grow">
                             <div className="flex items-center justify-between gap-2">

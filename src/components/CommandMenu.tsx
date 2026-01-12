@@ -1,5 +1,5 @@
 import type { Id } from '../../convex/_generated/dataModel'
-import { Link, useNavigate } from '@tanstack/react-router'
+import { useNavigate } from '@tanstack/react-router'
 import { useAction, useQuery } from 'convex/react'
 import {
   Code2,
@@ -151,21 +151,39 @@ export function CommandMenu() {
             <>
               <CommandEmpty>No results found. Try another query.</CommandEmpty>
               <CommandGroup heading="Recent / Seeded">
-                <CommandItem className="cursor-pointer" asChild>
-                  <Link to="/tasks/$taskId" params={{ taskId: 'jh74a4t1vbcsn7wpgkjtkpsrh97yztmm' }}>
-                    <Hash className="mr-2 h-4 w-4 text-accent" />
-                    <span>Seeded Initiative (Taskora Alpha)</span>
-                  </Link>
+                <CommandItem
+                  onSelect={async () => {
+                    await navigate({ to: '/tasks/$taskId', params: { taskId: 'jh74a4t1vbcsn7wpgkjtkpsrh97yztmm' } })
+                    setOpen(false)
+                  }}
+                  className="cursor-pointer"
+                >
+                  <Hash className="mr-2 h-4 w-4 text-accent" />
+                  <span>Seeded Initiative (Taskora Alpha)</span>
                 </CommandItem>
               </CommandGroup>
               <CommandSeparator />
               <CommandGroup heading="Suggestions">
-                <CommandItem className="cursor-pointer">
+                <CommandItem
+                  onSelect={async () => {
+                    await navigate({ to: '/' })
+                    setOpen(false)
+                  }}
+                  className="cursor-pointer"
+                >
                   <Zap className="mr-2 h-4 w-4 text-primary" />
                   <span>Groom Backlog</span>
                   <CommandShortcut>⌘G</CommandShortcut>
                 </CommandItem>
-                <CommandItem className="cursor-pointer">
+                <CommandItem
+                  onSelect={async () => {
+                    // Navigate to home/issues view and maybe focus search?
+                    // For now, navigating to home is the best fallback for full search.
+                    await navigate({ to: '/' })
+                    setOpen(false)
+                  }}
+                  className="cursor-pointer"
+                >
                   <Search className="mr-2 h-4 w-4" />
                   <span>Search Issues</span>
                 </CommandItem>
@@ -195,12 +213,24 @@ export function CommandMenu() {
               </CommandGroup>
               <CommandSeparator />
               <CommandGroup heading="Settings">
-                <CommandItem className="cursor-pointer">
+                <CommandItem
+                  onSelect={async () => {
+                    await navigate({ to: '/settings' })
+                    setOpen(false)
+                  }}
+                  className="cursor-pointer"
+                >
                   <User className="mr-2 h-4 w-4" />
                   <span>Profile</span>
                   <CommandShortcut>⌘P</CommandShortcut>
                 </CommandItem>
-                <CommandItem className="cursor-pointer">
+                <CommandItem
+                  onSelect={async () => {
+                    await navigate({ to: '/settings' })
+                    setOpen(false)
+                  }}
+                  className="cursor-pointer"
+                >
                   <Settings className="mr-2 h-4 w-4" />
                   <span>Settings</span>
                   <CommandShortcut>⌘S</CommandShortcut>
