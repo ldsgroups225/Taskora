@@ -10,7 +10,7 @@ import {
   useAuth,
   UserButton,
 } from '@clerk/clerk-react'
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools/production'
+
 import {
   createRootRouteWithContext,
   HeadContent,
@@ -20,7 +20,7 @@ import {
   useNavigate,
   useRouterState,
 } from '@tanstack/react-router'
-import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
+
 import { useMutation } from 'convex/react'
 import { ConvexProviderWithClerk } from 'convex/react-clerk'
 import { Rocket, Settings as SettingsIcon } from 'lucide-react'
@@ -41,6 +41,24 @@ import { seo } from '~/utils/seo'
 import { api } from '../../convex/_generated/api'
 
 import '~/styles/app.css'
+
+const ReactQueryDevtools
+  = import.meta.env.PROD
+    ? () => null
+    : React.lazy(async () =>
+        import('@tanstack/react-query-devtools').then(res => ({
+          default: res.ReactQueryDevtools,
+        })),
+      )
+
+const TanStackRouterDevtools
+  = import.meta.env.PROD
+    ? () => null
+    : React.lazy(async () =>
+        import('@tanstack/react-router-devtools').then(res => ({
+          default: res.TanStackRouterDevtools,
+        })),
+      )
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient
@@ -214,8 +232,10 @@ function RootDocument({
             </main>
           </div>
         </TooltipProvider>
-        <ReactQueryDevtools />
-        <TanStackRouterDevtools position="bottom-right" />
+        <React.Suspense fallback={null}>
+          <ReactQueryDevtools />
+          <TanStackRouterDevtools position="bottom-right" />
+        </React.Suspense>
         <Scripts />
       </body>
     </html>
