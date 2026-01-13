@@ -10,18 +10,22 @@ import {
 } from '~/components/ui/dropdown-menu'
 import { cn } from '~/lib/utils'
 
+function useThemeMounted() {
+  const [mounted, setMounted] = React.useState(false)
+  React.useEffect(() => {
+    // eslint-disable-next-line react-hooks-extra/no-direct-set-state-in-use-effect
+    setMounted(true)
+  }, [])
+  return mounted
+}
+
 /**
  * ThemeToggle component that allows users to switch between light, dark, and system themes.
  * Displays the current theme icon and provides a dropdown menu for theme selection.
  */
 export function ThemeToggle() {
   const { theme, setTheme, resolvedTheme } = useTheme()
-  const [mounted, setMounted] = React.useState(false)
-
-  // Prevent hydration mismatch by only rendering after mount
-  React.useEffect(() => {
-    setMounted(true)
-  }, [])
+  const mounted = useThemeMounted()
 
   if (!mounted) {
     return (

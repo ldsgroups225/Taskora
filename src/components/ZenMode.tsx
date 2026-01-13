@@ -19,7 +19,7 @@ import { IssueTypeIcon } from '~/components/IssueTypeIcon'
 import { TaskForm } from '~/components/TaskForm'
 import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
-import { useProject } from '~/context/ProjectContext'
+import { useProject } from '~/hooks/ui-hooks'
 import { useMyTasks } from '~/hooks/useMyTasks'
 import { cn } from '~/lib/utils'
 

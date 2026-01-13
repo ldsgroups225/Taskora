@@ -15,7 +15,7 @@ import { Button } from '~/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
 import { Progress } from '~/components/ui/progress'
 import { Skeleton } from '~/components/ui/skeleton'
-import { useProject } from '~/context/ProjectContext'
+import { useProject } from '~/hooks/ui-hooks'
 import { useDeliverables } from '~/hooks/useDeliverables'
 import { useProjectMetrics } from '~/hooks/useProjectMetrics'
 import { AgentActivityFeed } from './AgentActivityFeed'
@@ -95,7 +95,8 @@ export function WarRoom() {
                   const maxVelocity = Math.max(...(metrics?.velocityHistory || [10])) || 10
                   const height = Math.max((v / maxVelocity) * 100, 10)
                   return (
-                    <div key={i} className="grow h-full bg-card/10 rounded items-end flex overflow-hidden">
+                    // eslint-disable-next-line react/no-array-index-key
+                    <div key={`velocity-tick-${i}`} className="grow h-full bg-card/10 rounded items-end flex overflow-hidden">
                       <motion.div
                         initial={{ height: 0 }}
                         animate={{ height: `${height}%` }}

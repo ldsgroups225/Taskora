@@ -1,22 +1,5 @@
 import * as React from 'react'
-
-interface ProjectContextType {
-  projectId: string | null
-  setProjectId: (id: string | null) => void
-}
-
-const ProjectContext = React.createContext<ProjectContextType>({
-  projectId: null,
-  setProjectId: () => {},
-})
-
-export function useProject() {
-  const context = React.use(ProjectContext)
-  if (!context) {
-    throw new Error('useProject must be used within a ProjectProvider')
-  }
-  return context
-}
+import { ProjectContext } from './ProjectContextObject'
 
 export function ProjectProvider({ children }: { children: React.ReactNode }) {
   const [projectId, setProjectId] = React.useState<string | null>(() => {

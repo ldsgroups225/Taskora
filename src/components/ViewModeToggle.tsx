@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
 import { Code2, LayoutPanelLeft } from 'lucide-react'
 import { useRole } from '~/context/RoleContext'
-import { useViewMode } from '~/context/ViewModeContext'
+import { useViewMode } from '~/hooks/ui-hooks'
 import { cn } from '~/lib/utils'
 
 export function ViewModeToggle() {

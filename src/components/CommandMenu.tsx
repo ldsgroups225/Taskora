@@ -24,8 +24,8 @@ import {
   CommandSeparator,
   CommandShortcut,
 } from '~/components/ui/command'
-import { useProject } from '~/context/ProjectContext'
 import { RoleContext } from '~/context/RoleContext'
+import { useProject } from '~/hooks/ui-hooks'
 import { api } from '../../convex/_generated/api'
 
 export function CommandMenu() {

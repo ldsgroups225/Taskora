@@ -23,7 +23,7 @@ import {
   SelectValue,
 } from '~/components/ui/select'
 import { Textarea } from '~/components/ui/textarea'
-import { useProject } from '~/context/ProjectContext'
+import { useProject } from '~/hooks/ui-hooks'
 import { useCurrentUser } from '~/hooks/useCurrentUser'
 import { cn } from '~/lib/utils'
 import { api } from '../../convex/_generated/api'
@@ -64,27 +64,24 @@ export function TaskForm({ open, onOpenChange, parentId, initialProjectId, dismi
     selectedProjectId ? { projectId: selectedProjectId as Id<'projects'> } : 'skip',
   )
 
-  // Sync selected project with context or prop
-  React.useEffect(() => {
-    if (open) {
-      const targetId = initialProjectId || contextProjectId || ''
-      setSelectedProjectId(targetId)
-    }
-  }, [contextProjectId, initialProjectId, open])
+  // Sync state with props during render
+  const [prevId, setPrevId] = React.useState<{ initialProjectId?: string, contextProjectId?: string | null, parentId?: string, open: boolean }>({ initialProjectId, contextProjectId, parentId: parentId as string, open })
 
-  // Reset type when parentId changes
-  React.useEffect(() => {
-    if (parentId && type !== 'subtask') {
-      setType('subtask')
-    }
-  }, [parentId, type])
+  if (open && (initialProjectId !== prevId.initialProjectId || contextProjectId !== prevId.contextProjectId || open !== prevId.open)) {
+    setPrevId({ initialProjectId, contextProjectId, parentId: parentId as string, open })
+    setSelectedProjectId(initialProjectId || contextProjectId || '')
+  }
 
-  // Sync default assignee when user is available
-  React.useEffect(() => {
-    if (user?._id && !assigneeId) {
-      setAssigneeId(user._id)
-    }
-  }, [user?._id, assigneeId])
+  if (parentId && parentId !== prevId.parentId && type !== 'subtask') {
+    setPrevId(prev => ({ ...prev, parentId: parentId as string }))
+    setType('subtask')
+  }
+
+  const [prevUserId, setPrevUserId] = React.useState(user?._id)
+  if (user?._id && user._id !== prevUserId && !assigneeId) {
+    setPrevUserId(user._id)
+    setAssigneeId(user._id)
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

@@ -3,7 +3,7 @@ import { AnimatePresence } from 'framer-motion'
 import * as React from 'react'
 import { WarRoom } from '~/components/WarRoom'
 import { ZenMode } from '~/components/ZenMode'
-import { useViewMode } from '~/context/ViewModeContext'
+import { useViewMode } from '~/hooks/ui-hooks'
 import { useCurrentUser } from '~/hooks/useCurrentUser'
 
 export const Route = createFileRoute('/')({

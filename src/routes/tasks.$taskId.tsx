@@ -51,13 +51,13 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '~/components/ui/tooltip'
-import { useViewMode } from '~/context/ViewModeContext'
+import { useViewMode } from '~/hooks/ui-hooks'
 import { cn } from '~/lib/utils'
 import { issueQueries, userQueries, useUpdateIssueMutation } from '~/queries'
 import { api } from '../../convex/_generated/api'
 
 export const Route = createFileRoute('/tasks/$taskId')({
-  component: TaskDetail,
+  component: TaskDetailWrapper,
   errorComponent: DefaultCatchBoundary,
   pendingComponent: TaskPending,
   loader: async ({ context, params }) => {
@@ -82,6 +82,11 @@ function TaskPending() {
   )
 }
 
+function TaskDetailWrapper() {
+  const { taskId } = Route.useParams()
+  return <TaskDetail key={taskId} />
+}
+
 function TaskDetail() {
   const { viewMode } = useViewMode()
   const { taskId } = Route.useParams()
@@ -103,29 +108,20 @@ function TaskDetail() {
   const generateSuggestion = useAction(api.ai.generateTaskSuggestion)
   const [aiSuggestion, setAiSuggestion] = React.useState<string | null>(null)
 
-  const lastTaskIdRef = React.useRef<string | null>(null)
   React.useEffect(() => {
-    if (issue && lastTaskIdRef.current !== issue._id) {
-      setEditedTitle(issue.title)
-      setEditedDesc(issue.description || '')
-      lastTaskIdRef.current = issue._id
-      setAiSuggestion(null) // Reset suggestion for new task
-
-      // Trigger new suggestion
-      if (issue.status !== 'in_progress') {
-        generateSuggestion({
-          issueId: issue._id,
-          title: issue.title,
-          description: issue.description,
-          status: issue.status,
-          priority: issue.priority,
-          type: issue.type,
-        })
-          .then(res => setAiSuggestion(res.suggestion))
-          .catch(console.error)
-      }
+    if (issue && issue.status !== 'in_progress') {
+      generateSuggestion({
+        issueId: issue._id,
+        title: issue.title,
+        description: issue.description,
+        status: issue.status,
+        priority: issue.priority,
+        type: issue.type,
+      })
+        .then(res => setAiSuggestion(res.suggestion))
+        .catch(console.error)
     }
-  }, [issue])
+  }, [issue, issue?._id, issue?.title, issue?.description, issue?.status, issue?.priority, issue?.type, generateSuggestion])
 
   const handleUpdateTitle = async () => {
     if (!issue || editedTitle.trim() === issue.title || !editedTitle.trim()) {

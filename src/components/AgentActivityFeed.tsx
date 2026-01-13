@@ -4,7 +4,7 @@ import { formatDistanceToNow } from 'date-fns'
 import { Bot, Sparkles, XCircle } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
 import { ScrollArea } from '~/components/ui/scroll-area'
-import { useProject } from '~/context/ProjectContext'
+import { useProject } from '~/hooks/ui-hooks'
 import { api } from '../../convex/_generated/api'
 
 export function AgentActivityFeed() {

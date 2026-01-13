@@ -34,6 +34,7 @@ export const createIssue = mutation({
     ),
     assigneeId: v.optional(v.id('users')),
     storyPoints: v.optional(v.number()),
+    completedAt: v.optional(v.number()),
     properties: v.optional(v.any()),
   },
   handler: async (ctx, args) => {
@@ -115,6 +116,7 @@ export const updateIssue = mutation({
       ),
       assigneeId: v.optional(v.id('users')),
       storyPoints: v.optional(v.number()),
+      completedAt: v.optional(v.number()),
       properties: v.optional(v.any()),
     }),
   },
@@ -152,7 +154,7 @@ export const updateIssue = mutation({
       }
       else if (patch.status === 'done') {
         // Set completedAt when moving to done
-        (patch as any).completedAt = Date.now()
+        patch.completedAt = Date.now()
         await ctx.scheduler.runAfter(0, internal.postFunctions.onTransitionToDone, {
           issueId: id,
           projectId: issue.projectId,
@@ -160,9 +162,9 @@ export const updateIssue = mutation({
           description: issue.description ?? '',
         })
       }
-      else if (issue.status === 'done' && patch.status !== 'done') {
+      else if (issue.status === 'done') {
         // Clear completedAt if moving away from done
-        (patch as any).completedAt = undefined
+        patch.completedAt = undefined
       }
     }
 

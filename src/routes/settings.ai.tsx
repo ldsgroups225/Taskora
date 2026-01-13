@@ -6,7 +6,7 @@ import { toast } from 'sonner'
 import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card'
-import { useProject } from '~/context/ProjectContext'
+import { useProject } from '~/hooks/ui-hooks'
 import { api } from '../../convex/_generated/api'
 
 export const Route = createFileRoute('/settings/ai')({
