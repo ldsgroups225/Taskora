@@ -7,7 +7,7 @@ export function useDeliverables(projectId?: Id<'projects'>) {
   const { isAuthenticated, isLoading: isLoadingUser } = useCurrentUser()
   const deliverables = useQuery(
     api.deliverables.getDeliverables,
-    isAuthenticated ? { projectId } : 'skip',
+    isAuthenticated && projectId ? { projectId } : 'skip',
   )
 
   return {

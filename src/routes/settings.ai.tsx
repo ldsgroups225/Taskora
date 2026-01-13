@@ -15,7 +15,7 @@ export const Route = createFileRoute('/settings/ai')({
 
 function AIGroomingSettings() {
   const { projectId } = useProject()
-  const proposed = useQuery(api.reprioritization.getProposedRankings, { projectId: projectId as Id<'projects'> })
+  const proposed = useQuery(api.reprioritization.getProposedRankings, projectId ? { projectId: projectId as Id<'projects'> } : 'skip')
   const runGrooming = useAction(api.reprioritization.triggerReprioritization)
   const applyRankings = useMutation(api.reprioritization.applyProposedRankings)
 

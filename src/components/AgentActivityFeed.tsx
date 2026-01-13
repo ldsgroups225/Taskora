@@ -9,7 +9,7 @@ import { api } from '../../convex/_generated/api'
 
 export function AgentActivityFeed() {
   const { projectId } = useProject()
-  const logs = useQuery(api.agents.getAgentLogs, { projectId: projectId as Id<'projects'> | undefined })
+  const logs = useQuery(api.agents.getAgentLogs, projectId ? { projectId: projectId as Id<'projects'> } : 'skip')
 
   return (
     <Card className="bg-card/5 border-border/10 rounded-2xl h-full flex flex-col">

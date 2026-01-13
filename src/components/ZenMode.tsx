@@ -7,6 +7,7 @@ import {
   CheckCircle2,
   Circle,
   Clock,
+  LayoutGrid,
   Loader2,
   Plus,
   Sparkles,
@@ -19,6 +20,13 @@ import { IssueTypeIcon } from '~/components/IssueTypeIcon'
 import { TaskForm } from '~/components/TaskForm'
 import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '~/components/ui/empty'
 import { useProject } from '~/hooks/ui-hooks'
 import { useMyTasks } from '~/hooks/useMyTasks'
 import { cn } from '~/lib/utils'
@@ -177,17 +185,33 @@ export function ZenMode() {
                   </Link>
                 ))
               )
-            : (
-                <div className="text-center py-20 px-6 rounded-3xl bg-card/2 border border-dashed border-border/10">
-                  <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 text-primary mb-4">
-                    <Zap className="w-6 h-6" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-foreground mb-2">Clear Sky</h3>
-                  <p className="text-muted-foreground text-sm max-w-xs mx-auto">
-                    You've cleared your plate. Time to recharge or explore new initiatives.
-                  </p>
-                </div>
-              )}
+            : !projectId
+                ? (
+                    <div className="py-20">
+                      <Empty className="border-none bg-card/5 py-24">
+                        <EmptyHeader>
+                          <EmptyMedia variant="icon" className="mb-4">
+                            <LayoutGrid className="w-6 h-6" />
+                          </EmptyMedia>
+                          <EmptyTitle>No project selected</EmptyTitle>
+                          <EmptyDescription>
+                            Please select a project from the header to view and manage your tasks.
+                          </EmptyDescription>
+                        </EmptyHeader>
+                      </Empty>
+                    </div>
+                  )
+                : (
+                    <div className="text-center py-20 px-6 rounded-3xl bg-card/2 border border-dashed border-border/10">
+                      <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 text-primary mb-4">
+                        <Zap className="w-6 h-6" />
+                      </div>
+                      <h3 className="text-lg font-semibold text-foreground mb-2">Clear Sky</h3>
+                      <p className="text-muted-foreground text-sm max-w-xs mx-auto">
+                        You've cleared your plate. Time to recharge or explore new initiatives.
+                      </p>
+                    </div>
+                  )}
       </div>
 
       <div className="mt-12 p-6 rounded-2xl bg-primary/5 border border-primary/10 text-center">

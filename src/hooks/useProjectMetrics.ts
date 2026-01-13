@@ -7,7 +7,7 @@ export function useProjectMetrics(projectId?: Id<'projects'>) {
   const { isAuthenticated, isLoading: isLoadingUser } = useCurrentUser()
   const metrics = useQuery(
     api.metrics.getProjectMetrics,
-    isAuthenticated ? { projectId } : 'skip',
+    isAuthenticated && projectId ? { projectId } : 'skip',
   )
 
   return {

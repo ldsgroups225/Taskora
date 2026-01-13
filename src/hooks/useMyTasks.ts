@@ -7,7 +7,7 @@ export function useMyTasks(projectId?: Id<'projects'>) {
   const { isAuthenticated, isLoading: isLoadingUser } = useCurrentUser()
   const tasks = useQuery(
     api.issues.listMyIssues,
-    isAuthenticated ? { projectId } : 'skip',
+    isAuthenticated && projectId ? { projectId } : 'skip',
   )
 
   return {

@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import {
   AlertTriangle,
   ArrowUpRight,
+  LayoutGrid,
   Target,
   Terminal,
   TrendingUp,
@@ -13,6 +14,13 @@ import { toast } from 'sonner'
 import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '~/components/ui/empty'
 import { Progress } from '~/components/ui/progress'
 import { Skeleton } from '~/components/ui/skeleton'
 import { useProject } from '~/hooks/ui-hooks'
@@ -45,6 +53,24 @@ export function WarRoom() {
     catch {
       toast.error('Failed to copy prompt')
     }
+  }
+
+  if (!projectId) {
+    return (
+      <div className="container mx-auto max-w-2xl px-4 py-20">
+        <Empty className="border-none bg-card/5 py-24">
+          <EmptyHeader>
+            <EmptyMedia variant="icon" className="mb-4">
+              <LayoutGrid className="w-6 h-6" />
+            </EmptyMedia>
+            <EmptyTitle>No project selected</EmptyTitle>
+            <EmptyDescription>
+              Please select a project from the header to view and manage your tasks.
+            </EmptyDescription>
+          </EmptyHeader>
+        </Empty>
+      </div>
+    )
   }
 
   return (
