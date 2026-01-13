@@ -79,12 +79,20 @@ const schema = defineSchema({
     storyPoints: v.optional(v.number()),
     completedAt: v.optional(v.number()),
     generatedPrompt: v.optional(v.string()),
-    properties: v.any(), // Flexible "Entity Properties"
+    properties: v.optional(v.record(v.string(), v.any())), // Flexible "Entity Properties"
   })
     .index('by_project', ['projectId'])
     .index('by_assignee', ['assigneeId'])
     .index('by_status', ['status'])
-    .index('by_parent', ['parentId']),
+    .index('by_parent', ['parentId'])
+    .index('by_project_status', ['projectId', 'status'])
+    .index('by_project_assignee', ['projectId', 'assigneeId'])
+    .index('by_assignee_project', ['assigneeId', 'projectId'])
+    .index('by_assignee_status', ['assigneeId', 'status'])
+    .searchIndex('search_title_description', {
+      searchField: 'title',
+      filterFields: ['projectId', 'type', 'priority'],
+    }),
 
   agentLogs: defineTable({
     projectId: v.id('projects'),
@@ -110,6 +118,16 @@ const schema = defineSchema({
     oldValue: v.optional(v.string()),
     newValue: v.optional(v.string()),
   }).index('by_issue', ['issueId']),
+
+  project_summaries: defineTable({
+    projectId: v.id('projects'),
+    velocityScore: v.number(),
+    riskCount: v.number(),
+    activeAgents: v.number(),
+    totalIssues: v.number(),
+    doneIssues: v.number(),
+    lastUpdated: v.number(),
+  }).index('by_project', ['projectId']),
 })
 
 export default schema

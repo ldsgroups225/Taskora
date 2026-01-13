@@ -1,3 +1,4 @@
+import type { Doc } from './_generated/dataModel'
 import { v } from 'convex/values'
 import { internal } from './_generated/api'
 import { mutation, query } from './_generated/server'
@@ -35,7 +36,7 @@ export const createIssue = mutation({
     assigneeId: v.optional(v.id('users')),
     storyPoints: v.optional(v.number()),
     completedAt: v.optional(v.number()),
-    properties: v.optional(v.any()),
+    properties: v.optional(v.record(v.string(), v.any())),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity()
@@ -84,6 +85,11 @@ export const createIssue = mutation({
       priority: args.priority,
     })
 
+    // Trigger metrics cache update
+    await ctx.scheduler.runAfter(0, internal.metrics.updateProjectSummary, {
+      projectId: args.projectId,
+    })
+
     return id
   },
 })
@@ -117,7 +123,7 @@ export const updateIssue = mutation({
       assigneeId: v.optional(v.id('users')),
       storyPoints: v.optional(v.number()),
       completedAt: v.optional(v.number()),
-      properties: v.optional(v.any()),
+      properties: v.optional(v.record(v.string(), v.any())),
     }),
   },
   handler: async (ctx, { id, patch }) => {
@@ -207,25 +213,74 @@ export const updateIssue = mutation({
         })
       }
     }
+
+    // Trigger metrics cache update
+    await ctx.scheduler.runAfter(0, internal.metrics.updateProjectSummary, {
+      projectId: issue.projectId,
+    })
   },
 })
 
 /**
- * Delete an issue and its subtasks
+ * Delete an issue and its associated data (subtasks, comments, activity logs, agent logs)
  */
 export const deleteIssue = mutation({
   args: { id: v.id('issues') },
   handler: async (ctx, { id }) => {
+    const identity = await ctx.auth.getUserIdentity()
+    if (!identity)
+      throw new Error('Not authenticated')
+
+    const user = await ctx.db
+      .query('users')
+      .withIndex('by_clerkId', q => q.eq('clerkId', identity.subject))
+      .unique()
+
+    if (!user)
+      throw new Error('User not found')
+
+    const issue = await ctx.db.get(id)
+    if (!issue)
+      throw new Error('Issue not found')
+
+    // 1. Delete all subtasks (recursively)
     const subtasks = await ctx.db
       .query('issues')
       .withIndex('by_parent', q => q.eq('parentId', id))
       .collect()
 
     for (const subtask of subtasks) {
+      // Just call the direct delete for subtasks to keep it simple, or we could recurse.
+      // For now, we'll just delete one level down to avoid deep recursion in a single transaction.
       await ctx.db.delete(subtask._id)
     }
 
+    // 2. Cleanup associated data
+    const comments = await ctx.db
+      .query('comments')
+      .withIndex('by_issue', q => q.eq('issueId', id))
+      .collect()
+    for (const comment of comments) await ctx.db.delete(comment._id)
+
+    const activityLogs = await ctx.db
+      .query('activityLog')
+      .withIndex('by_issue', q => q.eq('issueId', id))
+      .collect()
+    for (const log of activityLogs) await ctx.db.delete(log._id)
+
+    const agentLogs = await ctx.db
+      .query('agentLogs')
+      .withIndex('by_issue', q => q.eq('issueId', id))
+      .collect()
+    for (const log of agentLogs) await ctx.db.delete(log._id)
+
+    // 3. Final deletion
     await ctx.db.delete(id)
+
+    // Trigger metrics cache update
+    await ctx.scheduler.runAfter(0, internal.metrics.updateProjectSummary, {
+      projectId: issue.projectId,
+    })
   },
 })
 
@@ -253,13 +308,14 @@ export const listMyIssues = query({
 
     const issues = await ctx.db
       .query('issues')
-      .withIndex('by_assignee', q => q.eq('assigneeId', user._id))
+      .withIndex('by_assignee_project', (q) => {
+        const query = q.eq('assigneeId', user._id)
+        if (args.projectId) {
+          return query.eq('projectId', args.projectId)
+        }
+        return query
+      })
       .collect()
-
-    // Filter by project if projectId is provided
-    if (args.projectId) {
-      return issues.filter(issue => issue.projectId === args.projectId)
-    }
 
     return issues
   },
@@ -275,20 +331,37 @@ export const listIssues = query({
     assigneeId: v.optional(v.id('users')),
   },
   handler: async (ctx, args) => {
-    const q = ctx.db
-      .query('issues')
-      .withIndex('by_project', q => q.eq('projectId', args.projectId))
+    let results: Doc<'issues'>[]
+    // Actually, let's use Issue type if possible.
+    // However, Convex queries already return typed results.
+    // Let's just avoid the explicit any[].
+    if (args.status && args.assigneeId) {
+      results = await ctx.db
+        .query('issues')
+        .withIndex('by_project_status', q => q.eq('projectId', args.projectId).eq('status', args.status as 'backlog' | 'todo' | 'in_progress' | 'in_review' | 'done'))
+        .collect()
+      results = results.filter(i => i.assigneeId === args.assigneeId)
+    }
+    else if (args.status) {
+      results = await ctx.db
+        .query('issues')
+        .withIndex('by_project_status', q => q.eq('projectId', args.projectId).eq('status', args.status as 'backlog' | 'todo' | 'in_progress' | 'in_review' | 'done'))
+        .collect()
+    }
+    else if (args.assigneeId) {
+      results = await ctx.db
+        .query('issues')
+        .withIndex('by_project_assignee', q => q.eq('projectId', args.projectId).eq('assigneeId', args.assigneeId))
+        .collect()
+    }
+    else {
+      results = await ctx.db
+        .query('issues')
+        .withIndex('by_project', q => q.eq('projectId', args.projectId))
+        .collect()
+    }
 
-    const results = await q.collect()
-
-    // Basic filtering (foundation for AQL)
-    return results.filter((issue) => {
-      if (args.status && issue.status !== args.status)
-        return false
-      if (args.assigneeId && issue.assigneeId !== args.assigneeId)
-        return false
-      return true
-    })
+    return results
   },
 })
 
