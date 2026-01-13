@@ -109,7 +109,7 @@ function AIGroomingSettings() {
                           </div>
                           <p className="text-xs text-muted-foreground mt-1 italic">
                             "
-                            {(issue.properties).reprioritizationReason}
+                            {issue.properties?.reprioritizationReason}
                             "
                           </p>
                         </div>

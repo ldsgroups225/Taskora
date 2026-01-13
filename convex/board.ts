@@ -1,4 +1,4 @@
-import type { Doc, Id } from './_generated/dataModel'
+import type { Doc, Id, TableNames } from './_generated/dataModel'
 import type { QueryCtx } from './_generated/server'
 import { v } from 'convex/values'
 import invariant from 'tiny-invariant'
@@ -41,7 +41,7 @@ export const clear = internalMutation(async (ctx) => {
   })
 })
 
-function withoutSystemFields<T extends { _creationTime: number, _id: Id<any> }>(
+function withoutSystemFields<T extends { _creationTime: number, _id: Id<TableNames> }>(
   doc: T,
 ) {
   const { _id, _creationTime, ...rest } = doc

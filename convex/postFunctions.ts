@@ -30,7 +30,7 @@ export const logAgentAction = internalMutation({
 export const updateIssueAiProperties = internalMutation({
   args: {
     issueId: v.id('issues'),
-    patch: v.any(),
+    patch: v.record(v.string(), v.any()),
   },
   handler: async (ctx, args) => {
     const issue = await ctx.db.get(args.issueId)
@@ -80,7 +80,7 @@ Description: ${args.description || 'No description provided.'}
 Type: ${args.type}
 Priority: ${args.priority}
 
-Task: Generate a comprehensive, prompt ready to send to a developer or use as a system instruction to implement this specific issue. 
+Task: Generate a comprehensive, prompt ready to send to a developer or use as a system instruction to implement this specific issue.
 It should include:
 1. Role definition based on the base template.
 2. Context about the specific issue.

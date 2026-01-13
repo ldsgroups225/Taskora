@@ -17,39 +17,76 @@ function getGenAI() {
  */
 export const suggestAssignments = internalAction({
   args: {
-    issues: v.any(),
-    capacity: v.any(),
+    issues: v.array(
+      v.object({
+        id: v.string(),
+        title: v.string(),
+        priority: v.string(),
+        storyPoints: v.optional(v.number()),
+        type: v.string(),
+      }),
+    ),
+    capacity: v.array(
+      v.object({
+        _id: v.string(),
+        name: v.string(),
+        role: v.string(),
+        activeCount: v.number(),
+        totalStoryPoints: v.number(),
+        loadScore: v.number(),
+        skillProfile: v.record(v.string(), v.number()),
+      }),
+    ),
   },
   handler: async (ctx, args) => {
     const genAI = getGenAI()
-    const model = genAI.getGenerativeModel({ model: AI_MODEL })
+    // Using a deterministic temperature for mapping tasks
+    const model = genAI.getGenerativeModel({
+      model: AI_MODEL,
+      generationConfig: {
+        temperature: 0.1,
+        responseMimeType: 'application/json',
+      },
+    })
 
     const prompt = `
-      You are an AI Resource Manager.
-      
-      Task: Assign the following UNASSIGNED ISSUES to the available DEVELOPERS based on their current CAPACITY and workload score.
-      Goal: Balance the load. Lower score means more capacity.
-      
-      Unassigned Issues: ${JSON.stringify(args.issues)}
-      
-      Developer Capacity: ${JSON.stringify(args.capacity)}
-      
-      Rules:
-      1. Return a JSON ARRAY of objects. Each object must have:
-         - "issueId": The ID of the issue
-         - "assigneeId": The ID of the developer to assign to
-         - "reason": A short explanation of why this assignment was chosen
-      2. If an issue should not be assigned yet (e.g. low priority and everyone is busy), leave it out of the array.
-      3. Distribute critical/high priority tasks to those with lowest load.
-      4. Consider 'skillProfile' to match issue types to developers who have experience in that type.
-      5. Output ONLY valid JSON. No markdown fencing.
+      System: You are the Taskora Strategic Resource Allocator, a specialist in operational efficiency and team load balancing.
+
+      Context: You are managing the assignment of unassigned issues to developers. Your objective is to maximize throughput while maintaining developer health by balancing load scores and matching skills.
+
+      Data:
+      - UNASSIGNED ISSUES: ${JSON.stringify(args.issues, null, 2)}
+      - DEVELOPER POOLS: ${JSON.stringify(args.capacity, null, 2)}
+
+      Constraints:
+      1. IDENTITIES: You MUST ONLY assign issues/users provided in the data above. Do NOT invent new IDs.
+      2. LOAD LIMITS: Prioritize developers with the lowest 'loadScore'. 
+      3. STRATEGIC MATCHING: Use 'skillProfile' to align 'issue.type' (e.g., bug, story) with developer experience.
+      4. PRIORITY OVERFLOW: Distribute 'critical' and 'high' issues first. Avoid stacking more than two 'critical' tasks on a single developer unless necessary.
+      5. OPTIONALITY: If all viable developers exceed a healthy load threshold (e.g., loadScore > 15), you may leave lower priority tasks unassigned.
+
+      Process (Think Step-by-Step):
+      1. Rank UNASSIGNED ISSUES by priority (Critical > High > Medium > Low).
+      2. For each issue, identify 2 potential candidates based on skillProfile and lowest current loadScore.
+      3. Make final selection and calculate the hypothetical new loadScore for that developer.
+
+      Output Format:
+      Return ONLY a valid JSON array of objects. No markdown, no "here is your JSON", just the array.
+      Each object must follow this schema:
+      {
+        "issueId": string,
+        "assigneeId": string,
+        "reason": string (A professional, strategic justification citing specific skill-match or load balancing metrics)
+      }
+
+      Example Reason: "Assigned [Issue Title] to [Dev Name] due to their extensive experience with 'bug' type tasks and their current low loadScore (2.5), which allows them to handle this high-priority item without bottlenecking."
     `
 
     try {
       const result = await model.generateContent(prompt)
       const text = result.response.text()
-      const cleanJson = text.replace(/```json\n?|\n?```/g, '').trim()
-      return JSON.parse(cleanJson)
+      // With responseMimeType: "application/json", text should be pure JSON
+      return JSON.parse(text)
     }
     catch (e) {
       console.error('Gemini Assignment Error:', e)
@@ -63,31 +100,41 @@ export const suggestAssignments = internalAction({
  */
 export const groomBacklog = action({
   args: {
-    issues: v.any(),
-    team: v.any(),
+    issues: v.array(v.any()),
+    team: v.array(v.any()),
   },
   handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity()
+    if (!identity)
+      throw new Error('Not authenticated')
+
     const genAI = getGenAI()
-    const model = genAI.getGenerativeModel({ model: AI_MODEL })
+    const model = genAI.getGenerativeModel({
+      model: AI_MODEL,
+      generationConfig: {
+        temperature: 0.1,
+        responseMimeType: 'application/json',
+      },
+    })
 
     const prompt = `
       System: You are Taskora Orchestrator, an Agentic AI for project management.
       Task: Re-prioritize the following backlog and suggest assignments based on team capacity.
       
-      Current Issues: ${JSON.stringify(args.issues)}
-      Team Capacity: ${JSON.stringify(args.team)}
+      Current Issues: ${JSON.stringify(args.issues, null, 2)}
+      Team Capacity: ${JSON.stringify(args.team, null, 2)}
       
       Rules:
-      1. Output a JSON list of issue IDs with recommended status, priority, and assigneeId.
+      1. Output a JSON list of objects. Each object must have issueId, status, priority, and assigneeId.
       2. Justify re-prioritization in a 'reason' field.
-      3. Return ONLY valid JSON.
+      3. Use your reasoning to detect bottlenecks (e.g., too many bugs) and suggest redistribution.
+      4. Return ONLY valid JSON.
     `
 
     try {
       const result = await model.generateContent(prompt)
       const text = result.response.text()
-      const cleanJson = text.replace(/```json\n?|\n?```/g, '').trim()
-      return JSON.parse(cleanJson)
+      return JSON.parse(text)
     }
     catch (e) {
       console.error('Gemini Grooming Error:', e)
@@ -101,35 +148,47 @@ export const groomBacklog = action({
  */
 export const rankBacklog = internalAction({
   args: {
-    issues: v.any(),
+    issues: v.array(
+      v.object({
+        id: v.string(),
+        title: v.string(),
+        priority: v.string(),
+        rawScore: v.number(),
+      }),
+    ),
   },
   handler: async (ctx, args) => {
     const genAI = getGenAI()
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
+    const model = genAI.getGenerativeModel({
+      model: AI_MODEL,
+      generationConfig: {
+        temperature: 0.1,
+        responseMimeType: 'application/json',
+      },
+    })
 
     const prompt = `
-      You are the Taskora Chief Product Officer AI.
+      System: You are the Taskora Chief Product Officer AI.
       
-      Task: Review the current backlog ranking and provide a refined list of priorities.
-      I have provided a 'rawScore' based on basic metrics (Priority, Age, Complexity). 
-      Your job is to provide the final relative Ranking (1 is top priority).
+      Context: Review a backlog ranking. Use 'rawScore' (Priority, Age, Complexity) as a guide, but apply strategic product judgment.
       
-      Input Issues: ${JSON.stringify(args.issues)}
+      Task: Provide a final numeric Ranking (1 is top priority).
       
-      Rules:
+      Input Issues: ${JSON.stringify(args.issues, null, 2)}
+      
+      Requirements:
       1. Return a JSON ARRAY of objects. Each object must have:
-         - "id": The ID of the issue
-         - "rank": The final suggested numeric rank (1, 2, 3...)
-         - "reason": A one-sentence strategic justification
-      2. High rawScore usually means higher rank, but use your judgment (e.g., if a Bug has been sitting for too long, rank it higher).
-      3. Output ONLY valid JSON.
+         - "id": id of the issue
+         - "rank": numeric rank (1, 2, 3...)
+         - "reason": strategic justification
+      2. Ensure ranks are unique and sequential.
+      3. Return ONLY valid JSON.
     `
 
     try {
       const result = await model.generateContent(prompt)
       const text = result.response.text()
-      const cleanJson = text.replace(/```json\n?|\n?```/g, '').trim()
-      return JSON.parse(cleanJson)
+      return JSON.parse(text)
     }
     catch (e) {
       console.error('Gemini Ranking Error:', e)
@@ -151,6 +210,10 @@ export const generateTaskSuggestion = action({
     type: v.string(),
   },
   handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity()
+    if (!identity)
+      throw new Error('Not authenticated')
+
     const genAI = getGenAI()
     const model = genAI.getGenerativeModel({ model: AI_MODEL })
 

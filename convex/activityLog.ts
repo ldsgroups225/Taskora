@@ -35,15 +35,19 @@ export const getActivityLog = query({
       .order('desc')
       .collect()
 
-    return Promise.all(
-      logs.map(async (log) => {
-        const user = await ctx.db.get(log.userId)
-        return {
-          ...log,
-          userName: user?.name ?? 'Unknown User',
-          userAvatar: user?.avatarUrl,
-        }
-      }),
+    const userIds = [...new Set(logs.map(log => log.userId))]
+    const users = await Promise.all(userIds.map(async id => ctx.db.get(id)))
+    const userMap = new Map(
+      users.filter((u): u is NonNullable<typeof u> => u !== null).map(u => [u._id, u]),
     )
+
+    return logs.map((log) => {
+      const user = userMap.get(log.userId)
+      return {
+        ...log,
+        userName: user?.name ?? 'Unknown User',
+        userAvatar: user?.avatarUrl,
+      }
+    })
   },
 })

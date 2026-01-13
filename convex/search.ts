@@ -1,3 +1,4 @@
+import type { Doc } from './_generated/dataModel'
 import { v } from 'convex/values'
 import { query } from './_generated/server'
 
@@ -24,13 +25,30 @@ export const executeAqlQuery = query({
     const { projectId, filter } = args
     const identity = await ctx.auth.getUserIdentity()
 
-    const issuesQuery = ctx.db
-      .query('issues')
-      .withIndex('by_project', q => q.eq('projectId', projectId))
+    let issues: Doc<'issues'>[]
+    if (filter.textSearch) {
+      // Use efficient database-level full-text search
+      const searchQ = ctx.db
+        .query('issues')
+        .withSearchIndex('search_title_description', (q) => {
+          let builder = q.search('title', filter.textSearch!).eq('projectId', projectId)
+          if (filter.type)
+            builder = builder.eq('type', filter.type as 'initiative' | 'epic' | 'story' | 'task' | 'bug' | 'subtask')
+          if (filter.priority)
+            builder = builder.eq('priority', filter.priority as 'low' | 'medium' | 'high' | 'critical')
+          return builder
+        })
+      issues = await searchQ.collect()
+    }
+    else {
+      // Standard project-based scan (fallback)
+      issues = await ctx.db
+        .query('issues')
+        .withIndex('by_project', q => q.eq('projectId', projectId))
+        .collect()
+    }
 
-    const issues = await issuesQuery.collect()
-
-    // Resolve "me" assignee
+    // Resolve "me" assignee for filtering
     let currentUserId: string | null = null
     if (filter.assignee === 'me' && identity) {
       const user = await ctx.db
@@ -41,12 +59,18 @@ export const executeAqlQuery = query({
     }
 
     return issues.filter((issue) => {
+      // Remaining filters that are not yet indexed
       if (filter.status && issue.status !== filter.status)
         return false
-      if (filter.priority && issue.priority !== filter.priority)
-        return false
-      if (filter.type && issue.type !== filter.type)
-        return false
+
+      // type and priority are already handled in searchQ if textSearch was used,
+      // but if not, we filter here.
+      if (!filter.textSearch) {
+        if (filter.priority && issue.priority !== filter.priority)
+          return false
+        if (filter.type && issue.type !== filter.type)
+          return false
+      }
 
       if (filter.assignee) {
         if (filter.assignee === 'me') {
@@ -57,12 +81,10 @@ export const executeAqlQuery = query({
           if (issue.assigneeId !== undefined)
             return false
         }
-        // General text search for assignee names would require more logic/joins
-        // For now we support "me" and "unassigned" as per specs
       }
 
       if (filter.dateFilter) {
-        const fieldVal = filter.dateFilter.field === 'created' ? issue._creationTime : issue._creationTime // Fallback for updated as we don't have it in schema yet
+        const fieldVal = issue._creationTime
         if (filter.dateFilter.operator === 'before') {
           if (fieldVal >= filter.dateFilter.value)
             return false
@@ -73,15 +95,7 @@ export const executeAqlQuery = query({
         }
       }
 
-      if (filter.textSearch) {
-        const search = filter.textSearch.toLowerCase()
-        const matchTitle = issue.title.toLowerCase().includes(search)
-        const matchDesc = issue.description?.toLowerCase().includes(search) ?? false
-        if (!matchTitle && !matchDesc)
-          return false
-      }
-
       return true
-    }).slice(0, 10) // Limit results for command menu
+    }).slice(0, 10)
   },
 })

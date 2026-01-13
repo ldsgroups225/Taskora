@@ -117,6 +117,10 @@ export const saveProposedRankings = internalMutation({
 export const applyProposedRankings = mutation({
   args: { projectId: v.id('projects') },
   handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity()
+    if (!identity)
+      throw new Error('Not authenticated')
+
     const issues = await ctx.db
       .query('issues')
       .withIndex('by_project', q => q.eq('projectId', args.projectId))
@@ -125,13 +129,13 @@ export const applyProposedRankings = mutation({
     const proposed = issues.filter(i => i.properties?.proposedOrder !== undefined)
 
     // Sort proposed items by their proposed rank
-    const sorted = proposed.sort((a, b) => a.properties.proposedOrder - b.properties.proposedOrder)
+    const sorted = proposed.sort((a, b) => a.properties!.proposedOrder - b.properties!.proposedOrder)
 
     for (let i = 0; i < sorted.length; i++) {
       const issue = sorted[i]
       const oldOrder = issue.order
       const newOrder = i * 10
-      const properties = { ...issue.properties }
+      const properties = { ...issue.properties! }
       delete properties.proposedOrder
 
       await ctx.db.patch(issue._id, {
@@ -159,6 +163,10 @@ export const applyProposedRankings = mutation({
 export const getProposedRankings = query({
   args: { projectId: v.id('projects') },
   handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity()
+    if (!identity)
+      throw new Error('Not authenticated')
+
     const issues = await ctx.db
       .query('issues')
       .withIndex('by_project', q => q.eq('projectId', args.projectId))
@@ -167,7 +175,7 @@ export const getProposedRankings = query({
 
     return issues
       .filter(i => i.properties?.proposedOrder !== undefined)
-      .sort((a, b) => a.properties.proposedOrder - b.properties.proposedOrder)
+      .sort((a, b) => a.properties!.proposedOrder - b.properties!.proposedOrder)
   },
 })
 
@@ -175,8 +183,24 @@ export const getProposedRankings = query({
 export const triggerReprioritization = action({
   args: { projectId: v.id('projects') },
   handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity()
+    if (!identity)
+      throw new Error('Not authenticated')
+
     await ctx.runAction(internal.reprioritization.runReprioritization, {
       projectId: args.projectId,
     })
+  },
+})
+
+export const groomAllProjects = internalAction({
+  args: {},
+  handler: async (ctx) => {
+    const projects = await ctx.runQuery(internal.projects.listProjectsInternal)
+    for (const project of projects) {
+      await ctx.scheduler.runAfter(0, internal.reprioritization.runReprioritization, {
+        projectId: project._id,
+      })
+    }
   },
 })

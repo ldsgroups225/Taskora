@@ -13,30 +13,24 @@ export const getDeveloperCapacity = internalQuery({
     // 2. Calculate capacity for each developer
     const capacityData = await Promise.all(
       devs.map(async (dev) => {
-        const issues = await ctx.db
-          .query('issues')
-          .withIndex('by_assignee', q => q.eq('assigneeId', dev._id))
-          .collect()
+        // Fetch active statuses in parallel using the new specialist index
+        const [todo, inProgress, inReview, done] = await Promise.all([
+          ctx.db.query('issues').withIndex('by_assignee_status', q => q.eq('assigneeId', dev._id).eq('status', 'todo')).collect(),
+          ctx.db.query('issues').withIndex('by_assignee_status', q => q.eq('assigneeId', dev._id).eq('status', 'in_progress')).collect(),
+          ctx.db.query('issues').withIndex('by_assignee_status', q => q.eq('assigneeId', dev._id).eq('status', 'in_review')).collect(),
+          ctx.db.query('issues').withIndex('by_assignee_status', q => q.eq('assigneeId', dev._id).eq('status', 'done')).take(50), // Only need recent done for skill profile
+        ])
 
-        // Filter for active work (Todo, In Progress, In Review)
-        const activeIssues = issues.filter(i =>
-          i.status === 'todo' || i.status === 'in_progress' || i.status === 'in_review',
-        )
-
+        const activeIssues = [...todo, ...inProgress, ...inReview]
         const activeCount = activeIssues.length
         const totalStoryPoints = activeIssues.reduce((sum, i) => sum + (i.storyPoints || 0), 0)
 
-        // Calculate a score (Task Count * 1 + SP * 0.5) - Simple heuristic
-        // Lower score = More capacity
+        // Load Score: Balanced heuristic for capacity assessment
         const loadScore = activeCount + (totalStoryPoints * 0.5)
 
-        // Calculate skill profile based on completed tasks
-        const completedIssues = issues.filter(i => i.status === 'done')
         const skillProfile: Record<string, number> = {}
-
-        for (const issue of completedIssues) {
-          const type = issue.type
-          skillProfile[type] = (skillProfile[type] || 0) + 1
+        for (const issue of done) {
+          skillProfile[issue.type] = (skillProfile[issue.type] || 0) + 1
         }
 
         return {

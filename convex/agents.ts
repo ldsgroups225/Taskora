@@ -6,24 +6,31 @@ import { internalAction, internalMutation, internalQuery, query } from './_gener
 export const getUnassignedIssues = internalQuery({
   args: { projectId: v.optional(v.id('projects')) },
   handler: async (ctx, args) => {
-    // 1. Get unassigned issues
-    const issues = await ctx.db
+    // Optimization: Use by_assignee_project index if projectId is provided
+    if (args.projectId) {
+      return ctx.db
+        .query('issues')
+        .withIndex('by_assignee_project', q => q.eq('assigneeId', undefined).eq('projectId', args.projectId!))
+        .filter(q => q.neq(q.field('status'), 'done'))
+        .collect()
+    }
+
+    // Fallback: Get all unassigned issues across projects (careful if backlog is huge)
+    return ctx.db
       .query('issues')
       .withIndex('by_assignee', q => q.eq('assigneeId', undefined))
       .filter(q => q.neq(q.field('status'), 'done'))
       .collect()
-
-    // 2. Filter by project if needed
-    if (args.projectId) {
-      return issues.filter(i => i.projectId === args.projectId)
-    }
-    return issues
   },
 })
 
 export const getAgentLogs = query({
   args: { projectId: v.optional(v.id('projects')) },
   handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity()
+    if (!identity)
+      throw new Error('Not authenticated')
+
     if (args.projectId) {
       return ctx.db
         .query('agentLogs')
@@ -59,8 +66,13 @@ export const runAutoAssignment = internalAction({
     console.log(`Auto-assigning ${issues.length} issues among ${capacity.length} developers...`)
 
     // 3. Ask AI for Assignments
+    const sortedIssues = [...issues].sort((a, b) => {
+      const priorityWeight = { critical: 4, high: 3, medium: 2, low: 1 }
+      return priorityWeight[b.priority] - priorityWeight[a.priority]
+    })
+
     const assignments = await ctx.runAction(internal.ai.suggestAssignments, {
-      issues: issues.map(i => ({
+      issues: sortedIssues.map(i => ({
         id: i._id,
         title: i.title,
         priority: i.priority,
@@ -81,7 +93,15 @@ export const runAutoAssignment = internalAction({
 })
 
 export const applyAssignments = internalMutation({
-  args: { assignments: v.any() },
+  args: {
+    assignments: v.array(
+      v.object({
+        issueId: v.id('issues'),
+        assigneeId: v.id('users'),
+        reason: v.string(),
+      }),
+    ),
+  },
   handler: async (ctx, args) => {
     for (const assignment of args.assignments) {
       const { issueId, assigneeId, reason } = assignment

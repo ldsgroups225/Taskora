@@ -1,4 +1,3 @@
-import type { Id } from './_generated/dataModel'
 import { cronJobs } from 'convex/server'
 import { internal } from './_generated/api'
 
@@ -16,8 +15,8 @@ crons.daily(
 crons.daily(
   'backlog grooming',
   { hourUTC: 3, minuteUTC: 0 },
-  internal.reprioritization.runReprioritization,
-  { projectId: 'jd7dkf06bt9p7v5asx1r5ay1m973rejt' as Id<'projects'> },
+  internal.reprioritization.groomAllProjects,
+  {},
 )
 
 export default crons

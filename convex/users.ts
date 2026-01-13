@@ -29,8 +29,15 @@ export const updateUserRole = mutation({
       throw new Error('Not authenticated')
     }
 
-    // Only managers (or the user themselves) should be able to update roles usually.
-    // Simplifying for now: any authenticated user but in a real app check permissions.
+    const user = await ctx.db
+      .query('users')
+      .withIndex('by_clerkId', q => q.eq('clerkId', identity.subject))
+      .unique()
+
+    if (!user || user.role !== 'manager') {
+      throw new Error('Only managers can update user roles')
+    }
+
     await ctx.db.patch(args.userId, { role: args.role })
   },
 })

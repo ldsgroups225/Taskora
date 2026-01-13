@@ -45,19 +45,20 @@ export const listComments = query({
       .withIndex('by_issue', q => q.eq('issueId', args.issueId))
       .collect()
 
-    // Enrich with author name and avatar
-    const enrichedComments = await Promise.all(
-      comments.map(async (comment) => {
-        const author = await ctx.db.get(comment.authorId)
-        return {
-          ...comment,
-          authorName: author?.name ?? 'Unknown User',
-          authorAvatar: author?.avatarUrl,
-        }
-      }),
+    const authorIds = [...new Set(comments.map(c => c.authorId))]
+    const authors = await Promise.all(authorIds.map(async id => ctx.db.get(id)))
+    const authorMap = new Map(
+      authors.filter((a): a is NonNullable<typeof a> => a !== null).map(a => [a._id, a]),
     )
 
-    return enrichedComments
+    return comments.map((comment) => {
+      const author = authorMap.get(comment.authorId)
+      return {
+        ...comment,
+        authorName: author?.name ?? 'Unknown User',
+        authorAvatar: author?.avatarUrl,
+      }
+    })
   },
 })
 
