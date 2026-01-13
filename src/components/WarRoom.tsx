@@ -90,16 +90,20 @@ export function WarRoom() {
                 <TrendingUp className="w-4 h-4" />
                 Live from Convex
               </div>
-              <div className="mt-8 flex gap-2">
-                {[1, 2, 3, 4, 5, 6, 7].map(i => (
-                  <div key={i} className="grow h-12 bg-card/10 rounded items-end flex overflow-hidden">
-                    <motion.div
-                      initial={{ height: 0 }}
-                      animate={{ height: `${Math.random() * 80 + 20}%` }}
-                      className="w-full bg-primary/40"
-                    />
-                  </div>
-                ))}
+              <div className="mt-8 flex gap-2 items-end h-16">
+                {(metrics?.velocityHistory || [0, 0, 0, 0, 0, 0, 0]).map((v, i) => {
+                  const maxVelocity = Math.max(...(metrics?.velocityHistory || [10])) || 10
+                  const height = Math.max((v / maxVelocity) * 100, 10)
+                  return (
+                    <div key={i} className="grow h-full bg-card/10 rounded items-end flex overflow-hidden">
+                      <motion.div
+                        initial={{ height: 0 }}
+                        animate={{ height: `${height}%` }}
+                        className="w-full bg-primary/40 group-hover:bg-primary/60 transition-colors"
+                      />
+                    </div>
+                  )
+                })}
               </div>
             </div>
           </CardContent>

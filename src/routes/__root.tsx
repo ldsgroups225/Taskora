@@ -89,6 +89,34 @@ export const Route = createRootRouteWithContext<{
 })
 
 function RootComponent() {
+  return (
+    <RootDocument>
+      <Outlet />
+    </RootDocument>
+  )
+}
+
+function RootDocument({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <HeadContent />
+      </head>
+      <body className="antialiased selection:bg-primary/30">
+        <RootProviders>
+          {children}
+        </RootProviders>
+        <Scripts />
+      </body>
+    </html>
+  )
+}
+
+function RootProviders({ children }: { children: React.ReactNode }) {
   const { convexClient } = Route.useRouteContext()
   const navigate = useNavigate()
   const CLERK_PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
@@ -100,13 +128,15 @@ function RootComponent() {
       routerReplace={async to => navigate({ to, replace: true })}
     >
       <ConvexProviderWithClerk client={convexClient} useAuth={useAuth}>
-        <RootComponentInner />
+        <RootComponentInner>
+          {children}
+        </RootComponentInner>
       </ConvexProviderWithClerk>
     </ClerkProvider>
   )
 }
 
-function RootComponentInner() {
+function RootComponentInner({ children }: { children: React.ReactNode }) {
   const { user, isLoading, isAuthenticated, isConvexAuthenticated } = useCurrentUser()
   const [manualRole, setManualRole] = React.useState<UserRole | null>(null)
   const navigate = useNavigate()
@@ -143,9 +173,9 @@ function RootComponentInner() {
             enableSystem
             disableTransitionOnChange
           >
-            <RootDocument>
-              <Outlet />
-            </RootDocument>
+            <RootLayout>
+              {children}
+            </RootLayout>
           </ThemeProvider>
         </RoleContext>
       </ViewModeProvider>
@@ -169,88 +199,81 @@ function ViewModeSync({ role }: { role: UserRole }) {
   return null
 }
 
-function RootDocument({
+function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <head>
-        <HeadContent />
-      </head>
-      <body className="antialiased selection:bg-primary/30">
-        <TooltipProvider>
-          <div className="h-screen flex flex-col min-h-0 bg-background text-foreground">
-            {/* Header */}
-            <header className="sticky top-0 z-50 w-full border-b border-border/5 bg-background/50 backdrop-blur-xl">
-              <div className="container mx-auto px-4 md:px-8 h-16 flex items-center justify-between gap-2 md:gap-4 overflow-x-hidden">
-                <div className="flex items-center gap-2 md:gap-8 shrink-0">
-                  <Link to="/" className="flex items-center gap-2 group shrink-0">
-                    <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">
-                      <Rocket className="w-5 h-5 text-foreground" />
-                    </div>
-                    <span className="hidden lg:inline font-bold text-xl tracking-tight text-foreground uppercase italic">Taskora</span>
-                  </Link>
-
-                  <ViewModeToggle />
+    <TooltipProvider>
+      <div className="h-screen flex flex-col min-h-0 bg-background text-foreground">
+        {/* Header */}
+        <header className="sticky top-0 z-50 w-full border-b border-border/5 bg-background/50 backdrop-blur-xl">
+          <div className="container mx-auto px-4 md:px-8 h-16 flex items-center justify-between gap-2 md:gap-4 overflow-x-hidden">
+            <div className="flex items-center gap-2 md:gap-8 shrink-0">
+              <Link to="/" className="flex items-center gap-2 group shrink-0">
+                <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">
+                  <Rocket className="w-5 h-5 text-foreground" />
                 </div>
+                <span className="hidden lg:inline font-bold text-xl tracking-tight text-foreground uppercase italic">Taskora</span>
+              </Link>
 
-                <div className="hidden sm:flex items-center gap-4 grow justify-center max-w-md">
-                  <CommandMenu />
-                </div>
+              <ViewModeToggle />
+            </div>
 
-                <div className="flex items-center gap-2 md:gap-4 shrink-0">
-                  <ProjectSelectorWrapper />
-                  <LoadingIndicator />
-                  <div className="sm:hidden -ml-2">
-                    <CommandMenu />
-                  </div>
-                  <div className="flex items-center gap-1.5 md:gap-3">
-                    <ThemeToggle />
-                    <Link
-                      to="/settings/projects"
-                      className="p-2 text-muted-foreground hover:text-foreground hover:bg-card/5 rounded-xl transition-all hidden xs:flex"
-                      title="Settings"
-                    >
-                      <SettingsIcon className="w-5 h-5" />
-                    </Link>
-                    <SignedIn>
-                      <div className="scale-90 md:scale-100">
-                        <UserButton
-                          appearance={{
-                            elements: {
-                              userButtonAvatarBox: 'w-8 h-8 rounded-full border border-border/10',
-                            },
-                          }}
-                        />
-                      </div>
-                    </SignedIn>
-                    <SignedOut>
-                      <SignInButton mode="modal">
-                        <button className="text-xs md:text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-                          Sign In
-                        </button>
-                      </SignInButton>
-                    </SignedOut>
-                  </div>
-                </div>
+            <div className="hidden sm:flex items-center gap-4 grow justify-center max-w-md">
+              <CommandMenu />
+            </div>
+
+            <div className="flex items-center gap-2 md:gap-4 shrink-0">
+              <ProjectSelectorWrapper />
+              <LoadingIndicator />
+              <div className="sm:hidden -ml-2">
+                <CommandMenu />
               </div>
-            </header>
-
-            <main className="grow min-h-0 h-full flex flex-col">
-              {children}
-              <Toaster position="bottom-center" />
-            </main>
+              <div className="flex items-center gap-1.5 md:gap-3">
+                <ThemeToggle />
+                <Link
+                  to="/settings/projects"
+                  className="p-2 text-muted-foreground hover:text-foreground hover:bg-card/5 rounded-xl transition-all hidden xs:flex"
+                  title="Settings"
+                >
+                  <SettingsIcon className="w-5 h-5" />
+                </Link>
+                <SignedIn>
+                  <div className="scale-90 md:scale-100">
+                    <UserButton
+                      appearance={{
+                        elements: {
+                          userButtonAvatarBox: 'w-8 h-8 rounded-full border border-border/10',
+                        },
+                      }}
+                    />
+                  </div>
+                </SignedIn>
+                <SignedOut>
+                  <SignInButton mode="modal">
+                    <button className="text-xs md:text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+                      Sign In
+                    </button>
+                  </SignInButton>
+                </SignedOut>
+              </div>
+            </div>
           </div>
-        </TooltipProvider>
-        <React.Suspense fallback={null}>
-          <ReactQueryDevtools />
-          <TanStackRouterDevtools position="bottom-right" />
-        </React.Suspense>
-        <Scripts />
-      </body>
-    </html>
+        </header>
+
+        <main className="grow min-h-0 h-full flex flex-col">
+          {children}
+          <Toaster position="bottom-center" />
+        </main>
+      </div>
+
+      <React.Suspense fallback={null}>
+        <ReactQueryDevtools />
+        <TanStackRouterDevtools position="bottom-right" />
+      </React.Suspense>
+    </TooltipProvider>
   )
 }
 

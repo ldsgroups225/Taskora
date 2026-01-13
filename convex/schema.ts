@@ -77,6 +77,7 @@ const schema = defineSchema({
     creatorId: v.id('users'),
     order: v.number(),
     storyPoints: v.optional(v.number()),
+    completedAt: v.optional(v.number()),
     generatedPrompt: v.optional(v.string()),
     properties: v.any(), // Flexible "Entity Properties"
   })

@@ -40,21 +40,43 @@ export const getProjectMetrics = query({
     )
     const riskCount = riskIssues.length
 
-    // 3. Active Agents (Mock for now until agentLogs is implemented in Phase 2)
-    // We'll return a static number or count "AI Assigned" issues if we had a marker.
-    // Let's count issues that have 'ai' in their properties for now as a placeholder.
-    const activeAgents = 3 // Placeholder as per design
+    // 3. Active Agents (Count issues currently assigned by AI that are in progress)
+    const activeAgents = issues.filter(i =>
+      i.properties?.aiAssigned === true
+      && i.status !== 'done',
+    ).length
 
     // 4. Productivity (Done vs Total)
     const productivity = issues.length > 0
       ? Math.round((doneIssues.length / issues.length) * 100)
       : 0
 
+    // 5. Velocity History (Last 7 days)
+    const velocityHistory = []
+    const now = new Date()
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date(now)
+      date.setDate(date.getDate() - i)
+      date.setHours(0, 0, 0, 0)
+      const nextDate = new Date(date)
+      nextDate.setDate(nextDate.getDate() + 1)
+
+      const dailyDone = issues.filter((issue) => {
+        if (issue.status !== 'done' || !issue.completedAt)
+          return false
+        return issue.completedAt >= date.getTime() && issue.completedAt < nextDate.getTime()
+      })
+
+      const dayVelocity = dailyDone.reduce((sum, issue) => sum + (issue.storyPoints || 0), 0)
+      velocityHistory.push(dayVelocity)
+    }
+
     return {
       velocity: totalVelocity,
       riskCount,
       activeAgents,
       productivity,
+      velocityHistory,
       totalIssues: issues.length,
       doneIssues: doneIssues.length,
     }
