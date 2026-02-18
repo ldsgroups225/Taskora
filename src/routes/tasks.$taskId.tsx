@@ -565,10 +565,10 @@ function TaskDetail() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="start" className="bg-background border-border/10 text-foreground rounded-xl w-48">
-                        {['backlog', 'todo', 'in_progress', 'in_review', 'done'].map(status => (
+                        {(['backlog', 'todo', 'in_progress', 'in_review', 'done'] as const).map(status => (
                           <DropdownMenuItem
                             key={status}
-                            onClick={() => updateIssue.mutate({ id: issue._id, patch: { status: status as any } })}
+                            onClick={() => updateIssue.mutate({ id: issue._id, patch: { status } })}
                             className="capitalize focus:bg-card/5 rounded-lg h-10 font-bold text-xs"
                           >
                             <div className={cn(
@@ -602,10 +602,10 @@ function TaskDetail() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="start" className="bg-background border-border/10 text-foreground rounded-xl w-48">
-                        {['low', 'medium', 'high', 'critical'].map(priorityItem => (
+                        {(['low', 'medium', 'high', 'critical'] as const).map(priorityItem => (
                           <DropdownMenuItem
                             key={priorityItem}
-                            onClick={() => updateIssue.mutate({ id: issue._id, patch: { priority: priorityItem as any } })}
+                            onClick={() => updateIssue.mutate({ id: issue._id, patch: { priority: priorityItem } })}
                             className="capitalize focus:bg-card/5 rounded-lg h-10 font-bold text-xs"
                           >
                             <div className={cn(

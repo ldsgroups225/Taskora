@@ -95,12 +95,12 @@ export function TaskForm({ open, onOpenChange, parentId, initialProjectId, dismi
       await createIssue({
         title,
         description,
-        projectId: selectedProjectId as any,
+        projectId: selectedProjectId as Id<'projects'>,
         parentId,
         priority,
         type,
         status: 'todo',
-        assigneeId: assigneeId as any || undefined,
+        assigneeId: (assigneeId as Id<'users'>) || undefined,
         properties: {
           startAt: startAt || undefined,
           dueDate: dueDate || undefined,
@@ -205,7 +205,7 @@ export function TaskForm({ open, onOpenChange, parentId, initialProjectId, dismi
               <Label className="text-sm font-bold text-foreground uppercase tracking-wider ml-1">
                 Priority
               </Label>
-              <Select value={priority} onValueChange={(val: any) => setPriority(val)}>
+              <Select value={priority} onValueChange={(val: typeof priority) => setPriority(val)}>
                 <SelectTrigger className="bg-card/5 border-border/10 rounded-xl h-12 md:h-11 focus:ring-primary">
                   <SelectValue placeholder="Select priority" />
                 </SelectTrigger>
