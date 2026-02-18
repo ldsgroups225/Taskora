@@ -1,4 +1,4 @@
-import type { Doc } from './_generated/dataModel'
+import type { Doc, Id } from './_generated/dataModel'
 import { v } from 'convex/values'
 import { query } from './_generated/server'
 
@@ -25,6 +25,16 @@ export const executeAqlQuery = query({
     const { projectId, filter } = args
     const identity = await ctx.auth.getUserIdentity()
 
+    // Resolve "me" assignee for filtering
+    let currentUserId: string | null = null
+    if (filter.assignee === 'me' && identity) {
+      const user = await ctx.db
+        .query('users')
+        .withIndex('by_clerkId', q => q.eq('clerkId', identity.subject))
+        .unique()
+      currentUserId = user?._id ?? null
+    }
+
     let issues: Doc<'issues'>[]
     if (filter.textSearch) {
       // Use efficient database-level full-text search
@@ -41,21 +51,28 @@ export const executeAqlQuery = query({
       issues = await searchQ.collect()
     }
     else {
-      // Standard project-based scan (fallback)
-      issues = await ctx.db
-        .query('issues')
-        .withIndex('by_project', q => q.eq('projectId', projectId))
-        .collect()
-    }
-
-    // Resolve "me" assignee for filtering
-    let currentUserId: string | null = null
-    if (filter.assignee === 'me' && identity) {
-      const user = await ctx.db
-        .query('users')
-        .withIndex('by_clerkId', q => q.eq('clerkId', identity.subject))
-        .unique()
-      currentUserId = user?._id ?? null
+      // Optimized query selection based on filters
+      if (filter.assignee === 'me' && currentUserId) {
+        // Use by_project_assignee index
+        issues = await ctx.db
+          .query('issues')
+          .withIndex('by_project_assignee', q => q.eq('projectId', projectId).eq('assigneeId', currentUserId as Id<'users'>))
+          .collect()
+      }
+      else if (filter.status) {
+        // Use by_project_status index
+        issues = await ctx.db
+          .query('issues')
+          .withIndex('by_project_status', q => q.eq('projectId', projectId).eq('status', filter.status as any))
+          .collect()
+      }
+      else {
+        // Standard project-based scan (fallback)
+        issues = await ctx.db
+          .query('issues')
+          .withIndex('by_project', q => q.eq('projectId', projectId))
+          .collect()
+      }
     }
 
     return issues.filter((issue) => {
