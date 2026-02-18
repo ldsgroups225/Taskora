@@ -10,6 +10,9 @@ export default defineConfig({
   test: {
     environment: 'node',
     include: ['convex/**/*.test.ts'],
+    env: {
+      GOOGLE_API_KEY: 'dummy_key',
+    },
     server: {
       deps: {
         inline: ['convex-test', 'convex'],
