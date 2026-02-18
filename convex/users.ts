@@ -75,10 +75,24 @@ export const inviteUser = mutation({
     email: v.string(),
     role: v.union(v.literal('dev'), v.literal('manager')),
   },
-  handler: async (_ctx, _args) => {
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity()
+    if (!identity) {
+      throw new Error('Not authenticated')
+    }
+
+    const user = await ctx.db
+      .query('users')
+      .withIndex('by_clerkId', q => q.eq('clerkId', identity.subject))
+      .unique()
+
+    if (!user || user.role !== 'manager') {
+      throw new Error('Only managers can invite users')
+    }
+
     // This is a placeholder as Clerk handles auth.
     // Usually we'd store the invitation in a table.
-    console.log(`Inviting user ${_args.email} as ${_args.role}`)
+    console.log(`Inviting user ${args.email} as ${args.role}`)
     return { success: true }
   },
 })
