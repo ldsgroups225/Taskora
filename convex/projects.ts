@@ -142,35 +142,43 @@ export const deleteProject = mutation({
       .withIndex('by_project', q => q.eq('projectId', args.id))
       .collect()
 
-    for (const issue of issues) {
-      // Cleanup associated data for each issue
-      const comments = await ctx.db
-        .query('comments')
-        .withIndex('by_issue', q => q.eq('issueId', issue._id))
-        .collect()
-      for (const c of comments) await ctx.db.delete(c._id)
+    // Parallel processing of issues
+    await Promise.all(
+      issues.map(async (issue) => {
+        const [comments, activity, agentLogs] = await Promise.all([
+          ctx.db
+            .query('comments')
+            .withIndex('by_issue', q => q.eq('issueId', issue._id))
+            .collect(),
+          ctx.db
+            .query('activityLog')
+            .withIndex('by_issue', q => q.eq('issueId', issue._id))
+            .collect(),
+          ctx.db
+            .query('agentLogs')
+            .withIndex('by_issue', q => q.eq('issueId', issue._id))
+            .collect(),
+        ])
 
-      const activity = await ctx.db
-        .query('activityLog')
-        .withIndex('by_issue', q => q.eq('issueId', issue._id))
-        .collect()
-      for (const a of activity) await ctx.db.delete(a._id)
+        // Parallel deletion of associated data
+        await Promise.all([
+          ...comments.map(async c => ctx.db.delete(c._id)),
+          ...activity.map(async a => ctx.db.delete(a._id)),
+          ...agentLogs.map(async l => ctx.db.delete(l._id)),
+        ])
 
-      const agentLogs = await ctx.db
-        .query('agentLogs')
-        .withIndex('by_issue', q => q.eq('issueId', issue._id))
-        .collect()
-      for (const l of agentLogs) await ctx.db.delete(l._id)
-
-      await ctx.db.delete(issue._id)
-    }
+        // Delete the issue itself
+        await ctx.db.delete(issue._id)
+      }),
+    )
 
     // 2. Delete project-wide agent logs
     const projectLogs = await ctx.db
       .query('agentLogs')
       .withIndex('by_project', q => q.eq('projectId', args.id))
       .collect()
-    for (const log of projectLogs) await ctx.db.delete(log._id)
+
+    await Promise.all(projectLogs.map(async log => ctx.db.delete(log._id)))
 
     // 3. Delete project
     await ctx.db.delete(args.id)
