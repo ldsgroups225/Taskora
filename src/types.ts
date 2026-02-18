@@ -1,10 +1,6 @@
-export interface RenderedItem {
-  id: string
-  title: string
-  order: number
-  content?: string
-  columnId: string
-}
+import type { Item } from '../convex/schema'
+
+export type RenderedItem = Item
 
 export const CONTENT_TYPES = {
   card: 'application/app-card',
