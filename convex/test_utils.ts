@@ -1,8 +1,8 @@
 import { v } from 'convex/values'
 import { internal } from './_generated/api'
-import { action, mutation, query } from './_generated/server'
+import { internalAction, internalMutation, internalQuery } from './_generated/server'
 
-export const validateAutoAssignment = action({
+export const validateAutoAssignment = internalAction({
   args: {},
   handler: async (ctx) => {
     // 1. Seed issues & users (via internal mutation or assuming they exist)
@@ -13,7 +13,7 @@ export const validateAutoAssignment = action({
   },
 })
 
-export const ensureDevUser = mutation({
+export const ensureDevUser = internalMutation({
   args: {},
   handler: async (ctx) => {
     const existing = await ctx.db
@@ -33,7 +33,7 @@ export const ensureDevUser = mutation({
   },
 })
 
-export const ensureDefaultUser = mutation({
+export const ensureDefaultUser = internalMutation({
   args: {},
   handler: async (ctx) => {
     const existing = await ctx.db.query('users').first()
@@ -49,7 +49,7 @@ export const ensureDefaultUser = mutation({
   },
 })
 
-export const seedHierarchy = mutation({
+export const seedHierarchy = internalMutation({
   args: {},
   handler: async (ctx) => {
     // 1. Get or create a project
@@ -125,7 +125,7 @@ export const seedHierarchy = mutation({
   },
 })
 
-export const getFullHierarchy = query({
+export const getFullHierarchy = internalQuery({
   args: { initiativeId: v.id('issues') },
   handler: async (ctx, args) => {
     const initiative = await ctx.db.get(args.initiativeId)

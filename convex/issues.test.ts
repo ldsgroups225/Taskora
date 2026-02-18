@@ -1,12 +1,22 @@
 /* eslint-disable */
 import { convexTest } from 'convex-test'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, beforeEach, afterEach } from 'vitest'
 import { api } from './_generated/api'
 import schema from './schema'
 
 const modules = (import.meta as any).glob('./**/*.ts')
 
 describe('issues', () => {
+  const originalApiKey = process.env.GOOGLE_API_KEY
+
+  beforeEach(() => {
+    process.env.GOOGLE_API_KEY = 'dummy_key'
+  })
+
+  afterEach(() => {
+    process.env.GOOGLE_API_KEY = originalApiKey
+  })
+
   it('creates an issue and logs activity on update', async () => {
     const t = convexTest(schema, modules)
 
