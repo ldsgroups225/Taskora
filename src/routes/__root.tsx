@@ -27,8 +27,10 @@ import { Rocket, Settings as SettingsIcon } from 'lucide-react'
 import * as React from 'react'
 import { CommandMenu } from '~/components/CommandMenu'
 import { DefaultCatchBoundary } from '~/components/DefaultCatchBoundary'
+import { NetworkStatus } from '~/components/NetworkStatus'
 import { NotFound } from '~/components/NotFound'
 import { ProjectSelector } from '~/components/ProjectSelector'
+import { ReloadPrompt } from '~/components/ReloadPrompt'
 import { ThemeProvider } from '~/components/ThemeProvider'
 import { ThemeToggle } from '~/components/ThemeToggle'
 import { Toaster } from '~/components/ui/sonner'
@@ -265,6 +267,8 @@ function RootLayout({
         <main className="grow min-h-0 h-full flex flex-col">
           {children}
           <Toaster position="bottom-center" />
+          <NetworkStatus />
+          <ReloadPrompt />
         </main>
       </div>
 

@@ -5,8 +5,11 @@ import {
   notifyManager,
   QueryClient,
 } from '@tanstack/react-query'
+import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister'
+import { persistQueryClient } from '@tanstack/react-query-persist-client'
 import { createRouter } from '@tanstack/react-router'
 import { setupRouterSsrQueryIntegration } from '@tanstack/react-router-ssr-query'
+import { del, get, set } from 'idb-keyval'
 import { toast } from 'sonner'
 import { DefaultCatchBoundary } from './components/DefaultCatchBoundary'
 import { NotFound } from './components/NotFound'
@@ -50,6 +53,22 @@ export function getRouter() {
     router,
     queryClient,
   })
+
+  if (typeof window !== 'undefined') {
+    const persister = createAsyncStoragePersister({
+      storage: {
+        getItem: get,
+        setItem: set,
+        removeItem: del,
+      },
+    })
+
+    persistQueryClient({
+      queryClient,
+      persister,
+      maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+    })
+  }
 
   return router
 }
