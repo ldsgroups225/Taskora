@@ -1,6 +1,6 @@
 import type { RenderedItem } from '../types'
 import { Plus, Trash2 } from 'lucide-react'
-import { useMemo, useRef, useState } from 'react'
+import { forwardRef, useMemo, useRef, useState } from 'react'
 import invariant from 'tiny-invariant'
 import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
@@ -25,7 +25,7 @@ interface ColumnProps {
   order: number
 }
 
-export function Column({ ref, name, columnId, boardId, items, nextOrder, previousOrder, order }: ColumnProps & { ref?: (node: HTMLDivElement | null) => void }) {
+export const Column = forwardRef<HTMLDivElement, ColumnProps>(({ name, columnId, boardId, items, nextOrder, previousOrder, order }, ref) => {
   const [acceptCardDrop, setAcceptCardDrop] = useState(false)
   const editState = useState(false)
   const [acceptColumnDrop, setAcceptColumnDrop] = useState<'none' | 'left' | 'right'>('none')
@@ -222,5 +222,5 @@ export function Column({ ref, name, columnId, boardId, items, nextOrder, previou
       )}
     </div>
   )
-}
+})
 Column.displayName = 'Column'
