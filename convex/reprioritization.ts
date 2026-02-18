@@ -88,7 +88,7 @@ export const saveProposedRankings = internalMutation({
     })),
   },
   handler: async (ctx, args) => {
-    for (const item of args.rankings) {
+    await Promise.all(args.rankings.map(async (item) => {
       const issueId = item.id as Id<'issues'>
       const issue = await ctx.db.get(issueId)
       if (issue) {
@@ -102,7 +102,7 @@ export const saveProposedRankings = internalMutation({
           },
         })
       }
-    }
+    }))
 
     // Log the event
     await ctx.db.insert('agentLogs', {
@@ -131,14 +131,12 @@ export const applyProposedRankings = mutation({
     // Sort proposed items by their proposed rank
     const sorted = proposed.sort((a, b) => a.properties!.proposedOrder - b.properties!.proposedOrder)
 
-    for (let i = 0; i < sorted.length; i++) {
-      const issue = sorted[i]
-      const oldOrder = issue.order
+    await Promise.all(sorted.map(async (issue, i) => {
       const newOrder = i * 10
       const properties = { ...issue.properties! }
       delete properties.proposedOrder
 
-      await ctx.db.patch(issue._id, {
+      return ctx.db.patch(issue._id, {
         order: newOrder,
         properties: {
           ...properties,
@@ -146,7 +144,7 @@ export const applyProposedRankings = mutation({
           lastReprioritizedAt: Date.now(),
         },
       })
-    }
+    }))
 
     // Log the application of rankings (Task 6.9)
     await ctx.db.insert('agentLogs', {
