@@ -1,3 +1,4 @@
+import type { OptimisticLocalStore } from 'convex/browser'
 import type { Id } from '../convex/_generated/dataModel'
 import { convexQuery, useConvexMutation } from '@convex-dev/react-query'
 import { useMutation } from '@tanstack/react-query'
@@ -67,20 +68,22 @@ export function useCreateItemMutation() {
   return useMutation({ mutationFn })
 }
 
+export function optimisticUpdateItem(localStore: OptimisticLocalStore, args: any) {
+  const board = localStore.getQuery(api.board.getBoard, { id: args.boardId })
+  if (!board)
+    return
+  const items = board.items.map(item => (item.id === args.id ? { ...item, ...args } : item))
+  localStore.setQuery(
+    api.board.getBoard,
+    { id: board.id },
+    { ...board, items },
+  )
+}
+
 export function useUpdateCardMutation() {
   const mutationFn = useConvexMutation(
     api.board.updateItem,
-  ).withOptimisticUpdate((localStore, args) => {
-    const board = localStore.getQuery(api.board.getBoard, { id: args.boardId })
-    if (!board)
-      return
-    const items = board.items.map(item => (item.id === args.id ? args : item))
-    localStore.setQuery(
-      api.board.getBoard,
-      { id: board.id },
-      { ...board, items },
-    )
-  })
+  ).withOptimisticUpdate(optimisticUpdateItem)
 
   return useMutation({ mutationFn })
 }
