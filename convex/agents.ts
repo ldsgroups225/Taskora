@@ -103,33 +103,35 @@ export const applyAssignments = internalMutation({
     ),
   },
   handler: async (ctx, args) => {
-    for (const assignment of args.assignments) {
-      const { issueId, assigneeId, reason } = assignment
+    await Promise.all(
+      args.assignments.map(async (assignment) => {
+        const { issueId, assigneeId, reason } = assignment
 
-      if (issueId && assigneeId) {
-        const validIssueId = issueId as Id<'issues'>
-        const validAssigneeId = assigneeId as Id<'users'>
-        const issue = await ctx.db.get(validIssueId)
+        if (issueId && assigneeId) {
+          const validIssueId = issueId as Id<'issues'>
+          const validAssigneeId = assigneeId as Id<'users'>
+          const issue = await ctx.db.get(validIssueId)
 
-        if (!issue || issue.assigneeId !== undefined)
-          continue
+          if (!issue || issue.assigneeId !== undefined)
+            return
 
-        // Update issue
-        const properties = issue.properties || {}
-        await ctx.db.patch(validIssueId, {
-          assigneeId: validAssigneeId,
-          properties: { ...properties, aiAssigned: true },
-        })
-
-        // Log action (Task 5.6)
-        await ctx.db.insert('agentLogs', {
-          projectId: issue.projectId,
-          issueId: validIssueId,
-          action: 'auto_assignment',
-          result: `Assigned to user ${assigneeId}. Reason: ${reason}`,
-          status: 'success',
-        })
-      }
-    }
+          // Update issue and log action in parallel
+          const properties = issue.properties || {}
+          await Promise.all([
+            ctx.db.patch(validIssueId, {
+              assigneeId: validAssigneeId,
+              properties: { ...properties, aiAssigned: true },
+            }),
+            ctx.db.insert('agentLogs', {
+              projectId: issue.projectId,
+              issueId: validIssueId,
+              action: 'auto_assignment',
+              result: `Assigned to user ${assigneeId}. Reason: ${reason}`,
+              status: 'success',
+            }),
+          ])
+        }
+      }),
+    )
   },
 })
