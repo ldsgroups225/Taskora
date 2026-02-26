@@ -121,6 +121,20 @@ async function ensureItemExists(
 export const createColumn = mutation({
   args: newColumnsSchema,
   handler: async (ctx, { boardId, name }) => {
+    const identity = await ctx.auth.getUserIdentity()
+    if (!identity) {
+      throw new Error('Not authenticated')
+    }
+
+    const user = await ctx.db
+      .query('users')
+      .withIndex('by_clerkId', q => q.eq('clerkId', identity.subject))
+      .unique()
+
+    if (!user) {
+      throw new Error('User not found')
+    }
+
     await ensureBoardExists(ctx, boardId)
 
     const existingColumns = await ctx.db
@@ -140,6 +154,20 @@ export const createColumn = mutation({
 export const createItem = mutation({
   args: schema.tables.items.validator,
   handler: async (ctx, item) => {
+    const identity = await ctx.auth.getUserIdentity()
+    if (!identity) {
+      throw new Error('Not authenticated')
+    }
+
+    const user = await ctx.db
+      .query('users')
+      .withIndex('by_clerkId', q => q.eq('clerkId', identity.subject))
+      .unique()
+
+    if (!user) {
+      throw new Error('User not found')
+    }
+
     await ensureBoardExists(ctx, item.boardId)
     await ctx.db.insert('items', item)
   },
@@ -148,6 +176,20 @@ export const createItem = mutation({
 export const deleteItem = mutation({
   args: deleteItemSchema,
   handler: async (ctx, { id, boardId }) => {
+    const identity = await ctx.auth.getUserIdentity()
+    if (!identity) {
+      throw new Error('Not authenticated')
+    }
+
+    const user = await ctx.db
+      .query('users')
+      .withIndex('by_clerkId', q => q.eq('clerkId', identity.subject))
+      .unique()
+
+    if (!user) {
+      throw new Error('User not found')
+    }
+
     await ensureBoardExists(ctx, boardId)
     const item = await ensureItemExists(ctx, id)
     await ctx.db.delete(item._id)
@@ -157,6 +199,20 @@ export const deleteItem = mutation({
 export const updateItem = mutation({
   args: schema.tables.items.validator,
   handler: async (ctx, newItem) => {
+    const identity = await ctx.auth.getUserIdentity()
+    if (!identity) {
+      throw new Error('Not authenticated')
+    }
+
+    const user = await ctx.db
+      .query('users')
+      .withIndex('by_clerkId', q => q.eq('clerkId', identity.subject))
+      .unique()
+
+    if (!user) {
+      throw new Error('User not found')
+    }
+
     const { id, boardId } = newItem
     await ensureBoardExists(ctx, boardId)
     const item = await ensureItemExists(ctx, id)
@@ -167,6 +223,20 @@ export const updateItem = mutation({
 export const updateColumn = mutation({
   args: updateColumnSchema,
   handler: async (ctx, newColumn) => {
+    const identity = await ctx.auth.getUserIdentity()
+    if (!identity) {
+      throw new Error('Not authenticated')
+    }
+
+    const user = await ctx.db
+      .query('users')
+      .withIndex('by_clerkId', q => q.eq('clerkId', identity.subject))
+      .unique()
+
+    if (!user) {
+      throw new Error('User not found')
+    }
+
     const { id, boardId } = newColumn
     await ensureBoardExists(ctx, boardId)
     const item = await ensureColumnExists(ctx, id)
@@ -177,6 +247,20 @@ export const updateColumn = mutation({
 export const updateBoard = mutation({
   args: updateBoardSchema,
   handler: async (ctx, boardUpdate) => {
+    const identity = await ctx.auth.getUserIdentity()
+    if (!identity) {
+      throw new Error('Not authenticated')
+    }
+
+    const user = await ctx.db
+      .query('users')
+      .withIndex('by_clerkId', q => q.eq('clerkId', identity.subject))
+      .unique()
+
+    if (!user) {
+      throw new Error('User not found')
+    }
+
     const board = await ensureBoardExists(ctx, boardUpdate.id)
     await ctx.db.patch(board._id, boardUpdate)
   },
@@ -185,6 +269,20 @@ export const updateBoard = mutation({
 export const deleteColumn = mutation({
   args: deleteColumnSchema,
   handler: async (ctx, { boardId, id }) => {
+    const identity = await ctx.auth.getUserIdentity()
+    if (!identity) {
+      throw new Error('Not authenticated')
+    }
+
+    const user = await ctx.db
+      .query('users')
+      .withIndex('by_clerkId', q => q.eq('clerkId', identity.subject))
+      .unique()
+
+    if (!user) {
+      throw new Error('User not found')
+    }
+
     await ensureBoardExists(ctx, boardId)
     const column = await ensureColumnExists(ctx, id)
     const items = await ctx.db
