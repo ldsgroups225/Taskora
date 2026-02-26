@@ -188,7 +188,7 @@ export function WarRoom() {
                 )
               : deliverables && deliverables.length > 0
                 ? (
-                    (deliverables as { _id: string, title: string, type: string, priority: string, status: string, generatedPrompt?: string }[]).map(item => (
+                    deliverables.map(item => (
                       <div key={item._id} className="group px-6 py-4 flex items-center justify-between hover:bg-card/2 transition-colors">
                         <div className="flex items-center gap-4 min-w-0 grow">
                           <div className="shrink-0 w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">

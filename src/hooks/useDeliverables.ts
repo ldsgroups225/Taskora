@@ -1,9 +1,15 @@
-import type { Id } from '../../convex/_generated/dataModel'
+import type { Doc, Id } from '../../convex/_generated/dataModel'
 import { useQuery } from 'convex/react'
 import { api } from '../../convex/_generated/api'
 import { useCurrentUser } from './useCurrentUser'
 
-export function useDeliverables(projectId?: Id<'projects'>) {
+export interface UseDeliverablesReturn {
+  deliverables: Doc<'issues'>[] | undefined
+  isLoading: boolean
+  isAuthenticated: boolean
+}
+
+export function useDeliverables(projectId?: Id<'projects'>): UseDeliverablesReturn {
   const { isAuthenticated, isLoading: isLoadingUser } = useCurrentUser()
   const deliverables = useQuery(
     api.deliverables.getDeliverables,
@@ -11,7 +17,7 @@ export function useDeliverables(projectId?: Id<'projects'>) {
   )
 
   return {
-    deliverables,
+    deliverables: deliverables as Doc<'issues'>[] | undefined,
     isLoading: isLoadingUser || (isAuthenticated && deliverables === undefined),
     isAuthenticated,
   }
