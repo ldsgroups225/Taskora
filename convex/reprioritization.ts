@@ -3,6 +3,18 @@ import { v } from 'convex/values'
 import { internal } from './_generated/api'
 import { action, internalAction, internalMutation, internalQuery, mutation, query } from './_generated/server'
 
+// Scoring constants for backlog prioritization
+const PRIORITY_SCORES = {
+  critical: 100,
+  high: 50,
+  medium: 20,
+  low: 5,
+} as const
+
+const MILLISECONDS_PER_DAY = 1000 * 60 * 60 * 24
+const MAX_AGE_SCORE = 50
+const STORY_POINT_MULTIPLIER = 2
+
 export const getBacklogScoring = internalQuery({
   args: { projectId: v.id('projects') },
   handler: async (ctx, args) => {
@@ -16,20 +28,14 @@ export const getBacklogScoring = internalQuery({
 
     return issues.map((issue) => {
       // Basic scoring algorithm
-      // Critical = 100, High = 50, Medium = 20, Low = 5
-      const priorityScore
-        = issue.priority === 'critical'
-          ? 100
-          : issue.priority === 'high'
-            ? 50
-            : issue.priority === 'medium' ? 20 : 5
+      const priorityScore = PRIORITY_SCORES[issue.priority]
 
       // Age score: 1 point per day since creation
-      const daysOld = Math.floor((now - issue._creationTime) / (1000 * 60 * 60 * 24))
-      const ageScore = Math.min(daysOld, 50) // Cap age score at 50
+      const daysOld = Math.floor((now - issue._creationTime) / MILLISECONDS_PER_DAY)
+      const ageScore = Math.min(daysOld, MAX_AGE_SCORE)
 
       // Story points: 2 points per SP
-      const complexityScore = (issue.storyPoints || 0) * 2
+      const complexityScore = (issue.storyPoints || 0) * STORY_POINT_MULTIPLIER
 
       // Total raw score
       const rawScore = priorityScore + ageScore + complexityScore
